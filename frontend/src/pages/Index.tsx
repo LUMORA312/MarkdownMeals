@@ -80,7 +80,7 @@ const Index = () => {
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer transition-transform hover:scale-105"
                 >
                   <Search className="w-3.5 h-3.5" />
-                  Find Deals
+                  Find Markdowns
                 </button>
                 <button
                   onClick={() => {
@@ -110,7 +110,7 @@ const Index = () => {
           <div className="absolute inset-0">
             <img
               src="/images/steak.jpg"
-              alt="Today's best food deals"
+              alt="Today's best food markdowns"
               className="w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-background" />
@@ -147,37 +147,37 @@ const Index = () => {
               transition={{ duration: 0.6 }}
               className="flex items-center gap-3 mb-4"
             >
-              <div className="p-2 rounded-xl bg-accent/90 backdrop-blur-sm">
-                <Tag className="w-8 h-8 text-accent-foreground" />
+              <div className="p-2.5 rounded-xl bg-accent/90 backdrop-blur-sm">
+                <Tag className="w-10 h-10 text-accent-foreground" />
               </div>
-              <h1 className="text-5xl md:text-7xl font-display text-primary-foreground drop-shadow-lg">
+              <h1 className="text-6xl sm:text-6xl md:text-7xl lg:text-8xl font-display text-primary-foreground drop-shadow-lg leading-none">
                 FoodMan
               </h1>
             </motion.div>
 
             {/* Animated tagline */}
-            <motion.p
+            <motion.h2
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-lg md:text-2xl font-body font-medium text-primary-foreground/90 max-w-lg mb-2 drop-shadow-md"
+              className="text-lg sm:text-xl md:text-3xl font-display font-medium text-primary-foreground/90 max-w-lg mb-2 drop-shadow-md leading-snug px-2"
             >
-              Today's deals{' '}
+              Local markdowns.{' '}
               <motion.span
                 animate={{ color: ['hsl(8,78%,58%)', 'hsl(42,90%,55%)', 'hsl(340,70%,55%)', 'hsl(8,78%,58%)'] }}
                 transition={{ duration: 4, repeat: Infinity }}
                 className="font-bold"
               >
-                near you
+                Real savings.
               </motion.span>
-            </motion.p>
+            </motion.h2>
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
-              className="text-sm md:text-base text-primary-foreground/70 font-body mb-8 max-w-md drop-shadow"
+              className="text-xs sm:text-sm md:text-base text-primary-foreground/70 font-body mb-6 sm:mb-8 max-w-md drop-shadow px-4"
             >
-              Happy hour, BOGO, late night — find specials before they expire.
+              Pick a price. We'll show the best specials that taste amazing.
             </motion.p>
 
             <motion.button
@@ -189,10 +189,10 @@ const Index = () => {
               onClick={() => {
                 document.getElementById('deal-section')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-8 py-4 rounded-full bg-accent text-accent-foreground font-body font-bold text-lg shadow-elevated cursor-pointer transition-shadow hover:shadow-food"
+              className="flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-accent text-accent-foreground font-body font-bold text-base sm:text-lg shadow-elevated cursor-pointer transition-shadow hover:shadow-food"
             >
               <Search className="w-5 h-5" />
-              Find Deals Near Me
+              Find Markdowns Near Me
             </motion.button>
           </div>
         </section>
@@ -206,7 +206,7 @@ const Index = () => {
               viewport={{ once: true }}
               className="text-sm font-body text-muted-foreground text-center mb-4 tracking-wide uppercase"
             >
-              Browse by Deal
+              Browse by Savings
             </motion.p>
             <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
               {DEAL_TYPES.map((deal, i) => {
@@ -243,7 +243,7 @@ const Index = () => {
                   onClick={() => setSelectedDealTypes([])}
                   className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
                 >
-                  Clear Deals
+                  Clear Savings
                 </button>
               </div>
             )}
@@ -275,7 +275,7 @@ const Index = () => {
             transition={{ delay: 0.1 }}
             className="text-muted-foreground font-body text-center mb-10 max-w-sm"
           >
-            Pick up to 5 tastes to narrow down deals.
+            Pick up to 5 tastes to narrow down markdowns.
           </motion.p>
 
           {/* Taste Grid */}
@@ -322,7 +322,7 @@ const Index = () => {
               onClick={goToRestaurants}
               className="flex items-center gap-2 px-8 py-3 rounded-full bg-accent text-accent-foreground font-body font-semibold text-base shadow-food transition-shadow hover:shadow-elevated cursor-pointer"
             >
-              {selectedTastes.length === 0 && selectedDealTypes.length === 0 ? 'Browse All Deals' : 'Show Deals'}
+              {selectedTastes.length === 0 && selectedDealTypes.length === 0 ? 'Browse All Markdowns' : 'Show Markdowns'}
               <ArrowRight className="w-4 h-4" />
             </motion.button>
             {selectedTastes.length === 0 && selectedDealTypes.length === 0 && (

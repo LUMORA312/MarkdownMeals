@@ -69,7 +69,7 @@ export default function RestaurantDetail() {
         </button>
         <div className="absolute top-4 right-4 flex items-center gap-1 px-2 py-1 rounded-full bg-destructive/90 backdrop-blur-sm">
           <Tag className="w-3 h-3 text-destructive-foreground" />
-          <span className="text-xs font-body font-bold text-destructive-foreground">{activeDealCount} deals</span>
+          <span className="text-xs font-body font-bold text-destructive-foreground">{activeDealCount} savings</span>
         </div>
         <div className="absolute bottom-4 left-4 right-4">
           <h1 className="text-2xl font-display text-primary-foreground">{restaurant.name}</h1>

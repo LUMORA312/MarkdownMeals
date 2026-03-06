@@ -45,7 +45,7 @@ export default function RestaurantList() {
             <ArrowLeft className="w-5 h-5 text-foreground" />
           </button>
           <Tag className="w-6 h-6 text-accent" />
-          <h2 className="text-2xl font-display text-foreground">Deals</h2>
+          <h2 className="text-2xl font-display text-foreground">Markdowns</h2>
         </div>
         <button
           onClick={() => navigate('/')}
@@ -185,7 +185,7 @@ export default function RestaurantList() {
             </div>
             <div className="text-center space-y-1">
               <h3 className="text-lg font-display text-foreground">
-                {showFavoritesOnly ? 'No favorites yet' : 'No deals found'}
+                {showFavoritesOnly ? 'No favorites yet' : 'No markdowns found'}
               </h3>
               <p className="text-sm text-muted-foreground font-body max-w-xs">
                 {showFavoritesOnly
@@ -200,7 +200,7 @@ export default function RestaurantList() {
                 onClick={() => setShowFavoritesOnly(false)}
                 className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors"
               >
-                Show all deals
+                Show all markdowns
               </button>
             ) : searchQuery.trim() ? (
               <button

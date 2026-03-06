@@ -117,7 +117,7 @@ export function RestaurantCard({ restaurant, index, favorited = false, onToggleF
         {/* Deal count badge */}
         <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 rounded-full bg-destructive/90 backdrop-blur-sm shadow-sm">
           <Tag className="w-3 h-3 text-destructive-foreground" />
-          <span className="text-xs font-body font-bold text-destructive-foreground">{dealCount} deals</span>
+          <span className="text-xs font-body font-bold text-destructive-foreground">{dealCount} savings</span>
         </div>
 
         {/* Featured deal tag */}
