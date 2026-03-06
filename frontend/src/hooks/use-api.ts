@@ -7,6 +7,7 @@ import {
   createToken,
   fetchToken,
   submitRating,
+  fetchRatings,
 } from '@/lib/api';
 import { PrimaryTaste, DealType, EmojiRating, RatingTag } from '@/types/food';
 
@@ -75,13 +76,23 @@ export function useToken(tokenId: string | undefined) {
   });
 }
 
+export function useRatings(restaurantId: string | undefined) {
+  return useQuery({
+    queryKey: ['ratings', restaurantId],
+    queryFn: () => fetchRatings(restaurantId!),
+    enabled: !!restaurantId,
+  });
+}
+
 export function useSubmitRating() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: ({ tokenId, emoji, tags }: { tokenId: string; emoji: EmojiRating; tags: RatingTag[] }) =>
       submitRating(tokenId, emoji, tags),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['restaurants'] });
+      queryClient.invalidateQueries({ queryKey: ['token', variables.tokenId] });
+      queryClient.invalidateQueries({ queryKey: ['ratings'] });
     },
   });
 }

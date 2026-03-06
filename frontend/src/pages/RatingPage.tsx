@@ -17,6 +17,7 @@ export default function RatingPage() {
   const [selectedEmoji, setSelectedEmoji] = useState<EmojiRating | null>(null);
   const [selectedTags, setSelectedTags] = useState<RatingTag[]>([]);
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
@@ -46,10 +47,16 @@ export default function RatingPage() {
     return () => clearInterval(interval);
   }, [timeLeft]);
 
+  const handleEmojiSelect = (emoji: EmojiRating) => {
+    setSelectedEmoji(emoji);
+    setError(null);
+  };
+
   const handleTagToggle = (tag: RatingTag) => {
     setSelectedTags((prev) =>
       prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag]
     );
+    setError(null);
   };
 
   const handleSubmit = async () => {
@@ -62,7 +69,12 @@ export default function RatingPage() {
       });
       setSubmitted(true);
     } catch (err) {
-      console.error('Failed to submit rating:', err);
+      const message = err instanceof Error ? err.message : 'Failed to submit rating';
+      if (message === 'Rating not yet available') {
+        setError('Rating period hasn\u2019t started yet. Please wait for the timer to finish.');
+      } else {
+        setError(message);
+      }
     }
   };
 
@@ -166,7 +178,7 @@ export default function RatingPage() {
             <EmojiRatingComponent
               selectedEmoji={selectedEmoji}
               selectedTags={selectedTags}
-              onEmojiSelect={setSelectedEmoji}
+              onEmojiSelect={handleEmojiSelect}
               onTagToggle={handleTagToggle}
             />
 
@@ -187,6 +199,16 @@ export default function RatingPage() {
                   Submit Rating
                 </button>
               </motion.div>
+            )}
+
+            {error && (
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-sm text-center text-destructive font-body"
+              >
+                {error}
+              </motion.p>
             )}
 
             <p className="text-xs text-center text-muted-foreground font-body">

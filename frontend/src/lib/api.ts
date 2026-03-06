@@ -10,8 +10,10 @@ function getSessionId(): string {
   return id;
 }
 
+const API_BASE = import.meta.env.VITE_API_URL || '';
+
 async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
+  const res = await fetch(`${API_BASE}${url}`, {
     ...init,
     headers: {
       'Content-Type': 'application/json',
@@ -98,6 +100,17 @@ export async function submitRating(
     method: 'POST',
     body: JSON.stringify({ tokenId, emoji, tags }),
   });
+}
+
+export interface RatingListItem {
+  id: string;
+  emoji: string;
+  tags: string[];
+  createdAt: number;
+}
+
+export async function fetchRatings(restaurantId: string): Promise<RatingListItem[]> {
+  return apiFetch<RatingListItem[]>(`/api/ratings/restaurant/${restaurantId}`);
 }
 
 // --- Favorites ---

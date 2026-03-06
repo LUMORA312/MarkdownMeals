@@ -3,12 +3,12 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:../dev.db"
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
 }
 
 model Restaurant {
-  id          String   @id @default(cuid())
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
   coverImage  String
   redirectUrl String
@@ -23,16 +23,16 @@ model Restaurant {
 }
 
 model RestaurantCategory {
-  id           String     @id @default(cuid())
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
   name         String
-  restaurantId String
+  restaurantId String     @db.ObjectId
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
   @@index([restaurantId])
 }
 
 model Dish {
-  id            String   @id @default(cuid())
+  id            String    @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   image         String
   category      String
@@ -41,27 +41,27 @@ model Dish {
   originalPrice Float?
   dealType      String?
   dealExpiresAt DateTime?
-  restaurantId  String
+  restaurantId  String    @db.ObjectId
   restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
-  modifiers DishModifier[]
+  modifiers   DishModifier[]
   tokenDishes TokenDish[]
 
   @@index([restaurantId])
 }
 
 model DishModifier {
-  id     String @id @default(cuid())
+  id     String @id @default(auto()) @map("_id") @db.ObjectId
   name   String
-  dishId String
+  dishId String @db.ObjectId
   dish   Dish   @relation(fields: [dishId], references: [id], onDelete: Cascade)
 
   @@index([dishId])
 }
 
 model RedirectToken {
-  id                 String   @id @default(cuid())
-  restaurantId       String
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  restaurantId       String   @db.ObjectId
   restaurant         Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   createdAt          DateTime @default(now())
   ratingAvailableAt  DateTime
@@ -73,9 +73,9 @@ model RedirectToken {
 }
 
 model TokenDish {
-  id      String @id @default(cuid())
-  tokenId String
-  dishId  String
+  id      String @id @default(auto()) @map("_id") @db.ObjectId
+  tokenId String @db.ObjectId
+  dishId  String @db.ObjectId
   token   RedirectToken @relation(fields: [tokenId], references: [id], onDelete: Cascade)
   dish    Dish          @relation(fields: [dishId], references: [id], onDelete: Cascade)
 
@@ -85,11 +85,11 @@ model TokenDish {
 }
 
 model Rating {
-  id        String   @id @default(cuid())
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
   emoji     String
-  tokenId   String   @unique
+  tokenId   String   @unique @db.ObjectId
   token     RedirectToken @relation(fields: [tokenId], references: [id], onDelete: Cascade)
-  restaurantId String
+  restaurantId String @db.ObjectId
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
 
@@ -99,18 +99,18 @@ model Rating {
 }
 
 model RatingTag {
-  id       String @id @default(cuid())
+  id       String @id @default(auto()) @map("_id") @db.ObjectId
   name     String
-  ratingId String
+  ratingId String @db.ObjectId
   rating   Rating @relation(fields: [ratingId], references: [id], onDelete: Cascade)
 
   @@index([ratingId])
 }
 
 model Favorite {
-  id           String     @id @default(cuid())
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
   sessionId    String
-  restaurantId String
+  restaurantId String     @db.ObjectId
   restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
   createdAt    DateTime   @default(now())
 
