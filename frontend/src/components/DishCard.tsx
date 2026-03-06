@@ -29,14 +29,11 @@ export function DishCard({ dish, rank, onTap }: DishCardProps) {
   const isExpired = dish.dealExpiresAt ? dish.dealExpiresAt <= Date.now() : false;
   const timeLeft = dish.dealExpiresAt ? formatTimeLeft(dish.dealExpiresAt) : null;
 
-  // Hide expired deals
-  if (isExpired && dish.dealType) return null;
-
   return (
     <motion.button
       whileTap={{ scale: 0.95 }}
       onClick={onTap}
-      className="relative aspect-square rounded-xl overflow-hidden cursor-pointer group"
+      className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer group ${isExpired && dish.dealType ? 'opacity-50' : ''}`}
     >
       <img
         src={dish.image}
@@ -46,7 +43,7 @@ export function DishCard({ dish, rank, onTap }: DishCardProps) {
       />
       
       {/* Deal type tag */}
-      {dish.dealType && (
+      {dish.dealType && !isExpired && (
         <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-destructive/90 backdrop-blur-sm">
           <span className="text-[9px]">{DEAL_ICONS[dish.dealType]}</span>
           <span className="text-[9px] font-body font-bold text-destructive-foreground">{dish.dealType}</span>
