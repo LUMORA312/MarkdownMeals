@@ -10,7 +10,7 @@ function getSessionId(): string {
   return id;
 }
 
-const API_BASE = import.meta.env.VITE_API_URL || '';
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
 async function apiFetch<T>(url: string, init?: RequestInit): Promise<T> {
   const res = await fetch(`${API_BASE}${url}`, {
