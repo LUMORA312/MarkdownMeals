@@ -50,6 +50,14 @@ export function DishCard({ dish, rank, onTap }: DishCardProps) {
         </div>
       )}
 
+      {/* Expired badge */}
+      {dish.dealType && isExpired && (
+        <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-muted-foreground/80 backdrop-blur-sm">
+          <Clock className="w-2.5 h-2.5 text-primary-foreground" />
+          <span className="text-[9px] font-body font-bold text-primary-foreground">Expired</span>
+        </div>
+      )}
+
       {/* Price badge */}
       {dish.price && (
         <div className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-card/90 backdrop-blur-sm">
