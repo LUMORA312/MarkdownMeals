@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS } from '@/types/food';
+import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS } from '@/types/food';
 import { TasteTile } from '@/components/TasteTile';
 import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, Tag } from 'lucide-react';
 
@@ -16,6 +16,7 @@ const FLOATING_CARDS = [
 
 const Index = () => {
   const navigate = useNavigate();
+  const [selectedPrice, setSelectedPrice] = useState<PriceRange | null>(null);
   const [selectedTastes, setSelectedTastes] = useState<PrimaryTaste[]>([]);
   const [selectedDealTypes, setSelectedDealTypes] = useState<DealType[]>([]);
   const [showNav, setShowNav] = useState(false);
@@ -44,13 +45,17 @@ const Index = () => {
     );
   };
 
-  const goToRestaurants = () => {
+  const goToRestaurants = (priceOverride?: PriceRange) => {
     const params = new URLSearchParams();
+    const price = priceOverride || selectedPrice;
+    if (price) params.set('price', price);
     if (selectedTastes.length > 0) params.set('tastes', selectedTastes.join(','));
     if (selectedDealTypes.length > 0) params.set('deals', selectedDealTypes.join(','));
     const qs = params.toString();
     navigate(`/restaurants${qs ? `?${qs}` : ''}`);
   };
+
+  const hasFilters = selectedPrice || selectedTastes.length > 0 || selectedDealTypes.length > 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -76,7 +81,7 @@ const Index = () => {
               </button>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={goToRestaurants}
+                  onClick={() => goToRestaurants()}
                   className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer transition-transform hover:scale-105"
                 >
                   <Search className="w-3.5 h-3.5" />
@@ -187,7 +192,7 @@ const Index = () => {
               whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.05 }}
               onClick={() => {
-                document.getElementById('deal-section')?.scrollIntoView({ behavior: 'smooth' });
+                document.getElementById('price-section')?.scrollIntoView({ behavior: 'smooth' });
               }}
               className="flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-accent text-accent-foreground font-body font-bold text-base sm:text-lg shadow-elevated cursor-pointer transition-shadow hover:shadow-food"
             >
@@ -197,61 +202,72 @@ const Index = () => {
           </div>
         </section>
 
-        {/* Deal Mode Filters (primary) */}
-        <section id="deal-section" className="w-full bg-card border-b border-border overflow-hidden">
-          <div className="max-w-3xl mx-auto px-4 py-6">
+        {/* Price/Value Selection (PRIMARY — biggest buttons on page) */}
+        <section id="price-section" className="w-full bg-card border-b border-border overflow-hidden">
+          <div className="max-w-2xl mx-auto px-4 py-10 sm:py-12">
+            <motion.h3
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              viewport={{ once: true }}
+              className="text-xl sm:text-2xl font-display text-foreground text-center mb-1"
+            >
+              Pick your price
+            </motion.h3>
             <motion.p
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
               viewport={{ once: true }}
-              className="text-sm font-body text-muted-foreground text-center mb-4 tracking-wide uppercase"
+              className="text-sm font-body text-muted-foreground text-center mb-8"
             >
-              Browse by Savings
+              We'll show the best markdowns in your range
             </motion.p>
-            <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
-              {DEAL_TYPES.map((deal, i) => {
-                const isActive = selectedDealTypes.includes(deal);
+            <div className="flex flex-col gap-3 sm:gap-4 w-full">
+              {PRICE_RANGES.map((price, i) => {
+                const isActive = selectedPrice === price;
                 return (
                   <motion.button
-                    key={deal}
+                    key={price}
                     initial={{ opacity: 0, y: 20 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.05 * i, type: 'spring', stiffness: 300, damping: 20 }}
-                    whileHover={{ scale: 1.08, y: -4 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => toggleDealType(deal)}
-                    className={`flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border transition-colors cursor-pointer min-w-[90px] group ${
+                    transition={{ delay: 0.06 * i, type: 'spring', stiffness: 300, damping: 20 }}
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                    onClick={() => {
+                      setSelectedPrice(isActive ? null : price);
+                      if (!isActive) {
+                        goToRestaurants(price);
+                      }
+                    }}
+                    className={`flex items-center gap-4 w-full px-6 sm:px-8 py-5 sm:py-6 rounded-2xl border-2 transition-all cursor-pointer group ${
                       isActive
-                        ? 'border-accent bg-accent/15 shadow-md ring-1 ring-accent/30'
-                        : 'border-border bg-muted/60 hover:bg-accent/10 hover:border-accent/40'
+                        ? 'border-accent bg-accent/15 shadow-lg ring-2 ring-accent/40'
+                        : 'border-border bg-muted/40 hover:bg-accent/10 hover:border-accent/50 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    <span className="text-xl">{DEAL_ICONS[deal]}</span>
-                    <span className={`text-xs font-body font-semibold whitespace-nowrap ${
-                      isActive ? 'text-foreground' : 'text-foreground/80 group-hover:text-foreground'
-                    }`}>
-                      {deal}
-                    </span>
+                    <span className="text-3xl sm:text-4xl">{PRICE_RANGE_ICONS[price]}</span>
+                    <div className="flex flex-col items-start">
+                      <span className={`text-lg sm:text-xl font-display font-bold ${
+                        isActive ? 'text-foreground' : 'text-foreground/90 group-hover:text-foreground'
+                      }`}>
+                        {price}
+                      </span>
+                      <span className="text-xs sm:text-sm font-body text-muted-foreground">
+                        {price === 'Best Value' ? 'Best bang for your buck' : price === 'Family Feast' ? 'Feed the whole crew' : `Specials ${price.toLowerCase()}`}
+                      </span>
+                    </div>
+                    <ArrowRight className={`w-5 h-5 sm:w-6 sm:h-6 ml-auto transition-transform ${
+                      isActive ? 'text-accent translate-x-1' : 'text-muted-foreground group-hover:translate-x-1 group-hover:text-foreground'
+                    }`} />
                   </motion.button>
                 );
               })}
             </div>
-            {selectedDealTypes.length > 0 && (
-              <div className="flex justify-center mt-3">
-                <button
-                  onClick={() => setSelectedDealTypes([])}
-                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
-                >
-                  Clear Savings
-                </button>
-              </div>
-            )}
           </div>
         </section>
 
-        {/* Taste Selection Section (optional add-on) */}
-        <section id="taste-section" className="flex flex-col items-center px-4 py-16 bg-background">
+        {/* Optional Refinements */}
+        <section id="refine-section" className="flex flex-col items-center px-4 py-12 bg-background">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -266,68 +282,106 @@ const Index = () => {
             viewport={{ once: true }}
             className="text-3xl md:text-4xl font-display text-foreground mb-2"
           >
-            Refine by taste
+            Refine your feed
           </motion.h2>
           <motion.p
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-muted-foreground font-body text-center mb-10 max-w-sm"
+            className="text-muted-foreground font-body text-center mb-8 max-w-sm"
           >
-            Pick up to 5 tastes to narrow down markdowns.
+            Add tags or vibes to narrow down your results.
           </motion.p>
 
-          {/* Taste Grid */}
-          <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-w-md w-full mb-8">
-            {PRIMARY_TASTES.map((taste, i) => (
-              <motion.div
-                key={taste}
-                initial={{ opacity: 0, scale: 0.8 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.05 + i * 0.04 }}
-              >
-                <TasteTile
-                  taste={taste}
-                  selected={selectedTastes.includes(taste)}
-                  onToggle={() => toggleTaste(taste)}
-                />
-              </motion.div>
-            ))}
+          {/* Deal type refinement */}
+          <div className="w-full max-w-md mb-8">
+            <p className="text-sm font-body font-semibold text-foreground/70 text-center mb-3 uppercase tracking-wide">Savings type</p>
+            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
+              {DEAL_TYPES.map((deal, i) => {
+                const isActive = selectedDealTypes.includes(deal);
+                return (
+                  <motion.button
+                    key={deal}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.03 * i }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => toggleDealType(deal)}
+                    className={`flex items-center gap-1.5 px-4 py-2 rounded-full border transition-colors cursor-pointer text-sm font-body font-medium ${
+                      isActive
+                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30'
+                        : 'border-border bg-muted/60 text-foreground/70 hover:bg-accent/10 hover:border-accent/40'
+                    }`}
+                  >
+                    <span className="text-base">{DEAL_ICONS[deal]}</span>
+                    {deal}
+                  </motion.button>
+                );
+              })}
+            </div>
+            {selectedDealTypes.length > 0 && (
+              <div className="flex justify-center mt-2">
+                <button
+                  onClick={() => setSelectedDealTypes([])}
+                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+                >
+                  Clear
+                </button>
+              </div>
+            )}
           </div>
 
-          {/* Counter + Continue */}
-          <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground font-body">
-                {selectedTastes.length}/5 selected
-              </span>
-              {selectedTastes.length > 0 && (
-                <motion.button
+          {/* Taste refinement */}
+          <div className="w-full max-w-md mb-8">
+            <p className="text-sm font-body font-semibold text-foreground/70 text-center mb-3 uppercase tracking-wide">Vibe / Taste</p>
+            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 w-full">
+              {PRIMARY_TASTES.map((taste, i) => (
+                <motion.div
+                  key={taste}
                   initial={{ opacity: 0, scale: 0.8 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.8 }}
-                  whileTap={{ scale: 0.9 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.05 + i * 0.04 }}
+                >
+                  <TasteTile
+                    taste={taste}
+                    selected={selectedTastes.includes(taste)}
+                    onToggle={() => toggleTaste(taste)}
+                  />
+                </motion.div>
+              ))}
+            </div>
+            {selectedTastes.length > 0 && (
+              <div className="flex items-center justify-center gap-2 mt-3">
+                <span className="text-sm text-muted-foreground font-body">
+                  {selectedTastes.length}/5 selected
+                </span>
+                <button
                   onClick={() => setSelectedTastes([])}
                   className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
                 >
-                  Clear All
-                </motion.button>
-              )}
-            </div>
+                  Clear
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Continue CTA */}
+          <div className="flex flex-col items-center gap-3">
             <motion.button
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.02 }}
-              onClick={goToRestaurants}
+              onClick={() => goToRestaurants()}
               className="flex items-center gap-2 px-8 py-3 rounded-full bg-accent text-accent-foreground font-body font-semibold text-base shadow-food transition-shadow hover:shadow-elevated cursor-pointer"
             >
-              {selectedTastes.length === 0 && selectedDealTypes.length === 0 ? 'Browse All Markdowns' : 'Show Markdowns'}
+              {hasFilters ? 'Show Markdowns' : 'Browse All Markdowns'}
               <ArrowRight className="w-4 h-4" />
             </motion.button>
-            {selectedTastes.length === 0 && selectedDealTypes.length === 0 && (
+            {!hasFilters && (
               <button
-                onClick={goToRestaurants}
+                onClick={() => goToRestaurants()}
                 className="text-sm text-muted-foreground underline underline-offset-2 font-body cursor-pointer"
               >
                 Skip for now

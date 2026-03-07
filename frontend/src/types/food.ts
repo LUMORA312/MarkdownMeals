@@ -1,3 +1,23 @@
+export type PriceRange = 'Under $10' | 'Under $15' | 'Under $20' | 'Best Value' | 'Family Feast';
+
+export const PRICE_RANGES: PriceRange[] = ['Under $10', 'Under $15', 'Under $20', 'Best Value', 'Family Feast'];
+
+export const PRICE_RANGE_ICONS: Record<PriceRange, string> = {
+  'Under $10': '💰',
+  'Under $15': '🤑',
+  'Under $20': '💎',
+  'Best Value': '🏆',
+  'Family Feast': '👨‍👩‍👧‍👦',
+};
+
+export const PRICE_RANGE_MAX: Record<PriceRange, number | null> = {
+  'Under $10': 10,
+  'Under $15': 15,
+  'Under $20': 20,
+  'Best Value': null,
+  'Family Feast': null,
+};
+
 export type PrimaryTaste = 'Savory' | 'Sweet' | 'Fresh' | 'Cheesy' | 'Crispy' | 'Comfort' | 'Something New';
 export type Modifier = 'Spicy' | 'Vegan' | 'Vegetarian';
 export type Category =
@@ -12,12 +32,11 @@ export type Category =
   | 'Desserts & Sweets'
   | 'Drinks & Shakes';
 
-export type DealType = 'Happy Hour' | 'Lunch Special' | 'Late Night' | 'BOGO' | 'Under $10';
+export type DealType = 'Lunch Special' | 'Late Night' | 'BOGO' | 'Under $10';
 
-export const DEAL_TYPES: DealType[] = ['Under $10', 'Happy Hour', 'BOGO', 'Late Night', 'Lunch Special'];
+export const DEAL_TYPES: DealType[] = ['Under $10', 'BOGO', 'Late Night', 'Lunch Special'];
 
 export const DEAL_ICONS: Record<DealType, string> = {
-  'Happy Hour': '🍻',
   'Lunch Special': '☀️',
   'Late Night': '🌙',
   'BOGO': '🎉',

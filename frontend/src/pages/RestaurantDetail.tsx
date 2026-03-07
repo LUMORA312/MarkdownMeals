@@ -21,17 +21,18 @@ export default function RestaurantDetail() {
     });
   }, []);
 
-  const handleContinue = async () => {
+  const handleViewMarkdown = async () => {
     if (!restaurant || selectedDishIds.length === 0) return;
 
     try {
-      const token = await createTokenMutation.mutateAsync({
+      // Log redirect token, then send user to restaurant destination
+      await createTokenMutation.mutateAsync({
         restaurantId: restaurant.id,
         dishIds: selectedDishIds,
       });
-      navigate(`/rating/${token.id}`);
+      window.open(restaurant.redirectUrl, '_blank', 'noopener,noreferrer');
     } catch (err) {
-      console.error('Failed to create token:', err);
+      console.error('Failed to log redirect:', err);
     }
   };
 
@@ -86,7 +87,7 @@ export default function RestaurantDetail() {
       {/* Instructions */}
       <div className="px-4 py-4">
         <p className="text-sm text-muted-foreground font-body text-center">
-          Tap specials to pick your top 5, then claim the deal
+          Tap specials to pick your top 5, then view the markdown
         </p>
       </div>
 
@@ -116,7 +117,7 @@ export default function RestaurantDetail() {
               {selectedDishIds.length}/5 selected
             </span>
             <button
-              onClick={handleContinue}
+              onClick={handleViewMarkdown}
               disabled={createTokenMutation.isPending}
               className="flex items-center gap-2 px-6 py-2.5 rounded-full bg-primary text-primary-foreground font-body font-semibold shadow-food cursor-pointer disabled:opacity-50"
             >
@@ -124,7 +125,7 @@ export default function RestaurantDetail() {
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
                 <>
-                  Claim Deal
+                  View Markdown
                   <ExternalLink className="w-4 h-4" />
                 </>
               )}

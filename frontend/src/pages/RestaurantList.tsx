@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PrimaryTaste, DealType, DEAL_ICONS } from '@/types/food';
+import { PrimaryTaste, DealType, DEAL_ICONS, PriceRange, PRICE_RANGE_ICONS, PRICE_RANGE_MAX } from '@/types/food';
 import { RestaurantCard } from '@/components/RestaurantCard';
 import { useRestaurants, useFavorites, useToggleFavorite } from '@/hooks/use-api';
 import { Search, X, ArrowUpDown, Heart, Tag, Loader2, ArrowLeft } from 'lucide-react';
@@ -14,6 +14,8 @@ export default function RestaurantList() {
 
   const tastes = (searchParams.get('tastes')?.split(',').filter(Boolean) || []) as PrimaryTaste[];
   const deals = (searchParams.get('deals')?.split(',').filter(Boolean) || []) as DealType[];
+  const priceFilter = searchParams.get('price') as PriceRange | null;
+  const priceMax = priceFilter ? PRICE_RANGE_MAX[priceFilter] : null;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('default');
@@ -71,9 +73,14 @@ export default function RestaurantList() {
         )}
       </div>
 
-      {/* Active deal filters */}
-      {deals.length > 0 && (
+      {/* Active filters */}
+      {(priceFilter || deals.length > 0) && (
         <div className="flex flex-wrap gap-2 mb-3">
+          {priceFilter && (
+            <span className="px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-body font-bold flex items-center gap-1">
+              {PRICE_RANGE_ICONS[priceFilter]} {priceFilter}
+            </span>
+          )}
           {deals.map((d) => (
             <span key={d} className="px-3 py-1 rounded-full bg-accent/10 text-accent text-sm font-body font-medium flex items-center gap-1">
               {DEAL_ICONS[d]} {d}
@@ -156,7 +163,14 @@ export default function RestaurantList() {
       {!isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {[...restaurants]
-            .filter((r) => !showFavoritesOnly || favorites.has(r.id))
+            .filter((r) => {
+              if (showFavoritesOnly && !favorites.has(r.id)) return false;
+              if (priceMax) {
+                const hasMatchingDish = r.dishes.some((d) => d.price && d.price <= priceMax);
+                if (!hasMatchingDish) return false;
+              }
+              return true;
+            })
             .sort((a, b) => {
               if (sortBy === 'alpha') return a.name.localeCompare(b.name);
               if (sortBy === 'dishes') return b.dishes.length - a.dishes.length;
@@ -169,7 +183,14 @@ export default function RestaurantList() {
       )}
 
       {!isLoading && (() => {
-        const displayedRestaurants = [...restaurants].filter((r) => !showFavoritesOnly || favorites.has(r.id));
+        const displayedRestaurants = [...restaurants].filter((r) => {
+          if (showFavoritesOnly && !favorites.has(r.id)) return false;
+          if (priceMax) {
+            const hasMatchingDish = r.dishes.some((d) => d.price && d.price <= priceMax);
+            if (!hasMatchingDish) return false;
+          }
+          return true;
+        });
         return displayedRestaurants.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
