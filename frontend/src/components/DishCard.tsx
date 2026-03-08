@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Dish, DEAL_ICONS } from '@/types/food';
-import { Clock, ExternalLink } from 'lucide-react';
+import { Clock } from 'lucide-react';
 
 interface DishCardProps {
   dish: Dish;
@@ -12,8 +12,8 @@ function formatExpiry(expiresAt: number): string | null {
   if (diff <= 0) return null;
   const hours = Math.floor(diff / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
-  if (hours > 0) return `${hours}h left`;
-  return `${mins}m left`;
+  if (hours > 0) return `${hours}h`;
+  return `${mins}m`;
 }
 
 export function DishCard({ dish, onTap }: DishCardProps) {
@@ -24,68 +24,70 @@ export function DishCard({ dish, onTap }: DishCardProps) {
     <motion.button
       whileTap={{ scale: 0.96 }}
       onClick={onTap}
-      className="relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer group text-left"
+      className="w-full rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group text-left bg-card shadow-card hover:shadow-food transition-shadow"
     >
-      <img
-        src={dish.image}
-        alt={dish.name}
-        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-        loading="lazy"
-      />
+      {/* Image */}
+      <div className="relative aspect-square overflow-hidden">
+        <img
+          src={dish.image}
+          alt={dish.name}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+        />
 
-      {/* Deal type tag */}
-      {dish.dealType && (
-        <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-destructive/90 backdrop-blur-sm shadow-sm">
-          <span className="text-xs">{DEAL_ICONS[dish.dealType]}</span>
-          <span className="text-[10px] sm:text-xs font-body font-bold text-destructive-foreground">{dish.dealType}</span>
+        {/* Price badge — always visible */}
+        <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
+          <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-accent/95 backdrop-blur-sm shadow-md">
+            <span className="text-xs sm:text-sm font-body font-extrabold text-accent-foreground">
+              ${dish.price.toFixed(2)}
+            </span>
+          </div>
         </div>
-      )}
 
-      {/* Price & feeds badges */}
-      <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
-        <motion.div
-          initial={{ scale: 0.8 }}
-          animate={{ scale: 1 }}
-          className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/95 backdrop-blur-sm shadow-md"
-        >
-          <span className="text-sm font-body font-extrabold text-accent-foreground">${dish.price.toFixed(2)}</span>
-        </motion.div>
-        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-card/90 backdrop-blur-sm">
-          <span className="text-[10px]">👥</span>
-          <span className="text-[10px] font-body font-bold text-foreground">{dish.feeds}</span>
-        </div>
+        {/* Deal type tag */}
+        {dish.dealType && (
+          <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-0.5 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full bg-destructive/90 backdrop-blur-sm">
+            <span className="text-[10px] sm:text-xs">{DEAL_ICONS[dish.dealType]}</span>
+            <span className="text-[8px] sm:text-[10px] font-body font-bold text-destructive-foreground hidden sm:inline">{dish.dealType}</span>
+          </div>
+        )}
+
+        {/* Urgency pulse */}
+        {isUrgent && timeLeft && !dish.dealType && (
+          <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-destructive animate-pulse" />
+        )}
       </div>
 
-      {/* Name + expiry overlay */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/85 via-foreground/40 to-transparent p-3 pt-10">
-        <p className="text-sm font-body font-semibold text-primary-foreground truncate">{dish.name}</p>
-        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
-          {dish.modifiers.length > 0 && dish.modifiers.map((m) => (
-            <span key={m} className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/80 text-accent-foreground">
-              {m}
-            </span>
-          ))}
+      {/* Info section below image */}
+      <div className="p-2 sm:p-2.5">
+        <p className="text-xs sm:text-sm font-body font-semibold text-foreground leading-tight line-clamp-2">
+          {dish.name}
+        </p>
+
+        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+          {/* Feeds */}
+          <span className="flex items-center gap-0.5 text-[10px] sm:text-xs font-body text-muted-foreground">
+            <span className="text-[10px]">👥</span> {dish.feeds}
+          </span>
+
+          {/* Expiry */}
           {timeLeft && (
-            <span className={`flex items-center gap-1 text-[10px] sm:text-xs font-body font-medium ${
-              isUrgent ? 'text-destructive-foreground' : 'text-primary-foreground/90'
+            <span className={`flex items-center gap-0.5 text-[10px] sm:text-xs font-body font-medium ${
+              isUrgent ? 'text-destructive' : 'text-muted-foreground'
             }`}>
-              <Clock className="w-3 h-3" />
+              <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
               {timeLeft}
             </span>
           )}
-        </div>
 
-        {/* Tap hint on hover */}
-        <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-          <ExternalLink className="w-3 h-3 text-primary-foreground/60" />
-          <span className="text-[10px] font-body text-primary-foreground/60">Tap to claim</span>
+          {/* Modifiers */}
+          {dish.modifiers.map((m) => (
+            <span key={m} className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-body font-medium">
+              {m}
+            </span>
+          ))}
         </div>
       </div>
-
-      {/* Urgent pulse indicator */}
-      {isUrgent && timeLeft && (
-        <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-destructive animate-pulse" />
-      )}
     </motion.button>
   );
 }

@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DishCard } from '@/components/DishCard';
 import { useRestaurant, useCreateToken } from '@/hooks/use-api';
 import { Feeds, PRICE_RANGE_MAX, PriceRange } from '@/types/food';
-import { ArrowLeft, Tag, Loader2, ExternalLink, Check } from 'lucide-react';
+import { ArrowLeft, Tag, Loader2, Check, MapPin } from 'lucide-react';
 
 export default function RestaurantDetail() {
   const { id } = useParams<{ id: string }>();
@@ -75,41 +75,62 @@ export default function RestaurantDetail() {
   return (
     <div className="min-h-screen bg-background safe-bottom">
       {/* Hero */}
-      <div className="relative h-32 sm:h-36 overflow-hidden">
+      <div className="relative h-44 sm:h-52 overflow-hidden">
         <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
-        <div className="absolute inset-0 bg-gradient-to-t from-foreground/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-foreground/10" />
 
-        <motion.button
-          whileTap={{ scale: 0.9 }}
-          onClick={() => navigate(-1)}
-          className="absolute top-3 left-3 sm:top-4 sm:left-4 w-10 h-10 rounded-full bg-card/80 backdrop-blur-sm flex items-center justify-center cursor-pointer safe-top"
-        >
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </motion.button>
+        {/* Top bar */}
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-3 sm:p-4 safe-top">
+          <motion.button
+            whileTap={{ scale: 0.9 }}
+            onClick={() => navigate(-1)}
+            className="w-10 h-10 rounded-full bg-card/70 backdrop-blur-md flex items-center justify-center cursor-pointer"
+          >
+            <ArrowLeft className="w-5 h-5 text-foreground" />
+          </motion.button>
 
-        <div className="absolute top-3 right-3 sm:top-4 sm:right-4 flex items-center gap-1 px-2.5 py-1 rounded-full bg-destructive/90 backdrop-blur-sm">
-          <Tag className="w-3 h-3 text-destructive-foreground" />
-          <span className="text-xs font-body font-bold text-destructive-foreground">{activeDealCount} deal{activeDealCount !== 1 ? 's' : ''}</span>
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/90 backdrop-blur-sm">
+            <Tag className="w-3 h-3 text-destructive-foreground" />
+            <span className="text-xs font-body font-bold text-destructive-foreground">
+              {activeDealCount} deal{activeDealCount !== 1 ? 's' : ''}
+            </span>
+          </div>
         </div>
 
-        <div className="absolute bottom-3 left-3 right-3 sm:left-4 sm:right-4">
-          <h1 className="text-xl sm:text-2xl font-display text-primary-foreground leading-tight">{restaurant.name}</h1>
-          <div className="flex gap-1 mt-1">
+        {/* Restaurant info overlay */}
+        <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
+          <h1 className="text-2xl sm:text-3xl font-display text-primary-foreground leading-tight drop-shadow-md">
+            {restaurant.name}
+          </h1>
+          <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             {restaurant.categories.map((c) => (
-              <span key={c} className="text-[10px] sm:text-xs px-2 py-0.5 rounded-full bg-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
+              <span key={c} className="text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full bg-primary-foreground/20 text-primary-foreground backdrop-blur-sm font-body">
                 {c}
               </span>
             ))}
+            {restaurant.distance > 0 && (
+              <span className="flex items-center gap-0.5 text-[11px] text-primary-foreground/70 font-body">
+                <MapPin className="w-3 h-3" />
+                {restaurant.distance.toFixed(1)} mi
+              </span>
+            )}
           </div>
         </div>
       </div>
 
-      {/* Instruction */}
-      <div className="px-4 py-3">
-        <p className="text-sm text-muted-foreground font-body text-center flex items-center justify-center gap-1.5">
-          <ExternalLink className="w-3.5 h-3.5" />
-          Tap a deal to claim it
-        </p>
+      {/* Subheader with instruction */}
+      <div className="px-4 py-4 border-b border-border/50">
+        <div className="max-w-2xl mx-auto flex items-center justify-between">
+          <div>
+            <h2 className="text-base font-display text-foreground">Active Deals</h2>
+            <p className="text-xs text-muted-foreground font-body mt-0.5">Tap any deal to claim it</p>
+          </div>
+          {activeDealCount > 0 && (
+            <span className="text-xs font-body text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
+              {activeDealCount} available
+            </span>
+          )}
+        </div>
       </div>
 
       {/* Claimed toast */}
@@ -119,7 +140,7 @@ export default function RestaurantDetail() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-2.5 rounded-full bg-primary text-primary-foreground shadow-elevated font-body text-sm font-medium"
+            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-primary-foreground shadow-elevated font-body text-sm font-medium"
           >
             <Check className="w-4 h-4" />
             Opening deal...
@@ -128,15 +149,15 @@ export default function RestaurantDetail() {
       </AnimatePresence>
 
       {/* Dish Grid */}
-      <div className="px-3 sm:px-4 pb-8 max-w-lg mx-auto">
+      <div className="px-4 py-5 pb-10 max-w-2xl mx-auto">
         {activeDishes.length > 0 ? (
-          <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+          <div className="grid grid-cols-3 gap-3 sm:gap-4">
             {activeDishes.map((dish, i) => (
               <motion.div
                 key={dish.id}
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
+                transition={{ delay: i * 0.04 }}
               >
                 <DishCard
                   dish={dish}
