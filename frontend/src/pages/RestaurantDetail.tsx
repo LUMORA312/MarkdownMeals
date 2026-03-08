@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { DishCard } from '@/components/DishCard';
 import { useRestaurant, useCreateToken } from '@/hooks/use-api';
 import { Feeds, PRICE_RANGE_MAX, PriceRange } from '@/types/food';
-import { ArrowLeft, Tag, Loader2, Check, MapPin } from 'lucide-react';
+import { ArrowLeft, Tag, Loader2, MapPin } from 'lucide-react';
 
 export default function RestaurantDetail() {
   const { id } = useParams<{ id: string }>();
@@ -15,26 +15,24 @@ export default function RestaurantDetail() {
   const priceMax = priceFilter ? PRICE_RANGE_MAX[priceFilter] : null;
   const { data: restaurant, isLoading } = useRestaurant(id);
   const createTokenMutation = useCreateToken();
-  const [claimedDishId, setClaimedDishId] = useState<string | null>(null);
+  const [loadingDishId, setLoadingDishId] = useState<string | null>(null);
 
   const handleDealTap = async (dishId: string) => {
-    if (!restaurant || createTokenMutation.isPending) return;
+    if (!restaurant || loadingDishId) return;
 
+    setLoadingDishId(dishId);
     try {
       await createTokenMutation.mutateAsync({
         restaurantId: restaurant.id,
         dishIds: [dishId],
       });
-      setClaimedDishId(dishId);
       const dish = restaurant.dishes.find((d) => d.id === dishId);
       const url = dish?.destinationUrl || restaurant.redirectUrl;
-      setTimeout(() => {
-        window.open(url, '_blank', 'noopener,noreferrer');
-        setClaimedDishId(null);
-      }, 400);
+      window.open(url, '_blank', 'noopener,noreferrer');
     } catch (err) {
       console.error('Failed to log redirect:', err);
-      setClaimedDishId(null);
+    } finally {
+      setLoadingDishId(null);
     }
   };
 
@@ -120,30 +118,48 @@ export default function RestaurantDetail() {
 
       {/* Subheader with instruction */}
       <div className="px-4 py-4 border-b border-border/50">
-        <div className="max-w-2xl mx-auto flex items-center justify-between">
-          <div>
+        <div className="max-w-2xl mx-auto flex flex-col items-center gap-2">
+          <div className="flex items-center gap-2">
             <h2 className="text-base font-display text-foreground">Active Deals</h2>
-            <p className="text-xs text-muted-foreground font-body mt-0.5">Tap any deal to claim it</p>
+            {activeDealCount > 0 && (
+              <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-accent text-accent-foreground text-xs font-body font-bold">
+                {activeDealCount}
+              </span>
+            )}
           </div>
-          {activeDealCount > 0 && (
-            <span className="text-xs font-body text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
-              {activeDealCount} available
-            </span>
-          )}
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-body font-semibold text-accent">
+            <span className="text-sm">👆</span>
+            Tap any deal to claim it
+          </span>
         </div>
       </div>
 
-      {/* Claimed toast */}
+      {/* Loading overlay on tapped card */}
       <AnimatePresence>
-        {claimedDishId && (
+        {loadingDishId && (
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-5 py-3 rounded-full bg-primary text-primary-foreground shadow-elevated font-body text-sm font-medium"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-foreground/40 backdrop-blur-sm"
           >
-            <Check className="w-4 h-4" />
-            Opening deal...
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="flex flex-col items-center gap-4 px-8 py-6 rounded-2xl bg-card shadow-elevated"
+            >
+              <Loader2 className="w-7 h-7 text-accent animate-spin" />
+              <p className="text-sm font-body font-medium text-foreground">Opening deal...</p>
+              <div className="w-48 h-1.5 rounded-full bg-muted overflow-hidden">
+                <motion.div
+                  initial={{ width: '0%' }}
+                  animate={{ width: '100%' }}
+                  transition={{ duration: 2, ease: 'easeInOut' }}
+                  className="h-full rounded-full bg-accent"
+                />
+              </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -151,7 +167,7 @@ export default function RestaurantDetail() {
       {/* Dish Grid */}
       <div className="px-4 py-5 pb-10 max-w-2xl mx-auto">
         {activeDishes.length > 0 ? (
-          <div className="grid grid-cols-3 gap-3 sm:gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
             {activeDishes.map((dish, i) => (
               <motion.div
                 key={dish.id}
