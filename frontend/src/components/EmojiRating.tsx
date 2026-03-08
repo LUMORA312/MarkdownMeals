@@ -2,6 +2,13 @@ import { motion } from 'framer-motion';
 import { EmojiRating as EmojiRatingType, RATING_TAGS, RatingTag } from '@/types/food';
 
 const EMOJIS: EmojiRatingType[] = ['😍', '😋', '😊', '😐', '😕'];
+const EMOJI_LABELS: Record<EmojiRatingType, string> = {
+  '😍': 'Loved it',
+  '😋': 'Yummy',
+  '😊': 'Good',
+  '😐': 'Okay',
+  '😕': 'Meh',
+};
 
 interface EmojiRatingProps {
   selectedEmoji: EmojiRatingType | null;
@@ -13,21 +20,34 @@ interface EmojiRatingProps {
 export function EmojiRatingComponent({ selectedEmoji, selectedTags, onEmojiSelect, onTagToggle }: EmojiRatingProps) {
   return (
     <div className="space-y-6">
-      {/* Emoji row */}
-      <div className="flex justify-center gap-3">
-        {EMOJIS.map((emoji) => (
-          <motion.button
-            key={emoji}
-            whileTap={{ scale: 0.85 }}
-            whileHover={{ scale: 1.15 }}
-            onClick={() => onEmojiSelect(emoji)}
-            className={`text-4xl p-2 rounded-xl transition-colors cursor-pointer ${
-              selectedEmoji === emoji ? 'bg-primary/15 ring-2 ring-primary' : 'hover:bg-muted'
-            }`}
-          >
-            {emoji}
-          </motion.button>
-        ))}
+      <div>
+        <p className="text-sm font-body font-medium text-muted-foreground text-center mb-3">How was it?</p>
+        <div className="flex justify-center gap-2 sm:gap-3">
+          {EMOJIS.map((emoji) => {
+            const isSelected = selectedEmoji === emoji;
+            return (
+              <motion.button
+                key={emoji}
+                whileTap={{ scale: 0.85 }}
+                onClick={() => onEmojiSelect(emoji)}
+                className={`flex flex-col items-center gap-1 p-2 sm:p-3 rounded-2xl transition-all cursor-pointer min-w-[56px] sm:min-w-[64px] ${
+                  isSelected
+                    ? 'bg-primary/15 ring-2 ring-primary shadow-sm'
+                    : 'hover:bg-muted active:bg-muted/80'
+                }`}
+              >
+                <span className={`text-3xl sm:text-4xl transition-transform ${isSelected ? 'scale-110' : ''}`}>
+                  {emoji}
+                </span>
+                <span className={`text-[10px] sm:text-xs font-body font-medium ${
+                  isSelected ? 'text-primary' : 'text-muted-foreground'
+                }`}>
+                  {EMOJI_LABELS[emoji]}
+                </span>
+              </motion.button>
+            );
+          })}
+        </div>
       </div>
 
       {/* Tags */}
@@ -35,21 +55,24 @@ export function EmojiRatingComponent({ selectedEmoji, selectedTags, onEmojiSelec
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap justify-center gap-2"
         >
-          {RATING_TAGS.map((tag) => (
-            <button
-              key={tag}
-              onClick={() => onTagToggle(tag)}
-              className={`px-3 py-1.5 rounded-full text-sm font-body transition-colors cursor-pointer ${
-                selectedTags.includes(tag)
-                  ? 'bg-primary text-primary-foreground'
-                  : 'bg-muted text-muted-foreground hover:bg-secondary'
-              }`}
-            >
-              {tag}
-            </button>
-          ))}
+          <p className="text-sm font-body font-medium text-muted-foreground text-center mb-3">What stood out?</p>
+          <div className="flex flex-wrap justify-center gap-2">
+            {RATING_TAGS.map((tag) => (
+              <motion.button
+                key={tag}
+                whileTap={{ scale: 0.93 }}
+                onClick={() => onTagToggle(tag)}
+                className={`px-3 py-2 rounded-full text-sm font-body transition-all cursor-pointer ${
+                  selectedTags.includes(tag)
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'bg-muted text-muted-foreground hover:bg-secondary active:bg-secondary/80'
+                }`}
+              >
+                {tag}
+              </motion.button>
+            ))}
+          </div>
         </motion.div>
       )}
     </div>

@@ -1,105 +1,91 @@
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Dish, DEAL_ICONS } from '@/types/food';
-import { Clock } from 'lucide-react';
+import { Clock, ExternalLink } from 'lucide-react';
 
 interface DishCardProps {
   dish: Dish;
-  rank: number | null;
   onTap: () => void;
 }
 
-const RANK_COLORS = [
-  'bg-primary',
-  'bg-primary/85',
-  'bg-primary/70',
-  'bg-primary/55',
-  'bg-primary/40',
-];
-
-function formatTimeLeft(expiresAt: number): string | null {
+function formatExpiry(expiresAt: number): string | null {
   const diff = expiresAt - Date.now();
   if (diff <= 0) return null;
   const hours = Math.floor(diff / 3600000);
   const mins = Math.floor((diff % 3600000) / 60000);
-  if (hours > 0) return `${hours}h ${mins}m`;
-  return `${mins}m`;
+  if (hours > 0) return `${hours}h left`;
+  return `${mins}m left`;
 }
 
-export function DishCard({ dish, rank, onTap }: DishCardProps) {
-  const isExpired = dish.dealExpiresAt ? dish.dealExpiresAt <= Date.now() : false;
-  const timeLeft = dish.dealExpiresAt ? formatTimeLeft(dish.dealExpiresAt) : null;
+export function DishCard({ dish, onTap }: DishCardProps) {
+  const timeLeft = formatExpiry(dish.dealExpiresAt);
+  const isUrgent = dish.dealExpiresAt - Date.now() < 3600000;
 
   return (
     <motion.button
-      whileTap={{ scale: 0.95 }}
+      whileTap={{ scale: 0.96 }}
       onClick={onTap}
-      className={`relative aspect-square rounded-xl overflow-hidden cursor-pointer group ${isExpired && dish.dealType ? 'opacity-50' : ''}`}
+      className="relative aspect-[4/5] rounded-2xl overflow-hidden cursor-pointer group text-left"
     >
       <img
         src={dish.image}
         alt={dish.name}
-        className={`w-full h-full object-cover transition-all duration-300 ${rank ? 'brightness-75' : 'group-hover:scale-105'}`}
+        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         loading="lazy"
       />
-      
+
       {/* Deal type tag */}
-      {dish.dealType && !isExpired && (
-        <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-destructive/90 backdrop-blur-sm">
-          <span className="text-[9px]">{DEAL_ICONS[dish.dealType]}</span>
-          <span className="text-[9px] font-body font-bold text-destructive-foreground">{dish.dealType}</span>
+      {dish.dealType && (
+        <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 rounded-full bg-destructive/90 backdrop-blur-sm shadow-sm">
+          <span className="text-xs">{DEAL_ICONS[dish.dealType]}</span>
+          <span className="text-[10px] sm:text-xs font-body font-bold text-destructive-foreground">{dish.dealType}</span>
         </div>
       )}
 
-      {/* Expired badge */}
-      {dish.dealType && isExpired && (
-        <div className="absolute top-1.5 left-1.5 flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-muted-foreground/80 backdrop-blur-sm">
-          <Clock className="w-2.5 h-2.5 text-primary-foreground" />
-          <span className="text-[9px] font-body font-bold text-primary-foreground">Expired</span>
+      {/* Price & feeds badges */}
+      <div className="absolute top-2 right-2 flex flex-col items-end gap-1">
+        <motion.div
+          initial={{ scale: 0.8 }}
+          animate={{ scale: 1 }}
+          className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-accent/95 backdrop-blur-sm shadow-md"
+        >
+          <span className="text-sm font-body font-extrabold text-accent-foreground">${dish.price.toFixed(2)}</span>
+        </motion.div>
+        <div className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-card/90 backdrop-blur-sm">
+          <span className="text-[10px]">👥</span>
+          <span className="text-[10px] font-body font-bold text-foreground">{dish.feeds}</span>
         </div>
-      )}
+      </div>
 
-      {/* Price badge */}
-      {dish.price && (
-        <div className="absolute top-1.5 right-1.5 flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-card/90 backdrop-blur-sm">
-          {dish.originalPrice && (
-            <span className="text-[9px] font-body text-muted-foreground line-through">${dish.originalPrice.toFixed(0)}</span>
-          )}
-          <span className="text-[10px] font-body font-bold text-foreground">${dish.price.toFixed(2)}</span>
-        </div>
-      )}
-
-      {/* Name overlay */}
-      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/70 to-transparent p-2">
-        <p className="text-xs font-body font-medium text-primary-foreground truncate">{dish.name}</p>
-        <div className="flex items-center gap-1 mt-0.5">
+      {/* Name + expiry overlay */}
+      <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-foreground/85 via-foreground/40 to-transparent p-3 pt-10">
+        <p className="text-sm font-body font-semibold text-primary-foreground truncate">{dish.name}</p>
+        <div className="flex items-center gap-1.5 mt-1 flex-wrap">
           {dish.modifiers.length > 0 && dish.modifiers.map((m) => (
             <span key={m} className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/80 text-accent-foreground">
               {m}
             </span>
           ))}
-          {/* Expiry countdown */}
           {timeLeft && (
-            <span className="flex items-center gap-0.5 text-[9px] text-primary-foreground/70">
-              <Clock className="w-2 h-2" />
+            <span className={`flex items-center gap-1 text-[10px] sm:text-xs font-body font-medium ${
+              isUrgent ? 'text-destructive-foreground' : 'text-primary-foreground/90'
+            }`}>
+              <Clock className="w-3 h-3" />
               {timeLeft}
             </span>
           )}
         </div>
+
+        {/* Tap hint on hover */}
+        <div className="flex items-center gap-1 mt-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <ExternalLink className="w-3 h-3 text-primary-foreground/60" />
+          <span className="text-[10px] font-body text-primary-foreground/60">Tap to claim</span>
+        </div>
       </div>
 
-      {/* Rank badge */}
-      <AnimatePresence>
-        {rank && (
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            exit={{ scale: 0 }}
-            className={`absolute top-8 right-2 w-8 h-8 rounded-full ${RANK_COLORS[rank - 1]} flex items-center justify-center`}
-          >
-            <span className="text-sm font-bold text-primary-foreground">#{rank}</span>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Urgent pulse indicator */}
+      {isUrgent && timeLeft && (
+        <div className="absolute top-2 left-2 w-2 h-2 rounded-full bg-destructive animate-pulse" />
+      )}
     </motion.button>
   );
 }

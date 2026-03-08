@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
-import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS } from '@/types/food';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS, Feeds, FEEDS_OPTIONS } from '@/types/food';
 import { TasteTile } from '@/components/TasteTile';
-import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, Tag } from 'lucide-react';
+import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, Tag, ChevronDown, Users, Check, Sparkles } from 'lucide-react';
 
 const FLOATING_CARDS = [
   { image: '/images/burger.jpg', label: '$7.99', x: '8%', y: '18%', rotate: -8, delay: 0.3 },
@@ -14,17 +14,32 @@ const FLOATING_CARDS = [
   { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '15%', y: '82%', rotate: -12, delay: 0.8 },
 ];
 
+const PRICE_DESCRIPTIONS: Record<PriceRange, string> = {
+  'Under $10': 'Quick bites that won\'t break the bank',
+  'Under $15': 'Great meals at great prices',
+  'Under $20': 'Premium specials, still affordable',
+  'Best Value': 'Best bang for your buck',
+  'Family Feast': 'Feed the whole crew for less',
+};
+
 const Index = () => {
   const navigate = useNavigate();
+  const heroRef = useRef<HTMLElement>(null);
   const [selectedPrice, setSelectedPrice] = useState<PriceRange | null>(null);
   const [selectedTastes, setSelectedTastes] = useState<PrimaryTaste[]>([]);
   const [selectedDealTypes, setSelectedDealTypes] = useState<DealType[]>([]);
+  const [selectedFeeds, setSelectedFeeds] = useState<Feeds | null>(null);
+  const [feedsOpen, setFeedsOpen] = useState(false);
   const [showNav, setShowNav] = useState(false);
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
 
+  const { scrollY } = useScroll();
+  const heroOpacity = useTransform(scrollY, [0, 300], [1, 0]);
+  const heroScale = useTransform(scrollY, [0, 300], [1, 1.1]);
+
   useEffect(() => {
     const handleScroll = () => {
-      const heroHeight = document.getElementById('hero-section')?.offsetHeight || 480;
+      const heroHeight = heroRef.current?.offsetHeight || 400;
       setShowNav(window.scrollY > heroHeight - 80);
     };
     window.addEventListener('scroll', handleScroll, { passive: true });
@@ -51,14 +66,16 @@ const Index = () => {
     if (price) params.set('price', price);
     if (selectedTastes.length > 0) params.set('tastes', selectedTastes.join(','));
     if (selectedDealTypes.length > 0) params.set('deals', selectedDealTypes.join(','));
+    if (selectedFeeds) params.set('feeds', selectedFeeds);
     const qs = params.toString();
     navigate(`/restaurants${qs ? `?${qs}` : ''}`);
   };
 
-  const hasFilters = selectedPrice || selectedTastes.length > 0 || selectedDealTypes.length > 0;
+  const hasFilters = selectedPrice || selectedTastes.length > 0 || selectedDealTypes.length > 0 || selectedFeeds;
+  const filterCount = (selectedPrice ? 1 : 0) + selectedTastes.length + selectedDealTypes.length + (selectedFeeds ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background safe-bottom">
       {/* Sticky Nav */}
       <AnimatePresence>
         {showNav && (
@@ -67,33 +84,40 @@ const Index = () => {
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: -70, opacity: 0 }}
             transition={{ duration: 0.25, ease: 'easeOut' }}
-            className="fixed top-0 left-0 right-0 z-50 bg-card/90 backdrop-blur-md border-b border-border shadow-sm"
+            className="fixed top-0 left-0 right-0 z-50 glass safe-top"
           >
-            <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-3">
+            <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-2.5">
               <button
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="flex items-center gap-2 cursor-pointer bg-transparent border-none p-0"
               >
                 <div className="p-1.5 rounded-lg bg-accent">
-                  <UtensilsCrossed className="w-5 h-5 text-accent-foreground" />
+                  <UtensilsCrossed className="w-4 h-4 text-accent-foreground" />
                 </div>
-                <span className="text-xl font-display text-foreground">FoodMan</span>
+                <span className="text-lg font-display text-foreground">FoodMan</span>
               </button>
               <div className="flex items-center gap-2">
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => goToRestaurants()}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer transition-transform hover:scale-105"
+                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer"
                 >
                   <Search className="w-3.5 h-3.5" />
-                  Find Markdowns
-                </button>
+                  <span className="hidden sm:inline">Find Markdowns</span>
+                  <span className="sm:hidden">Go</span>
+                  {filterCount > 0 && (
+                    <span className="ml-0.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent-foreground/20 text-[10px] font-bold">
+                      {filterCount}
+                    </span>
+                  )}
+                </motion.button>
                 <button
                   onClick={() => {
                     const next = !isDark;
                     setIsDark(next);
                     document.documentElement.classList.toggle('dark', next);
                   }}
-                  className="p-2 rounded-full bg-muted text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+                  className="p-2 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
                   aria-label="Toggle dark mode"
                 >
                   {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
@@ -109,27 +133,26 @@ const Index = () => {
         animate={{ opacity: 1 }}
         className="min-h-screen flex flex-col"
       >
-        {/* Full-bleed Hero */}
-        <section id="hero-section" className="relative w-full h-[70vh] min-h-[480px] overflow-hidden">
-          {/* Background image */}
-          <div className="absolute inset-0">
+        {/* Hero — shorter on mobile, parallax zoom */}
+        <section ref={heroRef} id="hero-section" className="relative w-full h-[55vh] sm:h-[65vh] min-h-[360px] sm:min-h-[420px] overflow-hidden">
+          <motion.div className="absolute inset-0" style={{ scale: heroScale }}>
             <img
               src="/images/steak.jpg"
               alt="Today's best food markdowns"
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-background" />
-          </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/30 to-background" />
+          </motion.div>
 
-          {/* Floating food cards */}
+          {/* Floating food cards — hidden on mobile */}
           {FLOATING_CARDS.map((card, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0, rotate: 0 }}
               animate={{ opacity: 1, scale: 1, rotate: card.rotate }}
               transition={{ delay: card.delay, type: 'spring', stiffness: 200, damping: 15 }}
-              className="absolute hidden md:block"
-              style={{ left: card.x, top: card.y }}
+              className="absolute hidden lg:block"
+              style={{ left: card.x, top: card.y, opacity: heroOpacity as unknown as number }}
             >
               <motion.div
                 animate={{ y: [0, -8, 0] }}
@@ -144,28 +167,45 @@ const Index = () => {
             </motion.div>
           ))}
 
-          {/* Hero content */}
-          <div className="relative z-10 flex flex-col items-center justify-center h-full px-4 text-center">
-            <motion.div
-              initial={{ opacity: 0, y: -30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="flex items-center gap-3 mb-4"
+          {/* Dark mode toggle — top right of hero */}
+          <div className="absolute top-4 right-4 z-20 safe-top">
+            <button
+              onClick={() => {
+                const next = !isDark;
+                setIsDark(next);
+                document.documentElement.classList.toggle('dark', next);
+              }}
+              className="p-2.5 rounded-full bg-card/30 backdrop-blur-md text-primary-foreground cursor-pointer transition-colors hover:bg-card/50"
+              aria-label="Toggle dark mode"
             >
-              <div className="p-2.5 rounded-xl bg-accent/90 backdrop-blur-sm">
-                <Tag className="w-10 h-10 text-accent-foreground" />
+              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+            </button>
+          </div>
+
+          {/* Hero content */}
+          <motion.div
+            className="relative z-10 flex flex-col items-center justify-center h-full px-6 text-center"
+            style={{ opacity: heroOpacity }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4"
+            >
+              <div className="p-2 sm:p-2.5 rounded-xl bg-accent/90 backdrop-blur-sm">
+                <Tag className="w-7 h-7 sm:w-10 sm:h-10 text-accent-foreground" />
               </div>
-              <h1 className="text-6xl sm:text-6xl md:text-7xl lg:text-8xl font-display text-primary-foreground drop-shadow-lg leading-none">
+              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display text-primary-foreground drop-shadow-lg leading-none">
                 FoodMan
               </h1>
             </motion.div>
 
-            {/* Animated tagline */}
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3, duration: 0.6 }}
-              className="text-lg sm:text-xl md:text-3xl font-display font-medium text-primary-foreground/90 max-w-lg mb-2 drop-shadow-md leading-snug px-2"
+              transition={{ delay: 0.25, duration: 0.5 }}
+              className="text-base sm:text-xl md:text-2xl font-display font-medium text-primary-foreground/90 max-w-md mb-1.5 sm:mb-2 drop-shadow-md leading-snug"
             >
               Local markdowns.{' '}
               <motion.span
@@ -179,59 +219,65 @@ const Index = () => {
             <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-xs sm:text-sm md:text-base text-primary-foreground/70 font-body mb-6 sm:mb-8 max-w-md drop-shadow px-4"
+              transition={{ delay: 0.4 }}
+              className="text-xs sm:text-sm text-primary-foreground/70 font-body mb-5 sm:mb-7 max-w-sm drop-shadow"
             >
-              Pick a price. We'll show the best specials that taste amazing.
+              Pick a price. We'll find the best specials near you.
             </motion.p>
 
             <motion.button
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.7, type: 'spring' }}
+              transition={{ delay: 0.6, type: 'spring' }}
               whileTap={{ scale: 0.95 }}
               whileHover={{ scale: 1.05 }}
               onClick={() => {
                 document.getElementById('price-section')?.scrollIntoView({ behavior: 'smooth' });
               }}
-              className="flex items-center gap-2 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-accent text-accent-foreground font-body font-bold text-base sm:text-lg shadow-elevated cursor-pointer transition-shadow hover:shadow-food"
+              className="flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-3.5 rounded-full bg-accent text-accent-foreground font-body font-bold text-sm sm:text-base shadow-elevated cursor-pointer"
             >
-              <Search className="w-5 h-5" />
+              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               Find Markdowns Near Me
             </motion.button>
-          </div>
+
+            {/* Scroll indicator */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1, y: [0, 6, 0] }}
+              transition={{ delay: 1.2, y: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' } }}
+              className="absolute bottom-4 sm:bottom-6"
+            >
+              <ChevronDown className="w-5 h-5 text-primary-foreground/50" />
+            </motion.div>
+          </motion.div>
         </section>
 
-        {/* Price/Value Selection (PRIMARY — biggest buttons on page) */}
+        {/* Price/Value Selection */}
         <section id="price-section" className="w-full bg-card border-b border-border overflow-hidden">
-          <div className="max-w-2xl mx-auto px-4 py-10 sm:py-12">
-            <motion.h3
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
+          <div className="max-w-lg mx-auto px-4 py-8 sm:py-12">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-xl sm:text-2xl font-display text-foreground text-center mb-1"
+              className="text-center mb-6 sm:mb-8"
             >
-              Pick your price
-            </motion.h3>
-            <motion.p
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={{ once: true }}
-              className="text-sm font-body text-muted-foreground text-center mb-8"
-            >
-              We'll show the best markdowns in your range
-            </motion.p>
-            <div className="flex flex-col gap-3 sm:gap-4 w-full">
+              <h3 className="text-xl sm:text-2xl font-display text-foreground mb-1">
+                Pick your price
+              </h3>
+              <p className="text-sm font-body text-muted-foreground">
+                Tap any range to see matching deals instantly
+              </p>
+            </motion.div>
+            <div className="flex flex-col gap-2.5 sm:gap-3 w-full">
               {PRICE_RANGES.map((price, i) => {
                 const isActive = selectedPrice === price;
                 return (
                   <motion.button
                     key={price}
-                    initial={{ opacity: 0, y: 20 }}
-                    whileInView={{ opacity: 1, y: 0 }}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
                     viewport={{ once: true }}
-                    transition={{ delay: 0.06 * i, type: 'spring', stiffness: 300, damping: 20 }}
-                    whileHover={{ scale: 1.03 }}
+                    transition={{ delay: 0.05 * i, type: 'spring', stiffness: 300, damping: 22 }}
                     whileTap={{ scale: 0.97 }}
                     onClick={() => {
                       setSelectedPrice(isActive ? null : price);
@@ -239,24 +285,24 @@ const Index = () => {
                         goToRestaurants(price);
                       }
                     }}
-                    className={`flex items-center gap-4 w-full px-6 sm:px-8 py-5 sm:py-6 rounded-2xl border-2 transition-all cursor-pointer group ${
+                    className={`flex items-center gap-3 sm:gap-4 w-full px-4 sm:px-6 py-4 sm:py-5 rounded-2xl border-2 transition-all cursor-pointer group ${
                       isActive
                         ? 'border-accent bg-accent/15 shadow-lg ring-2 ring-accent/40'
-                        : 'border-border bg-muted/40 hover:bg-accent/10 hover:border-accent/50 shadow-sm hover:shadow-md'
+                        : 'border-border bg-muted/30 hover:bg-accent/10 hover:border-accent/50 shadow-sm hover:shadow-md'
                     }`}
                   >
-                    <span className="text-3xl sm:text-4xl">{PRICE_RANGE_ICONS[price]}</span>
-                    <div className="flex flex-col items-start">
-                      <span className={`text-lg sm:text-xl font-display font-bold ${
+                    <span className="text-2xl sm:text-3xl">{PRICE_RANGE_ICONS[price]}</span>
+                    <div className="flex flex-col items-start flex-1 min-w-0">
+                      <span className={`text-base sm:text-lg font-display font-bold truncate ${
                         isActive ? 'text-foreground' : 'text-foreground/90 group-hover:text-foreground'
                       }`}>
                         {price}
                       </span>
-                      <span className="text-xs sm:text-sm font-body text-muted-foreground">
-                        {price === 'Best Value' ? 'Best bang for your buck' : price === 'Family Feast' ? 'Feed the whole crew' : `Specials ${price.toLowerCase()}`}
+                      <span className="text-xs sm:text-sm font-body text-muted-foreground truncate">
+                        {PRICE_DESCRIPTIONS[price]}
                       </span>
                     </div>
-                    <ArrowRight className={`w-5 h-5 sm:w-6 sm:h-6 ml-auto transition-transform ${
+                    <ArrowRight className={`w-5 h-5 shrink-0 transition-transform ${
                       isActive ? 'text-accent translate-x-1' : 'text-muted-foreground group-hover:translate-x-1 group-hover:text-foreground'
                     }`} />
                   </motion.button>
@@ -267,20 +313,23 @@ const Index = () => {
         </section>
 
         {/* Optional Refinements */}
-        <section id="refine-section" className="flex flex-col items-center px-4 py-12 bg-background">
+        <section id="refine-section" className="flex flex-col items-center px-4 py-10 sm:py-12 bg-background">
           <motion.div
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             className="flex items-center gap-2 mb-2"
           >
-            <span className="text-xs font-body font-medium text-muted-foreground px-2 py-0.5 rounded-full bg-muted border border-border">Optional</span>
+            <span className="flex items-center gap-1 text-xs font-body font-medium text-muted-foreground px-2.5 py-1 rounded-full bg-muted border border-border">
+              <Sparkles className="w-3 h-3" />
+              Optional
+            </span>
           </motion.div>
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-display text-foreground mb-2"
+            className="text-2xl sm:text-3xl md:text-4xl font-display text-foreground mb-1.5"
           >
             Refine your feed
           </motion.h2>
@@ -289,54 +338,15 @@ const Index = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-muted-foreground font-body text-center mb-8 max-w-sm"
+            className="text-sm text-muted-foreground font-body text-center mb-8 max-w-xs sm:max-w-sm"
           >
-            Add tags or vibes to narrow down your results.
+            Add vibes or filters to narrow down your results.
           </motion.p>
 
-          {/* Deal type refinement */}
-          <div className="w-full max-w-md mb-8">
-            <p className="text-sm font-body font-semibold text-foreground/70 text-center mb-3 uppercase tracking-wide">Savings type</p>
-            <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide justify-center flex-wrap">
-              {DEAL_TYPES.map((deal, i) => {
-                const isActive = selectedDealTypes.includes(deal);
-                return (
-                  <motion.button
-                    key={deal}
-                    initial={{ opacity: 0, y: 10 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ delay: 0.03 * i }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => toggleDealType(deal)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-full border transition-colors cursor-pointer text-sm font-body font-medium ${
-                      isActive
-                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30'
-                        : 'border-border bg-muted/60 text-foreground/70 hover:bg-accent/10 hover:border-accent/40'
-                    }`}
-                  >
-                    <span className="text-base">{DEAL_ICONS[deal]}</span>
-                    {deal}
-                  </motion.button>
-                );
-              })}
-            </div>
-            {selectedDealTypes.length > 0 && (
-              <div className="flex justify-center mt-2">
-                <button
-                  onClick={() => setSelectedDealTypes([])}
-                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
-                >
-                  Clear
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Taste refinement */}
-          <div className="w-full max-w-md mb-8">
-            <p className="text-sm font-body font-semibold text-foreground/70 text-center mb-3 uppercase tracking-wide">Vibe / Taste</p>
-            <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 w-full">
+          {/* Vibe / Taste — horizontal scroll on mobile, centered on desktop */}
+          <div className="w-full max-w-2xl mb-8">
+            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Vibe / Taste</p>
+            <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
               {PRIMARY_TASTES.map((taste, i) => (
                 <motion.div
                   key={taste}
@@ -344,6 +354,7 @@ const Index = () => {
                   whileInView={{ opacity: 1, scale: 1 }}
                   viewport={{ once: true }}
                   transition={{ delay: 0.05 + i * 0.04 }}
+                  className="flex-shrink-0 w-[72px] sm:w-auto sm:flex-1 sm:max-w-[110px]"
                 >
                   <TasteTile
                     taste={taste}
@@ -354,9 +365,13 @@ const Index = () => {
               ))}
             </div>
             {selectedTastes.length > 0 && (
-              <div className="flex items-center justify-center gap-2 mt-3">
-                <span className="text-sm text-muted-foreground font-body">
-                  {selectedTastes.length}/5 selected
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                className="flex items-center justify-center gap-2 mt-3"
+              >
+                <span className="text-xs text-muted-foreground font-body">
+                  {selectedTastes.length} selected
                 </span>
                 <button
                   onClick={() => setSelectedTastes([])}
@@ -364,30 +379,175 @@ const Index = () => {
                 >
                   Clear
                 </button>
-              </div>
+              </motion.div>
             )}
           </div>
 
+          {/* Savings type — horizontal scroll on mobile */}
+          <div className="w-full max-w-2xl mb-8">
+            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Savings type</p>
+            <div className="flex gap-2 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
+              {DEAL_TYPES.map((deal, i) => {
+                const isActive = selectedDealTypes.includes(deal);
+                return (
+                  <motion.button
+                    key={deal}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.03 * i }}
+                    whileTap={{ scale: 0.93 }}
+                    onClick={() => toggleDealType(deal)}
+                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-medium whitespace-nowrap flex-shrink-0 ${
+                      isActive
+                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
+                        : 'border-border bg-muted/50 text-foreground/70 hover:bg-accent/10 hover:border-accent/40'
+                    }`}
+                  >
+                    <span className="text-base">{DEAL_ICONS[deal]}</span>
+                    {deal}
+                  </motion.button>
+                );
+              })}
+            </div>
+            {selectedDealTypes.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-center mt-2"
+              >
+                <button
+                  onClick={() => setSelectedDealTypes([])}
+                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+                >
+                  Clear
+                </button>
+              </motion.div>
+            )}
+          </div>
+
+          {/* Feeds — inline buttons instead of dropdown on mobile */}
+          <div className="w-full max-w-sm mb-8">
+            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Group size</p>
+
+            {/* Mobile: horizontal pill buttons */}
+            <div className="flex sm:hidden gap-2 justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 pb-1">
+              {FEEDS_OPTIONS.map((feeds) => {
+                const isActive = selectedFeeds === feeds;
+                const icons: Record<string, string> = { '3–4': '👥', '5–7': '👨‍👩‍👧', '8–10': '👨‍👩‍👧‍👦', '10+': '🎉' };
+                return (
+                  <motion.button
+                    key={feeds}
+                    whileTap={{ scale: 0.93 }}
+                    onClick={() => setSelectedFeeds(isActive ? null : feeds)}
+                    className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-medium whitespace-nowrap flex-shrink-0 ${
+                      isActive
+                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
+                        : 'border-border bg-muted/50 text-foreground/70'
+                    }`}
+                  >
+                    <span className="text-sm">{icons[feeds]}</span>
+                    {feeds}
+                  </motion.button>
+                );
+              })}
+            </div>
+
+            {/* Desktop: dropdown */}
+            <div className="hidden sm:block relative w-full max-w-xs mx-auto">
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={() => setFeedsOpen((prev) => !prev)}
+                className={`flex items-center justify-between w-full px-5 py-3.5 rounded-2xl border-2 transition-all cursor-pointer ${
+                  selectedFeeds
+                    ? 'border-accent bg-accent/10 shadow-sm'
+                    : 'border-border bg-muted/50 hover:border-accent/40'
+                } ${feedsOpen ? 'ring-2 ring-accent/30 border-accent' : ''}`}
+              >
+                <div className="flex items-center gap-3">
+                  <Users className={`w-5 h-5 ${selectedFeeds ? 'text-accent' : 'text-muted-foreground'}`} />
+                  <span className={`text-sm font-body font-semibold ${selectedFeeds ? 'text-foreground' : 'text-muted-foreground'}`}>
+                    {selectedFeeds ? `Feeds ${selectedFeeds} people` : 'Select group size'}
+                  </span>
+                </div>
+                <ChevronDown className={`w-4 h-4 text-muted-foreground transition-transform duration-200 ${feedsOpen ? 'rotate-180' : ''}`} />
+              </motion.button>
+
+              <AnimatePresence>
+                {feedsOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8, scaleY: 0.95 }}
+                    animate={{ opacity: 1, y: 0, scaleY: 1 }}
+                    exit={{ opacity: 0, y: -8, scaleY: 0.95 }}
+                    transition={{ duration: 0.15, ease: 'easeOut' }}
+                    className="absolute z-20 mt-2 w-full rounded-2xl border-2 border-border bg-card shadow-elevated overflow-hidden origin-top"
+                  >
+                    {FEEDS_OPTIONS.map((feeds) => {
+                      const isActive = selectedFeeds === feeds;
+                      const icons: Record<string, string> = { '3–4': '👥', '5–7': '👨‍👩‍👧', '8–10': '👨‍👩‍👧‍👦', '10+': '🎉' };
+                      const labels: Record<string, string> = { '3–4': 'Small group', '5–7': 'Medium group', '8–10': 'Large group', '10+': 'Party size' };
+                      return (
+                        <button
+                          key={feeds}
+                          onClick={() => {
+                            setSelectedFeeds(isActive ? null : feeds);
+                            setFeedsOpen(false);
+                          }}
+                          className={`flex items-center gap-3 w-full px-5 py-3.5 transition-colors cursor-pointer ${
+                            isActive ? 'bg-accent/10' : 'hover:bg-muted/80'
+                          }`}
+                        >
+                          <span className="text-lg">{icons[feeds]}</span>
+                          <div className="flex flex-col items-start flex-1">
+                            <span className={`text-sm font-body font-bold ${isActive ? 'text-accent' : 'text-foreground'}`}>
+                              Feeds {feeds}
+                            </span>
+                            <span className="text-[11px] font-body text-muted-foreground">{labels[feeds]}</span>
+                          </div>
+                          {isActive && <Check className="w-4 h-4 text-accent" />}
+                        </button>
+                      );
+                    })}
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {feedsOpen && (
+                <div className="fixed inset-0 z-10" onClick={() => setFeedsOpen(false)} />
+              )}
+            </div>
+          </div>
+
           {/* Continue CTA */}
-          <div className="flex flex-col items-center gap-3">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="flex flex-col items-center gap-3 w-full px-4"
+          >
             <motion.button
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => goToRestaurants()}
-              className="flex items-center gap-2 px-8 py-3 rounded-full bg-accent text-accent-foreground font-body font-semibold text-base shadow-food transition-shadow hover:shadow-elevated cursor-pointer"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 rounded-full bg-accent text-accent-foreground font-body font-bold text-base shadow-food cursor-pointer"
             >
               {hasFilters ? 'Show Markdowns' : 'Browse All Markdowns'}
+              {filterCount > 0 && (
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent-foreground/20 text-[10px] font-bold">
+                  {filterCount}
+                </span>
+              )}
               <ArrowRight className="w-4 h-4" />
             </motion.button>
             {!hasFilters && (
               <button
                 onClick={() => goToRestaurants()}
-                className="text-sm text-muted-foreground underline underline-offset-2 font-body cursor-pointer"
+                className="text-sm text-muted-foreground underline underline-offset-2 font-body cursor-pointer py-2"
               >
                 Skip for now
               </button>
             )}
-          </div>
+          </motion.div>
         </section>
       </motion.div>
     </div>

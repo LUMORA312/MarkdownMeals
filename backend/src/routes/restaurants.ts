@@ -47,6 +47,7 @@ restaurantsRouter.get('/', async (req, res) => {
     coverImage: r.coverImage,
     redirectUrl: r.redirectUrl,
     rating: r.rating,
+    distance: r.distance,
     categories: r.categories.map((c) => c.name),
     dishes: r.dishes.map((d) => ({
       id: d.id,
@@ -56,9 +57,10 @@ restaurantsRouter.get('/', async (req, res) => {
       primaryTaste: d.primaryTaste,
       modifiers: d.modifiers.map((m) => m.name),
       price: d.price,
-      originalPrice: d.originalPrice,
+      feeds: d.feeds,
       dealType: d.dealType,
       dealExpiresAt: d.dealExpiresAt ? d.dealExpiresAt.getTime() : undefined,
+      destinationUrl: d.destinationUrl || undefined,
     })),
   }));
 
@@ -88,6 +90,7 @@ restaurantsRouter.get('/:id', async (req, res) => {
     coverImage: restaurant.coverImage,
     redirectUrl: restaurant.redirectUrl,
     rating: restaurant.rating,
+    distance: restaurant.distance,
     categories: restaurant.categories.map((c) => c.name),
     dishes: restaurant.dishes.map((d) => ({
       id: d.id,
@@ -97,9 +100,10 @@ restaurantsRouter.get('/:id', async (req, res) => {
       primaryTaste: d.primaryTaste,
       modifiers: d.modifiers.map((m) => m.name),
       price: d.price,
-      originalPrice: d.originalPrice,
+      feeds: d.feeds,
       dealType: d.dealType,
       dealExpiresAt: d.dealExpiresAt ? d.dealExpiresAt.getTime() : undefined,
+      destinationUrl: d.destinationUrl || undefined,
     })),
   });
 });

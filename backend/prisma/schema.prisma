@@ -13,6 +13,7 @@ model Restaurant {
   coverImage  String
   redirectUrl String
   rating      Float?
+  distance    Float     @default(0)
   createdAt   DateTime @default(now())
 
   categories RestaurantCategory[]
@@ -37,11 +38,12 @@ model Dish {
   image         String
   category      String
   primaryTaste  String
-  price         Float?
-  originalPrice Float?
-  dealType      String?
-  dealExpiresAt DateTime?
-  restaurantId  String    @db.ObjectId
+  price         Float
+  feeds          String
+  dealType       String?
+  dealExpiresAt  DateTime
+  destinationUrl String?
+  restaurantId   String    @db.ObjectId
   restaurant    Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
 
   modifiers   DishModifier[]

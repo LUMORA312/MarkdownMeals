@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3001;
 
 const allowedOrigins = [
   'http://localhost:3001',
+  'http://localhost:8080',
   'https://markdown-meals.vercel.app',
   'https://markdownmeals.onrender.com'
 ];

@@ -18,19 +18,18 @@ export const PRICE_RANGE_MAX: Record<PriceRange, number | null> = {
   'Family Feast': null,
 };
 
-export type PrimaryTaste = 'Savory' | 'Sweet' | 'Fresh' | 'Cheesy' | 'Crispy' | 'Comfort' | 'Something New';
-export type Modifier = 'Spicy' | 'Vegan' | 'Vegetarian';
+export type PrimaryTaste = 'Crispy' | 'Cheesy' | 'Spicy' | 'Fresh' | 'Sweet';
+export type Modifier = 'Vegan' | 'Vegetarian';
 export type Category =
-  | 'Burgers & Sandwiches'
-  | 'Pizza & Italian'
-  | 'Asian'
-  | 'Mexican & Latin'
-  | 'Steak & Grill'
-  | 'Seafood'
-  | 'Salads & Bowls'
-  | 'Comfort Classics'
-  | 'Desserts & Sweets'
-  | 'Drinks & Shakes';
+  | 'Handheld'
+  | 'Bowls & Plates'
+  | 'Comfort'
+  | 'Fresh & Light'
+  | 'Snacky'
+  | 'Dessert';
+
+export type Feeds = '3–4' | '5–7' | '8–10' | '10+';
+export const FEEDS_OPTIONS: Feeds[] = ['3–4', '5–7', '8–10', '10+'];
 
 export type DealType = 'Lunch Special' | 'Late Night' | 'BOGO' | 'Under $10';
 
@@ -50,10 +49,11 @@ export interface Dish {
   category: Category;
   primaryTaste: PrimaryTaste;
   modifiers: Modifier[];
-  price?: number;
-  originalPrice?: number;
+  price: number;
+  feeds: Feeds;
   dealType?: DealType;
-  dealExpiresAt?: number; // timestamp
+  dealExpiresAt: number; // timestamp
+  destinationUrl?: string;
 }
 
 export interface Restaurant {
@@ -64,6 +64,7 @@ export interface Restaurant {
   dishes: Dish[];
   redirectUrl: string;
   rating?: number;
+  distance: number;
 }
 
 export interface RedirectToken {
@@ -91,20 +92,17 @@ export const RATING_TAGS = [
 
 export type RatingTag = typeof RATING_TAGS[number];
 
-export const PRIMARY_TASTES: PrimaryTaste[] = ['Savory', 'Sweet', 'Fresh', 'Cheesy', 'Crispy', 'Comfort', 'Something New'];
-export const MODIFIERS: Modifier[] = ['Spicy', 'Vegan', 'Vegetarian'];
+export const PRIMARY_TASTES: PrimaryTaste[] = ['Crispy', 'Cheesy', 'Spicy', 'Fresh', 'Sweet'];
+export const MODIFIERS: Modifier[] = ['Vegan', 'Vegetarian'];
 export const CATEGORIES: Category[] = [
-  'Burgers & Sandwiches', 'Pizza & Italian', 'Asian', 'Mexican & Latin',
-  'Steak & Grill', 'Seafood', 'Salads & Bowls', 'Comfort Classics',
-  'Desserts & Sweets', 'Drinks & Shakes',
+  'Handheld', 'Bowls & Plates', 'Comfort',
+  'Fresh & Light', 'Snacky', 'Dessert',
 ];
 
 export const TASTE_ICONS: Record<PrimaryTaste, string> = {
-  'Savory': '🍖',
-  'Sweet': '🍰',
-  'Fresh': '🥗',
-  'Cheesy': '🧀',
   'Crispy': '🍟',
-  'Comfort': '🍲',
-  'Something New': '✨',
+  'Cheesy': '🧀',
+  'Spicy': '🌶️',
+  'Fresh': '🥗',
+  'Sweet': '🍰',
 };

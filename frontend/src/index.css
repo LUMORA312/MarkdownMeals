@@ -97,6 +97,10 @@
     --sidebar-accent-foreground: 35 15% 80%;
     --sidebar-border: 25 10% 18%;
     --sidebar-ring: 100 45% 50%;
+
+    --shadow-food: 0 8px 32px -8px hsl(25 30% 5% / 0.4);
+    --shadow-card: 0 2px 12px -4px hsl(25 30% 5% / 0.3);
+    --shadow-elevated: 0 12px 40px -12px hsl(25 30% 5% / 0.5);
   }
 }
 
@@ -105,13 +109,32 @@
     @apply border-border;
   }
 
+  html {
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
+    overscroll-behavior-y: contain;
   }
 
   h1, h2, h3 {
     font-family: var(--font-display);
+  }
+
+  /* Better focus styles for accessibility */
+  :focus-visible {
+    @apply outline-2 outline-offset-2 outline-accent;
+  }
+
+  /* Prevent layout shift from scrollbar */
+  @supports (scrollbar-gutter: stable) {
+    html {
+      scrollbar-gutter: stable;
+    }
   }
 }
 
@@ -124,5 +147,37 @@
   }
   .shadow-elevated {
     box-shadow: var(--shadow-elevated);
+  }
+
+  /* Hide scrollbar but keep scroll functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Safe area padding for notched devices */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Smooth momentum scrolling for touch */
+  .scroll-touch {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-card/70 backdrop-blur-xl border border-border/50;
+  }
+
+  /* Active press state for touch */
+  .press-scale {
+    @apply transition-transform duration-100 active:scale-[0.97];
   }
 }
