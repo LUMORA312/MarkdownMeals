@@ -7,7 +7,7 @@ import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Us
 
 const FLOATING_CARDS = [
   { image: '/images/burger.jpg', label: '$7.99', x: '10%', y: '10%', rotate: -8, delay: 0.3 },
-  { image: '/images/pizza.jpg', label: 'BOGO', x: '78%', y: '10%', rotate: 6, delay: 0.5 },
+  { image: '/images/pizza.jpg', label: 'BOGO', x: '78%', y: '7%', rotate: 6, delay: 0.5 },
   { image: '/images/tacos.jpg', label: '$6.99', x: '8%', y: '49%', rotate: 12, delay: 0.7 },
   { image: '/images/poke-bowl.jpg', label: '50% Off', x: '80%', y: '42%', rotate: -5, delay: 0.4 },
   { image: '/images/salmon.jpg', label: '$14.99', x: '18%', y: '70%', rotate: 8, delay: 0.6 },
