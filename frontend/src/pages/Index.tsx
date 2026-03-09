@@ -588,14 +588,6 @@ const Index = () => {
               )}
               <ArrowRight className="w-4 h-4" />
             </motion.button>
-            {!hasFilters && (
-              <button
-                onClick={() => goToRestaurants()}
-                className="text-sm text-muted-foreground underline underline-offset-2 font-body cursor-pointer py-2"
-              >
-                Skip for now
-              </button>
-            )}
           </motion.div>
         </section>
 
