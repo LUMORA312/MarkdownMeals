@@ -270,7 +270,7 @@ const Index = () => {
         </section>
 
         {/* Price/Value Selection — first interaction */}
-        <section id="price-section" className="w-full bg-gradient-to-b from-card to-background overflow-hidden">
+        <section id="price-section" className="w-full bg-gradient-to-b from-card via-accent/5 to-accent/10 overflow-hidden">
           <div className="max-w-2xl mx-auto px-4 py-6 sm:py-12">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -354,6 +354,9 @@ const Index = () => {
               })}
             </div>
           </div>
+
+          {/* Smooth gradient divider */}
+          <div className="w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
         </section>
 
         {/* Optional Refinements */}
@@ -597,28 +600,63 @@ const Index = () => {
 
 
         {/* Footer */}
-        <footer className="w-full bg-foreground/5 border-t border-border">
-          <div className="max-w-2xl mx-auto px-4 py-8 sm:py-10">
-            <div className="flex flex-col items-center gap-4 text-center">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 rounded-lg bg-accent">
-                  <UtensilsCrossed className="w-4 h-4 text-accent-foreground" />
+        <footer className="w-full relative overflow-hidden">
+          {/* Decorative top wave */}
+          <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
+
+          <div className="bg-gradient-to-b from-foreground/5 to-foreground/10 pt-10 sm:pt-14 pb-6 sm:pb-8">
+            <div className="max-w-3xl mx-auto px-6">
+              {/* Top section: brand + columns */}
+              <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 mb-8 sm:mb-10">
+                {/* Brand */}
+                <div className="flex flex-col items-center sm:items-start gap-3 flex-1">
+                  <div className="flex items-center gap-2.5">
+                    <div className="p-2 rounded-xl bg-accent shadow-sm">
+                      <UtensilsCrossed className="w-5 h-5 text-accent-foreground" />
+                    </div>
+                    <span className="text-2xl font-display text-foreground">FoodMan</span>
+                  </div>
+                  <p className="text-sm font-body text-muted-foreground max-w-[260px] text-center sm:text-left leading-relaxed">
+                    Discover the best food markdowns near you. Save more, eat better.
+                  </p>
                 </div>
-                <span className="text-xl font-display text-foreground">FoodMan</span>
+
+                {/* Link columns */}
+                <div className="flex gap-12 sm:gap-16">
+                  <div className="flex flex-col gap-2.5">
+                    <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Explore</span>
+                    <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Browse Deals</span>
+                    <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Top Rated</span>
+                    <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Near Me</span>
+                  </div>
+                  <div className="flex flex-col gap-2.5">
+                    <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Company</span>
+                    <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">About</span>
+                    <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Contact</span>
+                    <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Privacy</span>
+                  </div>
+                </div>
               </div>
-              <p className="text-xs sm:text-sm font-body text-muted-foreground max-w-sm">
-                Discover the best food markdowns near you. Save more, eat better.
-              </p>
-              <div className="flex items-center gap-4 text-xs font-body text-muted-foreground">
-                <span>About</span>
-                <span className="w-1 h-1 rounded-full bg-border" />
-                <span>Contact</span>
-                <span className="w-1 h-1 rounded-full bg-border" />
-                <span>Privacy</span>
+
+              {/* Divider */}
+              <div className="h-px bg-gradient-to-r from-transparent via-border to-transparent mb-5 sm:mb-6" />
+
+              {/* Bottom bar */}
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                <p className="text-xs font-body text-muted-foreground/60">
+                  &copy; {new Date().getFullYear()} FoodMan. All rights reserved.
+                </p>
+                <div className="flex items-center gap-1.5 text-xs font-body text-muted-foreground/50">
+                  <span>Made with</span>
+                  <motion.span
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
+                  >
+                    🍔
+                  </motion.span>
+                  <span>for food lovers</span>
+                </div>
               </div>
-              <p className="text-[10px] font-body text-muted-foreground/60 mt-2">
-                &copy; {new Date().getFullYear()} FoodMan. All rights reserved.
-              </p>
             </div>
           </div>
         </footer>
