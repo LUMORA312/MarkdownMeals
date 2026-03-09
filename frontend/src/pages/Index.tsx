@@ -55,9 +55,11 @@ const Index = () => {
   };
 
   const toggleTaste = (taste: PrimaryTaste) => {
-    setSelectedTastes((prev) =>
-      prev.includes(taste) ? prev.filter((t) => t !== taste) : [...prev, taste]
-    );
+    setSelectedTastes((prev) => {
+      if (prev.includes(taste)) return prev.filter((t) => t !== taste);
+      if (prev.length >= 2) return prev;
+      return [...prev, taste];
+    });
   };
 
   const toggleDealType = (deal: DealType) => {
