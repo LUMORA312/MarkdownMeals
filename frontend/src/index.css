@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Serif+Display&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Amatic+SC:wght@400;700&family=Quicksand:wght@400;500;600;700&display=swap');
 
 @layer base {
   :root {
@@ -65,8 +65,8 @@
     --shadow-card: 0 2px 12px -4px hsl(25 30% 20% / 0.1);
     --shadow-elevated: 0 12px 40px -12px hsl(25 30% 20% / 0.2);
 
-    --font-display: 'DM Serif Display', serif;
-    --font-body: 'DM Sans', sans-serif;
+    --font-display: 'Amatic SC', cursive;
+    --font-body: 'Quicksand', sans-serif;
   }
 
   .dark {

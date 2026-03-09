@@ -14,8 +14,8 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ['DM Serif Display', 'serif'],
-        body: ['DM Sans', 'sans-serif'],
+        display: ['Amatic SC', 'cursive'],
+        body: ['Quicksand', 'sans-serif'],
       },
       colors: {
         border: "hsl(var(--border))",

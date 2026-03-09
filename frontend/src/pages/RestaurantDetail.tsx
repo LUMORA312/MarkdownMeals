@@ -78,13 +78,13 @@ export default function RestaurantDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-foreground/10" />
 
         {/* Top bar */}
-        <div className="absolute top-0 left-0 right-0 flex items-center justify-between p-3 sm:p-4 safe-top">
+        <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 pt-4 pb-3 sm:py-6 safe-top">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-card/70 backdrop-blur-md flex items-center justify-center cursor-pointer"
+            className="w-10 h-10 rounded-full bg-accent flex items-center justify-center cursor-pointer"
           >
-            <ArrowLeft className="w-5 h-5 text-foreground" />
+            <ArrowLeft className="w-5 h-5 text-accent-foreground" />
           </motion.button>
 
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/90 backdrop-blur-sm">

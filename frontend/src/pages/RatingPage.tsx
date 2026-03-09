@@ -147,9 +147,9 @@ export default function RatingPage() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-muted flex items-center justify-center cursor-pointer shrink-0"
+            className="w-10 h-10 rounded-full bg-accent flex items-center justify-center cursor-pointer shrink-0"
           >
-            <ArrowLeft className="w-5 h-5 text-foreground" />
+            <ArrowLeft className="w-5 h-5 text-accent-foreground" />
           </motion.button>
           <div className="min-w-0">
             <h2 className="text-lg sm:text-xl font-display text-foreground leading-tight">Rate your experience</h2>

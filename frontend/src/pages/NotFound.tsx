@@ -29,7 +29,7 @@ const NotFound = () => {
           <motion.button
             whileTap={{ scale: 0.97 }}
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-muted text-foreground font-body font-medium cursor-pointer text-sm"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-accent text-accent-foreground font-body font-medium cursor-pointer text-sm"
           >
             <ArrowLeft className="w-4 h-4" />
             Go back

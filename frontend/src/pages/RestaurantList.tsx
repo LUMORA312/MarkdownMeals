@@ -1,12 +1,18 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { PrimaryTaste, DealType, DEAL_ICONS, PriceRange, PRICE_RANGE_ICONS, PRICE_RANGE_MAX, Restaurant, Feeds } from '@/types/food';
+import {
+  PrimaryTaste, PRIMARY_TASTES, TASTE_ICONS,
+  PriceRange, PRICE_RANGE_ICONS, PRICE_RANGE_MAX,
+  EatingStyle, EATING_STYLES, EATING_STYLE_ICONS,
+  Restaurant, Feeds, Category,
+} from '@/types/food';
 import { RestaurantCard } from '@/components/RestaurantCard';
 import { useRestaurants, useFavorites, useToggleFavorite } from '@/hooks/use-api';
-import { Search, X, ArrowUpDown, Heart, Tag, Loader2, ArrowLeft, SlidersHorizontal } from 'lucide-react';
+import { Search, X, ArrowUpDown, Heart, Loader2, ArrowLeft } from 'lucide-react';
 
 type SortOption = 'default' | 'alpha' | 'dishes';
+const PAGE_SIZE = 12;
 
 const FEEDS_ESTIMATE: Record<Feeds, number> = {
   '3–4': 3.5,
@@ -41,7 +47,6 @@ function getHighestFeedsRank(r: Restaurant): number {
 
 function sortByPriceRange(restaurants: Restaurant[], priceRange: PriceRange): Restaurant[] {
   const sorted = [...restaurants];
-
   if (priceRange === 'Best Value') {
     sorted.sort((a, b) => {
       const scoreA = getBestValueScore(a);
@@ -64,27 +69,39 @@ function sortByPriceRange(restaurants: Restaurant[], priceRange: PriceRange): Re
       return getLowestPrice(a) - getLowestPrice(b);
     });
   }
-
   return sorted;
 }
 
 export default function RestaurantList() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchBarRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
   const [isSearchSticky, setIsSearchSticky] = useState(false);
 
-  const tastes = (searchParams.get('tastes')?.split(',').filter(Boolean) || []) as PrimaryTaste[];
-  const deals = (searchParams.get('deals')?.split(',').filter(Boolean) || []) as DealType[];
   const priceFilter = searchParams.get('price') as PriceRange | null;
   const priceMax = priceFilter ? PRICE_RANGE_MAX[priceFilter] : null;
-  const feedsFilter = searchParams.get('feeds') as Feeds | null;
+  const zipCode = searchParams.get('zip') || localStorage.getItem('foodman_zip') || '';
+
+  // Read initial filter values from URL params (passed from Index page)
+  const initialTastes = searchParams.get('tastes');
+  const initialDeals = searchParams.get('deals');
+  const initialFeeds = searchParams.get('feeds') as Feeds | null;
 
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('default');
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false);
+  const [eatingStyle, setEatingStyle] = useState<EatingStyle | null>(null);
+  const [tasteTags, setTasteTags] = useState<PrimaryTaste[]>(
+    () => initialTastes ? initialTastes.split(',').filter((t): t is PrimaryTaste => PRIMARY_TASTES.includes(t as PrimaryTaste)) as PrimaryTaste[] : []
+  );
+  const [dealFilters, setDealFilters] = useState<string[]>(
+    () => initialDeals ? initialDeals.split(',') : []
+  );
+  const [feedsFilter, setFeedsFilter] = useState<Feeds | null>(initialFeeds);
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const { data: restaurants = [], isLoading } = useRestaurants({ tastes, deals, search: searchQuery });
+  const { data: restaurants = [], isLoading } = useRestaurants({ search: searchQuery });
   const { data: favoriteIds = [] } = useFavorites();
   const toggleFavoriteMutation = useToggleFavorite();
 
@@ -92,6 +109,20 @@ export default function RestaurantList() {
 
   const toggleFavorite = (id: string) => {
     toggleFavoriteMutation.mutate(id);
+  };
+
+  const toggleTasteTag = (taste: PrimaryTaste) => {
+    setTasteTags((prev) => {
+      if (prev.includes(taste)) return prev.filter((t) => t !== taste);
+      if (prev.length >= 2) return prev;
+      return [...prev, taste];
+    });
+    setVisibleCount(PAGE_SIZE);
+  };
+
+  const selectEatingStyle = (style: EatingStyle) => {
+    setEatingStyle((prev) => (prev === style ? null : style));
+    setVisibleCount(PAGE_SIZE);
   };
 
   // Sticky search bar detection
@@ -105,7 +136,84 @@ export default function RestaurantList() {
     return () => { if (el) observer.unobserve(el); };
   }, []);
 
-  const activeFilterCount = (priceFilter ? 1 : 0) + tastes.length + deals.length + (feedsFilter ? 1 : 0);
+  // Build filtered + sorted list
+  const filteredList = useMemo(() => {
+    let list = [...restaurants].filter((r) => {
+      if (showFavoritesOnly && !favorites.has(r.id)) return false;
+      if (priceMax) {
+        if (!r.dishes.some((d) => d.price <= priceMax)) return false;
+      }
+      if (eatingStyle) {
+        if (!r.dishes.some((d) => d.category === (eatingStyle as Category))) return false;
+      }
+      if (tasteTags.length > 0) {
+        if (!r.dishes.some((d) => tasteTags.includes(d.primaryTaste))) return false;
+      }
+      if (dealFilters.length > 0) {
+        if (!r.dishes.some((d) => d.dealType && dealFilters.includes(d.dealType))) return false;
+      }
+      if (feedsFilter) {
+        if (!r.dishes.some((d) => d.feeds === feedsFilter)) return false;
+      }
+      return true;
+    });
+
+    if (sortBy === 'default' && priceFilter) {
+      list = sortByPriceRange(list, priceFilter);
+    } else if (sortBy === 'alpha') {
+      list.sort((a, b) => a.name.localeCompare(b.name));
+    } else if (sortBy === 'dishes') {
+      list.sort((a, b) => b.dishes.length - a.dishes.length);
+    }
+
+    return list.map((r) => {
+      let filteredDishes = r.dishes;
+      if (priceMax) {
+        filteredDishes = filteredDishes.filter((d) => d.price <= priceMax);
+      }
+      if (eatingStyle) {
+        filteredDishes = filteredDishes.filter((d) => d.category === (eatingStyle as Category));
+      }
+      if (tasteTags.length > 0) {
+        filteredDishes = filteredDishes.filter((d) => tasteTags.includes(d.primaryTaste));
+      }
+      if (dealFilters.length > 0) {
+        filteredDishes = filteredDishes.filter((d) => d.dealType && dealFilters.includes(d.dealType));
+      }
+      if (feedsFilter) {
+        filteredDishes = filteredDishes.filter((d) => d.feeds === feedsFilter);
+      }
+      return filteredDishes.length !== r.dishes.length
+        ? { ...r, dishes: filteredDishes }
+        : r;
+    });
+  }, [restaurants, showFavoritesOnly, favorites, priceMax, eatingStyle, tasteTags, dealFilters, feedsFilter, sortBy, priceFilter]);
+
+  const visibleList = filteredList.slice(0, visibleCount);
+  const hasMore = visibleCount < filteredList.length;
+
+  // Infinite scroll — load more when sentinel enters viewport
+  const loadMore = useCallback(() => {
+    if (hasMore) setVisibleCount((prev) => prev + PAGE_SIZE);
+  }, [hasMore]);
+
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) loadMore(); },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
+
+  // Reset visible count when filters change
+  useEffect(() => {
+    setVisibleCount(PAGE_SIZE);
+  }, [searchQuery, sortBy, showFavoritesOnly, priceFilter]);
+
+  const hasSecondaryFilters = eatingStyle || tasteTags.length > 0;
 
   return (
     <motion.div
@@ -120,31 +228,27 @@ export default function RestaurantList() {
             <motion.button
               whileTap={{ scale: 0.9 }}
               onClick={() => navigate('/')}
-              className="w-10 h-10 rounded-full bg-muted flex items-center justify-center cursor-pointer"
+              className="w-10 h-10 rounded-full bg-accent flex items-center justify-center cursor-pointer"
             >
-              <ArrowLeft className="w-5 h-5 text-foreground" />
+              <ArrowLeft className="w-5 h-5 text-accent-foreground" />
             </motion.button>
             <div>
-              <h2 className="text-xl sm:text-2xl font-display text-foreground leading-tight">Markdowns</h2>
+              <h2 className="text-xl sm:text-2xl font-display text-foreground leading-tight">
+                {priceFilter || 'All Markdowns'}
+              </h2>
               {!isLoading && (
                 <p className="text-xs text-muted-foreground font-body">
-                  {restaurants.length} restaurant{restaurants.length !== 1 ? 's' : ''} found
+                  {filteredList.length} deal{filteredList.length !== 1 ? 's' : ''} found
+                  {zipCode && <span> near {zipCode}</span>}
                 </p>
               )}
             </div>
           </div>
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1.5 text-sm font-body text-muted-foreground px-3 py-1.5 rounded-full border border-border hover:bg-muted/60 cursor-pointer transition-colors"
-          >
-            <SlidersHorizontal className="w-3.5 h-3.5" />
-            Filters
-            {activeFilterCount > 0 && (
-              <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-accent text-accent-foreground text-[10px] font-bold px-1">
-                {activeFilterCount}
-              </span>
-            )}
-          </button>
+          {priceFilter && (
+            <span className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-sm font-body font-bold">
+              {PRICE_RANGE_ICONS[priceFilter]} {priceFilter}
+            </span>
+          )}
         </div>
 
         {/* Sentinel for sticky detection */}
@@ -168,33 +272,75 @@ export default function RestaurantList() {
           </div>
         </div>
 
-        {/* Active filters */}
-        {(priceFilter || deals.length > 0 || feedsFilter || tastes.length > 0) && (
-          <div className="flex gap-2 mt-3 mb-3 overflow-x-auto scrollbar-hide scroll-touch pb-0.5">
-            {priceFilter && (
-              <span className="flex-shrink-0 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs sm:text-sm font-body font-bold flex items-center gap-1">
-                {PRICE_RANGE_ICONS[priceFilter]} {priceFilter}
-              </span>
-            )}
-            {feedsFilter && (
-              <span className="flex-shrink-0 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs sm:text-sm font-body font-medium flex items-center gap-1">
-                👥 {feedsFilter}
-              </span>
-            )}
-            {deals.map((d) => (
-              <span key={d} className="flex-shrink-0 px-3 py-1 rounded-full bg-accent/10 text-accent text-xs sm:text-sm font-body font-medium flex items-center gap-1">
-                {DEAL_ICONS[d]} {d}
-              </span>
-            ))}
-            {tastes.map((t) => (
-              <span key={t} className="flex-shrink-0 px-3 py-1 rounded-full bg-muted text-muted-foreground text-xs sm:text-sm font-body font-medium">
-                {t}
-              </span>
-            ))}
+        {/* Secondary filters — Eating Style + Taste Tags */}
+        <div className="mt-3 space-y-3">
+          {/* Eating Style (choose one) */}
+          <div>
+            <p className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">Eating Style</p>
+            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide scroll-touch pb-0.5">
+              {EATING_STYLES.map((style) => {
+                const isActive = eatingStyle === style;
+                return (
+                  <button
+                    key={style}
+                    onClick={() => selectEatingStyle(style)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-body font-medium whitespace-nowrap flex-shrink-0 cursor-pointer transition-all ${
+                      isActive
+                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30'
+                        : 'border-border bg-muted/40 text-muted-foreground hover:bg-muted'
+                    }`}
+                  >
+                    <span className="text-sm">{EATING_STYLE_ICONS[style]}</span>
+                    {style}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-        )}
 
-        {/* Sort options */}
+          {/* Taste Tags (max two) */}
+          <div>
+            <p className="text-[10px] font-body font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">
+              Taste {tasteTags.length > 0 && <span className="text-accent">({tasteTags.length}/2)</span>}
+            </p>
+            <div className="flex gap-1.5 overflow-x-auto scrollbar-hide scroll-touch pb-0.5">
+              {PRIMARY_TASTES.map((taste) => {
+                const isActive = tasteTags.includes(taste);
+                const atMax = tasteTags.length >= 2 && !isActive;
+                return (
+                  <button
+                    key={taste}
+                    onClick={() => !atMax && toggleTasteTag(taste)}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-body font-medium whitespace-nowrap flex-shrink-0 transition-all ${
+                      isActive
+                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 cursor-pointer'
+                        : atMax
+                          ? 'border-border bg-muted/20 text-muted-foreground/40 cursor-not-allowed'
+                          : 'border-border bg-muted/40 text-muted-foreground hover:bg-muted cursor-pointer'
+                    }`}
+                  >
+                    <span className="text-sm">{TASTE_ICONS[taste]}</span>
+                    {taste}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Clear secondary filters */}
+          {hasSecondaryFilters && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-end">
+              <button
+                onClick={() => { setEatingStyle(null); setTasteTags([]); }}
+                className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+              >
+                Clear filters
+              </button>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Sort + Favorites row */}
         <div className="flex items-center gap-1.5 my-3 overflow-x-auto scrollbar-hide">
           <ArrowUpDown className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
           {([
@@ -255,108 +401,84 @@ export default function RestaurantList() {
         )}
 
         {/* Restaurant Grid */}
-        {!isLoading && (
+        {!isLoading && visibleList.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
-            {(() => {
-              let list = [...restaurants].filter((r) => {
-                if (showFavoritesOnly && !favorites.has(r.id)) return false;
-                if (priceMax) {
-                  const hasMatchingDish = r.dishes.some((d) => d.price <= priceMax);
-                  if (!hasMatchingDish) return false;
-                }
-                if (feedsFilter) {
-                  const hasMatchingFeeds = r.dishes.some((d) => d.feeds === feedsFilter);
-                  if (!hasMatchingFeeds) return false;
-                }
-                return true;
-              });
-
-              if (sortBy === 'default' && priceFilter) {
-                list = sortByPriceRange(list, priceFilter);
-              } else if (sortBy === 'alpha') {
-                list.sort((a, b) => a.name.localeCompare(b.name));
-              } else if (sortBy === 'dishes') {
-                list.sort((a, b) => b.dishes.length - a.dishes.length);
-              }
-
-              return list.map((r) => {
-                let filteredDishes = r.dishes;
-                if (feedsFilter) {
-                  filteredDishes = filteredDishes.filter((d) => d.feeds === feedsFilter);
-                }
-                if (priceMax) {
-                  filteredDishes = filteredDishes.filter((d) => d.price <= priceMax);
-                }
-                return filteredDishes.length !== r.dishes.length
-                  ? { ...r, dishes: filteredDishes }
-                  : r;
-              });
-            })()
-              .map((restaurant, i) => (
-                <RestaurantCard key={restaurant.id} restaurant={restaurant} index={i} favorited={favorites.has(restaurant.id)} onToggleFavorite={toggleFavorite} />
-              ))}
+            {visibleList.map((restaurant, i) => (
+              <RestaurantCard
+                key={restaurant.id}
+                restaurant={restaurant}
+                index={i}
+                favorited={favorites.has(restaurant.id)}
+                onToggleFavorite={toggleFavorite}
+              />
+            ))}
           </div>
         )}
 
-        {!isLoading && (() => {
-          const displayedRestaurants = [...restaurants].filter((r) => {
-            if (showFavoritesOnly && !favorites.has(r.id)) return false;
-            if (priceMax) {
-              const hasMatchingDish = r.dishes.some((d) => d.price <= priceMax);
-              if (!hasMatchingDish) return false;
-            }
-            return true;
-          });
-          return displayedRestaurants.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex flex-col items-center justify-center py-16 sm:py-20 gap-4"
-            >
-              <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-muted flex items-center justify-center">
-                {showFavoritesOnly ? (
-                  <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
-                ) : (
-                  <Search className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
-                )}
-              </div>
-              <div className="text-center space-y-1 px-4">
-                <h3 className="text-lg font-display text-foreground">
-                  {showFavoritesOnly ? 'No favorites yet' : 'No markdowns found'}
-                </h3>
-                <p className="text-sm text-muted-foreground font-body max-w-xs mx-auto">
-                  {showFavoritesOnly
-                    ? 'Tap the heart icon on a restaurant card to save it here.'
-                    : searchQuery.trim()
-                      ? `No results for "${searchQuery}". Try a different name.`
-                      : 'No restaurants match your selected filters. Try changing your preferences.'}
-                </p>
-              </div>
+        {/* Load more sentinel */}
+        {hasMore && !isLoading && (
+          <div ref={loadMoreRef} className="flex justify-center py-8">
+            <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />
+          </div>
+        )}
+
+        {/* Empty state */}
+        {!isLoading && filteredList.length === 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-col items-center justify-center py-16 sm:py-20 gap-4"
+          >
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-muted flex items-center justify-center">
               {showFavoritesOnly ? (
-                <button
-                  onClick={() => setShowFavoritesOnly(false)}
-                  className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
-                >
-                  Show all markdowns
-                </button>
-              ) : searchQuery.trim() ? (
-                <button
-                  onClick={() => setSearchQuery('')}
-                  className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
-                >
-                  Clear search
-                </button>
+                <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
               ) : (
-                <button
-                  onClick={() => navigate('/')}
-                  className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
-                >
-                  Change filters
-                </button>
+                <Search className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
               )}
-            </motion.div>
-          ) : null;
-        })()}
+            </div>
+            <div className="text-center space-y-1 px-4">
+              <h3 className="text-lg font-display text-foreground">
+                {showFavoritesOnly ? 'No favorites yet' : 'No markdowns found'}
+              </h3>
+              <p className="text-sm text-muted-foreground font-body max-w-xs mx-auto">
+                {showFavoritesOnly
+                  ? 'Tap the heart icon on a restaurant card to save it here.'
+                  : searchQuery.trim()
+                    ? `No results for "${searchQuery}". Try a different name.`
+                    : 'No restaurants match your filters. Try adjusting your preferences.'}
+              </p>
+            </div>
+            {showFavoritesOnly ? (
+              <button
+                onClick={() => setShowFavoritesOnly(false)}
+                className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
+              >
+                Show all markdowns
+              </button>
+            ) : hasSecondaryFilters ? (
+              <button
+                onClick={() => { setEatingStyle(null); setTasteTags([]); }}
+                className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
+              >
+                Clear filters
+              </button>
+            ) : searchQuery.trim() ? (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
+              >
+                Clear search
+              </button>
+            ) : (
+              <button
+                onClick={() => navigate('/')}
+                className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer transition-colors py-2"
+              >
+                Change price range
+              </button>
+            )}
+          </motion.div>
+        )}
       </div>
     </motion.div>
   );

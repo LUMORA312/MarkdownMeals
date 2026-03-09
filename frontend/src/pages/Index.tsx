@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS, Feeds, FEEDS_OPTIONS } from '@/types/food';
 import { TasteTile } from '@/components/TasteTile';
-import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, Tag, ChevronDown, Users, Check, Sparkles } from 'lucide-react';
+import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check, Sparkles } from 'lucide-react';
 
 const FLOATING_CARDS = [
   { image: '/images/burger.jpg', label: '$7.99', x: '8%', y: '18%', rotate: -8, delay: 0.3 },
@@ -30,6 +30,7 @@ const Index = () => {
   const [selectedDealTypes, setSelectedDealTypes] = useState<DealType[]>([]);
   const [selectedFeeds, setSelectedFeeds] = useState<Feeds | null>(null);
   const [feedsOpen, setFeedsOpen] = useState(false);
+  const [zipCode, setZipCode] = useState(() => localStorage.getItem('foodman_zip') || '');
   const [showNav, setShowNav] = useState(false);
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
 
@@ -46,12 +47,17 @@ const Index = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const saveZip = (val: string) => {
+    const clean = val.replace(/\D/g, '').slice(0, 5);
+    setZipCode(clean);
+    if (clean.length === 5) localStorage.setItem('foodman_zip', clean);
+    else if (clean.length === 0) localStorage.removeItem('foodman_zip');
+  };
+
   const toggleTaste = (taste: PrimaryTaste) => {
-    setSelectedTastes((prev) => {
-      if (prev.includes(taste)) return prev.filter((t) => t !== taste);
-      if (prev.length >= 5) return prev;
-      return [...prev, taste];
-    });
+    setSelectedTastes((prev) =>
+      prev.includes(taste) ? prev.filter((t) => t !== taste) : [...prev, taste]
+    );
   };
 
   const toggleDealType = (deal: DealType) => {
@@ -60,13 +66,14 @@ const Index = () => {
     );
   };
 
-  const goToRestaurants = (priceOverride?: PriceRange) => {
+  const goToRestaurants = (price?: PriceRange) => {
+    const p = price || selectedPrice;
     const params = new URLSearchParams();
-    const price = priceOverride || selectedPrice;
-    if (price) params.set('price', price);
+    if (p) params.set('price', p);
     if (selectedTastes.length > 0) params.set('tastes', selectedTastes.join(','));
     if (selectedDealTypes.length > 0) params.set('deals', selectedDealTypes.join(','));
     if (selectedFeeds) params.set('feeds', selectedFeeds);
+    if (zipCode.length === 5) params.set('zip', zipCode);
     const qs = params.toString();
     navigate(`/restaurants${qs ? `?${qs}` : ''}`);
   };
@@ -105,11 +112,6 @@ const Index = () => {
                   <Search className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">Find Markdowns</span>
                   <span className="sm:hidden">Go</span>
-                  {filterCount > 0 && (
-                    <span className="ml-0.5 inline-flex items-center justify-center w-5 h-5 rounded-full bg-accent-foreground/20 text-[10px] font-bold">
-                      {filterCount}
-                    </span>
-                  )}
                 </motion.button>
                 <button
                   onClick={() => {
@@ -134,36 +136,52 @@ const Index = () => {
         className="min-h-screen flex flex-col"
       >
         {/* Hero — shorter on mobile, parallax zoom */}
-        <section ref={heroRef} id="hero-section" className="relative w-full h-[55vh] sm:h-[65vh] min-h-[360px] sm:min-h-[420px] overflow-hidden">
-          <motion.div className="absolute inset-0" style={{ scale: heroScale }}>
-            <img
-              src="/images/steak.jpg"
-              alt="Today's best food markdowns"
-              className="w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/30 to-background" />
-          </motion.div>
+        <section ref={heroRef} id="hero-section" className="relative w-full h-[40vh] sm:h-[55vh] min-h-[280px] sm:min-h-[380px]">
+          {/* Parallax background — overflow-hidden only here */}
+          <div className="absolute inset-0 overflow-hidden">
+            <motion.div className="absolute inset-0" style={{ scale: heroScale }}>
+              <img
+                src="/images/steak.jpg"
+                alt="Today's best food markdowns"
+                className="w-full h-full object-cover"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/30 to-card" />
+            </motion.div>
+          </div>
 
-          {/* Floating food cards — hidden on mobile */}
+          {/* Floating food cards */}
           {FLOATING_CARDS.map((card, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, scale: 0, rotate: 0 }}
               animate={{ opacity: 1, scale: 1, rotate: card.rotate }}
               transition={{ delay: card.delay, type: 'spring', stiffness: 200, damping: 15 }}
-              className="absolute hidden lg:block"
+              className="absolute hidden sm:block"
               style={{ left: card.x, top: card.y, opacity: heroOpacity as unknown as number }}
             >
-              <motion.div
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut' }}
-                className="w-20 h-20 lg:w-24 lg:h-24 rounded-2xl overflow-hidden shadow-elevated border-2 border-card/50 backdrop-blur-sm"
+              <motion.button
+                animate={{ y: [0, -10, 0], rotate: [0, -5, 5, -3, 0] }}
+                transition={{
+                  y: { duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut' },
+                  rotate: { duration: 4 + i * 0.3, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' },
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => document.getElementById('price-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl shadow-elevated border-2 border-white/70 cursor-pointer overflow-visible"
               >
-                <img src={card.image} alt={card.label} className="w-full h-full object-cover" />
-                <div className="absolute inset-x-0 bottom-0 bg-destructive/90 px-1 py-0.5">
-                  <p className="text-[9px] font-body font-bold text-destructive-foreground text-center">{card.label}</p>
+                <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden">
+                  <img src={card.image} alt={card.label} className="w-full h-full object-cover" />
+                  <div className="absolute inset-x-0 bottom-0 rounded-b-xl sm:rounded-b-2xl bg-destructive/90 px-1 py-0.5 sm:py-1">
+                    <p className="text-[8px] sm:text-[10px] lg:text-xs font-body font-bold text-destructive-foreground text-center">{card.label}</p>
+                  </div>
                 </div>
-              </motion.div>
+                <motion.div
+                  animate={{ scale: [1, 1.4, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                  className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-destructive border-2 border-primary-foreground/50 z-10"
+                />
+              </motion.button>
             </motion.div>
           ))}
 
@@ -191,12 +209,21 @@ const Index = () => {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4"
+              className="flex items-center gap-2.5 sm:gap-3 mb-4 sm:mb-8"
             >
-              <div className="p-2 sm:p-2.5 rounded-xl bg-accent/90 backdrop-blur-sm">
-                <Tag className="w-7 h-7 sm:w-10 sm:h-10 text-accent-foreground" />
-              </div>
-              <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-display text-primary-foreground drop-shadow-lg leading-none">
+              <motion.div
+                animate={{ rotate: [0, -8, 8, -4, 0] }}
+                transition={{ duration: 3, repeat: Infinity, repeatDelay: 2, ease: 'easeInOut' }}
+                className="relative p-4 sm:p-5 rounded-2xl sm:rounded-3xl bg-accent shadow-elevated"
+              >
+                <UtensilsCrossed className="w-10 h-10 sm:w-14 sm:h-14 text-accent-foreground" />
+                <motion.div
+                  animate={{ scale: [1, 1.4, 1] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="absolute -top-1 -right-1 w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-destructive border-2 border-primary-foreground/30"
+                />
+              </motion.div>
+              <h1 className="text-6xl sm:text-7xl md:text-8xl lg:text-9xl font-display text-primary-foreground drop-shadow-lg leading-none">
                 FoodMan
               </h1>
             </motion.div>
@@ -205,7 +232,7 @@ const Index = () => {
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.25, duration: 0.5 }}
-              className="text-base sm:text-xl md:text-2xl font-display font-medium text-primary-foreground/90 max-w-md mb-1.5 sm:mb-2 drop-shadow-md leading-snug"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-display font-bold text-primary-foreground/90 mb-1.5 sm:mb-2 drop-shadow-md leading-tight whitespace-nowrap"
             >
               Local markdowns.{' '}
               <motion.span
@@ -216,25 +243,15 @@ const Index = () => {
                 Real savings.
               </motion.span>
             </motion.h2>
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.4 }}
-              className="text-xs sm:text-sm text-primary-foreground/70 font-body mb-5 sm:mb-7 max-w-sm drop-shadow"
-            >
-              Pick a price. We'll find the best specials near you.
-            </motion.p>
-
+            {/* Find Markdowns Near Me CTA */}
             <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 0.6, type: 'spring' }}
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.05 }}
-              onClick={() => {
-                document.getElementById('price-section')?.scrollIntoView({ behavior: 'smooth' });
-              }}
-              className="flex items-center gap-2 px-6 py-3 sm:px-8 sm:py-3.5 rounded-full bg-accent text-accent-foreground font-body font-bold text-sm sm:text-base shadow-elevated cursor-pointer"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, type: 'spring', stiffness: 300, damping: 20 }}
+              whileTap={{ scale: 0.97 }}
+              whileHover={{ scale: 1.03 }}
+              onClick={() => goToRestaurants()}
+              className="flex items-center justify-center gap-2 mt-8 sm:mt-10 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-accent text-accent-foreground font-body font-bold text-sm sm:text-base shadow-food cursor-pointer"
             >
               <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               Find Markdowns Near Me
@@ -245,28 +262,55 @@ const Index = () => {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1, y: [0, 6, 0] }}
               transition={{ delay: 1.2, y: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' } }}
-              className="absolute bottom-4 sm:bottom-6"
+              className="absolute bottom-3 sm:bottom-5"
             >
               <ChevronDown className="w-5 h-5 text-primary-foreground/50" />
             </motion.div>
           </motion.div>
         </section>
 
-        {/* Price/Value Selection */}
-        <section id="price-section" className="w-full bg-card border-b border-border overflow-hidden">
-          <div className="max-w-lg mx-auto px-4 py-8 sm:py-12">
+        {/* Price/Value Selection — first interaction */}
+        <section id="price-section" className="w-full bg-gradient-to-b from-card to-background overflow-hidden">
+          <div className="max-w-2xl mx-auto px-4 py-6 sm:py-12">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              className="text-center mb-6 sm:mb-8"
+              className="text-center mb-5 sm:mb-8"
             >
-              <h3 className="text-xl sm:text-2xl font-display text-foreground mb-1">
+              <h3 className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-foreground mb-1.5">
                 Pick your price
               </h3>
-              <p className="text-sm font-body text-muted-foreground">
+              <p className="text-sm sm:text-base font-body text-muted-foreground">
                 Tap any range to see matching deals instantly
               </p>
+            </motion.div>
+
+            {/* Zip code input */}
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: 0.1 }}
+              className="flex items-center gap-2 mb-5 sm:mb-6 px-4 py-2.5 rounded-xl border border-border bg-muted/40 focus-within:border-accent/50 focus-within:bg-card transition-all max-w-xs mx-auto"
+            >
+              <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
+              <input
+                value={zipCode}
+                onChange={(e) => saveZip(e.target.value)}
+                placeholder="Enter zip code"
+                inputMode="numeric"
+                maxLength={5}
+                className="bg-transparent text-sm font-body text-foreground placeholder:text-muted-foreground outline-none w-full"
+              />
+              {zipCode && (
+                <button
+                  onClick={() => saveZip('')}
+                  className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer"
+                >
+                  <span className="text-xs">✕</span>
+                </button>
+              )}
             </motion.div>
             <div className="flex flex-col gap-2.5 sm:gap-3 w-full">
               {PRICE_RANGES.map((price, i) => {
@@ -285,20 +329,20 @@ const Index = () => {
                         goToRestaurants(price);
                       }
                     }}
-                    className={`flex items-center gap-3 sm:gap-4 w-full px-4 sm:px-6 py-4 sm:py-5 rounded-2xl border-2 transition-all cursor-pointer group ${
+                    className={`flex items-center gap-3 sm:gap-5 w-full px-4 sm:px-7 py-3.5 sm:py-6 rounded-2xl border-2 transition-all cursor-pointer group ${
                       isActive
                         ? 'border-accent bg-accent/15 shadow-lg ring-2 ring-accent/40'
-                        : 'border-border bg-muted/30 hover:bg-accent/10 hover:border-accent/50 shadow-sm hover:shadow-md'
+                        : 'border-border bg-card hover:bg-accent/10 hover:border-accent/50 shadow-card hover:shadow-food'
                     }`}
                   >
-                    <span className="text-2xl sm:text-3xl">{PRICE_RANGE_ICONS[price]}</span>
+                    <span className="text-2xl sm:text-4xl">{PRICE_RANGE_ICONS[price]}</span>
                     <div className="flex flex-col items-start flex-1 min-w-0">
-                      <span className={`text-base sm:text-lg font-display font-bold truncate ${
+                      <span className={`text-sm sm:text-xl font-display font-bold truncate ${
                         isActive ? 'text-foreground' : 'text-foreground/90 group-hover:text-foreground'
                       }`}>
                         {price}
                       </span>
-                      <span className="text-xs sm:text-sm font-body text-muted-foreground truncate">
+                      <span className="text-xs sm:text-base font-body text-muted-foreground truncate">
                         {PRICE_DESCRIPTIONS[price]}
                       </span>
                     </div>
@@ -343,7 +387,7 @@ const Index = () => {
             Add vibes or filters to narrow down your results.
           </motion.p>
 
-          {/* Vibe / Taste — horizontal scroll on mobile, centered on desktop */}
+          {/* Vibe / Taste */}
           <div className="w-full max-w-2xl mb-8">
             <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Vibe / Taste</p>
             <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
@@ -383,16 +427,16 @@ const Index = () => {
             )}
           </div>
 
-          {/* Savings type — horizontal scroll on mobile */}
+          {/* Savings type */}
           <div className="w-full max-w-2xl mb-8">
-            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Savings type</p>
+            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Favorites</p>
             <div className="flex gap-2 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
               {DEAL_TYPES.map((deal, i) => {
                 const isActive = selectedDealTypes.includes(deal);
                 return (
                   <motion.button
                     key={deal}
-                    initial={{ opacity: 0, y: 10 }}
+                    initial={{ opacity: 0, y: 8 }}
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ delay: 0.03 * i }}
@@ -426,7 +470,7 @@ const Index = () => {
             )}
           </div>
 
-          {/* Feeds — inline buttons instead of dropdown on mobile */}
+          {/* Group size */}
           <div className="w-full max-w-sm mb-8">
             <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Group size</p>
 
@@ -549,6 +593,35 @@ const Index = () => {
             )}
           </motion.div>
         </section>
+
+
+
+        {/* Footer */}
+        <footer className="w-full bg-foreground/5 border-t border-border">
+          <div className="max-w-2xl mx-auto px-4 py-8 sm:py-10">
+            <div className="flex flex-col items-center gap-4 text-center">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 rounded-lg bg-accent">
+                  <UtensilsCrossed className="w-4 h-4 text-accent-foreground" />
+                </div>
+                <span className="text-xl font-display text-foreground">FoodMan</span>
+              </div>
+              <p className="text-xs sm:text-sm font-body text-muted-foreground max-w-sm">
+                Discover the best food markdowns near you. Save more, eat better.
+              </p>
+              <div className="flex items-center gap-4 text-xs font-body text-muted-foreground">
+                <span>About</span>
+                <span className="w-1 h-1 rounded-full bg-border" />
+                <span>Contact</span>
+                <span className="w-1 h-1 rounded-full bg-border" />
+                <span>Privacy</span>
+              </div>
+              <p className="text-[10px] font-body text-muted-foreground/60 mt-2">
+                &copy; {new Date().getFullYear()} FoodMan. All rights reserved.
+              </p>
+            </div>
+          </div>
+        </footer>
       </motion.div>
     </div>
   );
