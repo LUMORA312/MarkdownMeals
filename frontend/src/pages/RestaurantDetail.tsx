@@ -82,7 +82,7 @@ export default function RestaurantDetail() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-3">
         <Loader2 className="w-8 h-8 text-accent animate-spin" />
-        <p className="text-sm text-muted-foreground font-body">Loading deals...</p>
+        <p className="text-base text-muted-foreground font-body">Loading deals...</p>
       </div>
     );
   }
@@ -93,10 +93,10 @@ export default function RestaurantDetail() {
         <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
           <Tag className="w-8 h-8 text-muted-foreground/50" />
         </div>
-        <p className="text-muted-foreground font-body text-center">Restaurant not found.</p>
+        <p className="text-base text-muted-foreground font-body text-center">Restaurant not found.</p>
         <button
           onClick={() => navigate(-1)}
-          className="text-sm font-body text-accent underline underline-offset-2 cursor-pointer py-2"
+          className="text-base font-body text-accent underline underline-offset-2 cursor-pointer py-2"
         >
           Go back
         </button>
@@ -128,7 +128,7 @@ export default function RestaurantDetail() {
 
           <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-destructive/90 backdrop-blur-sm">
             <Tag className="w-3 h-3 text-destructive-foreground" />
-            <span className="text-xs font-body font-bold text-destructive-foreground">
+            <span className="text-sm font-body font-bold text-destructive-foreground">
               {activeDealCount} deal{activeDealCount !== 1 ? 's' : ''}
             </span>
           </div>
@@ -136,17 +136,17 @@ export default function RestaurantDetail() {
 
         {/* Restaurant info overlay */}
         <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
-          <h1 className="text-2xl sm:text-3xl font-display text-primary-foreground leading-tight drop-shadow-md">
+          <h1 className="text-3xl sm:text-4xl font-display text-primary-foreground leading-tight drop-shadow-md">
             {restaurant.name}
           </h1>
           <div className="flex items-center gap-2 mt-1.5 flex-wrap">
             {restaurant.categories.map((c) => (
-              <span key={c} className="text-[11px] sm:text-xs px-2.5 py-0.5 rounded-full bg-primary-foreground/20 text-primary-foreground backdrop-blur-sm font-body">
+              <span key={c} className="text-xs sm:text-sm px-2.5 py-0.5 rounded-full bg-primary-foreground/20 text-primary-foreground backdrop-blur-sm font-body">
                 {c}
               </span>
             ))}
             {restaurant.distance > 0 && (
-              <span className="flex items-center gap-0.5 text-[11px] text-primary-foreground/70 font-body">
+              <span className="flex items-center gap-0.5 text-xs sm:text-sm text-primary-foreground/70 font-body">
                 <MapPin className="w-3 h-3" />
                 {restaurant.distance.toFixed(1)} mi
               </span>
@@ -159,15 +159,15 @@ export default function RestaurantDetail() {
       <div className="px-4 py-4 border-b border-border/50">
         <div className="max-w-2xl mx-auto flex flex-col items-center gap-2">
           <div className="flex items-center gap-2">
-            <h2 className="text-base font-display text-foreground">Active Deals</h2>
+            <h2 className="text-lg sm:text-xl font-display text-foreground">Active Deals</h2>
             {activeDealCount > 0 && (
-              <span className="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-accent text-accent-foreground text-xs font-body font-bold">
+              <span className="inline-flex items-center justify-center min-w-[24px] h-[24px] px-1.5 rounded-full bg-accent text-accent-foreground text-sm font-body font-bold">
                 {activeDealCount}
               </span>
             )}
           </div>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-xs font-body font-semibold text-accent">
-            <span className="text-sm">👆</span>
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-sm font-body font-semibold text-accent">
+            <span className="text-base">👆</span>
             Tap any deal to claim it
           </span>
         </div>
@@ -189,7 +189,7 @@ export default function RestaurantDetail() {
               className="flex flex-col items-center gap-4 px-8 py-6 rounded-2xl bg-card shadow-elevated"
             >
               <Loader2 className="w-7 h-7 text-accent animate-spin" />
-              <p className="text-sm font-body font-medium text-foreground">Opening deal...</p>
+              <p className="text-base font-body font-medium text-foreground">Opening deal...</p>
               <div className="w-48 h-1.5 rounded-full bg-muted overflow-hidden">
                 <motion.div
                   initial={{ width: '0%' }}
@@ -244,12 +244,12 @@ export default function RestaurantDetail() {
             <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
               <Tag className="w-8 h-8 text-muted-foreground/50" />
             </div>
-            <p className="text-sm text-muted-foreground font-body text-center max-w-xs">
+            <p className="text-base text-muted-foreground font-body text-center max-w-xs">
               No active deals match your filters right now. Check back soon!
             </p>
             <button
               onClick={() => navigate(-1)}
-              className="text-sm font-body text-accent underline underline-offset-2 cursor-pointer py-2"
+              className="text-base font-body text-accent underline underline-offset-2 cursor-pointer py-2"
             >
               Browse other restaurants
             </button>

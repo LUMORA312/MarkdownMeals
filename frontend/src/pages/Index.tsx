@@ -469,7 +469,7 @@ const Index = () => {
           {/* Eating Style */}
           <div className="w-full max-w-2xl mb-8">
             <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Eating Style</p>
-            <div className="flex gap-2 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center px-2 sm:px-0 pb-1">
               {EATING_STYLES.map((style, i) => {
                 const isActive = selectedStyle === style;
                 return (
@@ -481,18 +481,18 @@ const Index = () => {
                     transition={{ delay: 0.03 * i }}
                     whileTap={{ scale: 0.93 }}
                     onClick={() => setSelectedStyle(isActive ? null : style)}
-                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
+                    className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-full border transition-all cursor-pointer text-xs sm:text-sm font-body font-semibold whitespace-nowrap ${
                       isActive
                         ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
                         : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
                     }`}
                   >
-                    <span className="text-base">{EATING_STYLE_ICONS[style]}</span>
+                    <span className="text-sm sm:text-base">{EATING_STYLE_ICONS[style]}</span>
                     {style}
                   </motion.button>
                 );
               })}
-              <div className="w-px h-8 bg-border my-auto mx-0.5 shrink-0" />
+              <div className="hidden sm:block w-px h-8 bg-border my-auto mx-0.5 shrink-0" />
               <motion.button
                 initial={{ opacity: 0, y: 8 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -500,7 +500,7 @@ const Index = () => {
                 transition={{ delay: 0.03 * EATING_STYLES.length }}
                 whileTap={{ scale: 0.93 }}
                 onClick={() => setVeganOnly((prev) => !prev)}
-                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
+                className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-full border transition-all cursor-pointer text-xs sm:text-sm font-body font-semibold whitespace-nowrap ${
                   veganOnly
                     ? 'border-green-500 bg-green-500/15 text-green-700 ring-1 ring-green-500/30 shadow-sm'
                     : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
