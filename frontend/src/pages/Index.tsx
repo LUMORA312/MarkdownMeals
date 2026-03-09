@@ -1,17 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
-import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS, Feeds, FEEDS_OPTIONS } from '@/types/food';
+import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS, Feeds, FEEDS_OPTIONS, EatingStyle, EATING_STYLES, EATING_STYLE_ICONS } from '@/types/food';
 import { TasteTile } from '@/components/TasteTile';
 import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check, Sparkles } from 'lucide-react';
 
 const FLOATING_CARDS = [
-  { image: '/images/burger.jpg', label: '$7.99', x: '8%', y: '18%', rotate: -8, delay: 0.3 },
-  { image: '/images/pizza.jpg', label: 'BOGO', x: '78%', y: '12%', rotate: 6, delay: 0.5 },
-  { image: '/images/tacos.jpg', label: '$6.99', x: '5%', y: '62%', rotate: 12, delay: 0.7 },
-  { image: '/images/poke-bowl.jpg', label: '50% Off', x: '82%', y: '55%', rotate: -5, delay: 0.4 },
-  { image: '/images/salmon.jpg', label: '$14.99', x: '70%', y: '78%', rotate: 8, delay: 0.6 },
-  { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '15%', y: '82%', rotate: -12, delay: 0.8 },
+  { image: '/images/burger.jpg', label: '$7.99', x: '5%', y: '10%', rotate: -8, delay: 0.3 },
+  { image: '/images/pizza.jpg', label: 'BOGO', x: '78%', y: '8%', rotate: 6, delay: 0.5 },
+  { image: '/images/tacos.jpg', label: '$6.99', x: '3%', y: '50%', rotate: 12, delay: 0.7 },
+  { image: '/images/poke-bowl.jpg', label: '50% Off', x: '82%', y: '42%', rotate: -5, delay: 0.4 },
+  { image: '/images/salmon.jpg', label: '$14.99', x: '75%', y: '68%', rotate: 8, delay: 0.6 },
+  { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '8%', y: '72%', rotate: -12, delay: 0.8 },
 ];
 
 const PRICE_DESCRIPTIONS: Record<PriceRange, string> = {
@@ -29,6 +29,8 @@ const Index = () => {
   const [selectedTastes, setSelectedTastes] = useState<PrimaryTaste[]>([]);
   const [selectedDealTypes, setSelectedDealTypes] = useState<DealType[]>([]);
   const [selectedFeeds, setSelectedFeeds] = useState<Feeds | null>(null);
+  const [selectedStyle, setSelectedStyle] = useState<EatingStyle | null>(null);
+  const [veganOnly, setVeganOnly] = useState(false);
   const [feedsOpen, setFeedsOpen] = useState(false);
   const [zipCode, setZipCode] = useState(() => localStorage.getItem('foodman_zip') || '');
   const [showNav, setShowNav] = useState(false);
@@ -75,16 +77,23 @@ const Index = () => {
     if (selectedTastes.length > 0) params.set('tastes', selectedTastes.join(','));
     if (selectedDealTypes.length > 0) params.set('deals', selectedDealTypes.join(','));
     if (selectedFeeds) params.set('feeds', selectedFeeds);
+    if (selectedStyle) params.set('style', selectedStyle);
+    if (veganOnly) params.set('vegan', '1');
     if (zipCode.length === 5) params.set('zip', zipCode);
     const qs = params.toString();
     navigate(`/restaurants${qs ? `?${qs}` : ''}`);
   };
 
-  const hasFilters = selectedPrice || selectedTastes.length > 0 || selectedDealTypes.length > 0 || selectedFeeds;
-  const filterCount = (selectedPrice ? 1 : 0) + selectedTastes.length + selectedDealTypes.length + (selectedFeeds ? 1 : 0);
+  const hasFilters = selectedPrice || selectedTastes.length > 0 || selectedDealTypes.length > 0 || selectedFeeds || selectedStyle || veganOnly;
+  const filterCount = (selectedPrice ? 1 : 0) + selectedTastes.length + selectedDealTypes.length + (selectedFeeds ? 1 : 0) + (selectedStyle ? 1 : 0) + (veganOnly ? 1 : 0);
 
   return (
-    <div className="min-h-screen bg-background safe-bottom">
+    <div className="relative min-h-screen bg-background safe-bottom">
+      {/* Full-page background image — different from hero steak */}
+      <div className="fixed inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.06 }}
+      />
+
       {/* Sticky Nav */}
       <AnimatePresence>
         {showNav && (
@@ -271,8 +280,11 @@ const Index = () => {
           </motion.div>
         </section>
 
+        {/* Gradient divider */}
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+
         {/* Price/Value Selection — first interaction */}
-        <section id="price-section" className="w-full bg-gradient-to-b from-card via-accent/5 to-accent/10 overflow-hidden">
+        <section id="price-section" className="w-full overflow-hidden">
           <div className="max-w-2xl mx-auto px-4 py-6 sm:py-12">
             <motion.div
               initial={{ opacity: 0, y: 10 }}
@@ -362,15 +374,38 @@ const Index = () => {
         </section>
 
         {/* Optional Refinements */}
-        <section id="refine-section" className="flex flex-col items-center px-4 py-10 sm:py-12 bg-background">
+        <section id="refine-section" className="flex flex-col items-center px-4 py-10 sm:py-12">
+          <div className="flex flex-col items-center w-full">
+          {/* Floating food thumbnails */}
+          <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6">
+            {[
+              { src: '/images/poke-bowl.jpg', rotate: -6, delay: 0.1 },
+              { src: '/images/tacos.jpg', rotate: 4, delay: 0.2 },
+              { src: '/images/salmon.jpg', rotate: -3, delay: 0.3 },
+              { src: '/images/pad-thai.jpg', rotate: 5, delay: 0.4 },
+              { src: '/images/chocolate-cake.jpg', rotate: -5, delay: 0.5 },
+            ].map((img, i) => (
+              <motion.div
+                key={i}
+                initial={{ opacity: 0, scale: 0, rotate: 0 }}
+                whileInView={{ opacity: 1, scale: 1, rotate: img.rotate }}
+                viewport={{ once: true }}
+                transition={{ delay: img.delay, type: 'spring', stiffness: 250, damping: 18 }}
+                className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl overflow-hidden shadow-card border-2 border-background"
+              >
+                <img src={img.src} alt="" className="w-full h-full object-cover" />
+              </motion.div>
+            ))}
+          </div>
+
           <motion.div
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="flex items-center gap-2 mb-2"
+            className="flex items-center gap-2.5 mb-4"
           >
-            <span className="flex items-center gap-1 text-xs font-body font-medium text-muted-foreground px-2.5 py-1 rounded-full bg-muted border border-border">
-              <Sparkles className="w-3 h-3" />
+            <span className="flex items-center gap-1.5 text-sm font-body font-bold text-accent px-4 py-1.5 rounded-full bg-accent/10 border border-accent/25 shadow-sm">
+              <Sparkles className="w-4 h-4" />
               Optional
             </span>
           </motion.div>
@@ -378,7 +413,7 @@ const Index = () => {
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-2xl sm:text-3xl md:text-4xl font-display text-foreground mb-1.5"
+            className="text-3xl sm:text-4xl md:text-5xl font-display font-bold text-foreground mb-2"
           >
             Refine your feed
           </motion.h2>
@@ -387,14 +422,14 @@ const Index = () => {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 0.1 }}
-            className="text-sm text-muted-foreground font-body text-center mb-8 max-w-xs sm:max-w-sm"
+            className="text-base sm:text-lg font-body font-medium text-foreground/70 text-center mb-8 max-w-xs sm:max-w-md"
           >
-            Add vibes or filters to narrow down your results.
+            Mix and match vibes, styles, and dietary preferences to find your perfect meal.
           </motion.p>
 
           {/* Vibe / Taste */}
           <div className="w-full max-w-2xl mb-8">
-            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Vibe / Taste</p>
+            <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Vibe / Taste</p>
             <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
               {PRIMARY_TASTES.map((taste, i) => (
                 <motion.div
@@ -432,9 +467,69 @@ const Index = () => {
             )}
           </div>
 
+          {/* Eating Style */}
+          <div className="w-full max-w-2xl mb-8">
+            <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Eating Style</p>
+            <div className="flex gap-2 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
+              {EATING_STYLES.map((style, i) => {
+                const isActive = selectedStyle === style;
+                return (
+                  <motion.button
+                    key={style}
+                    initial={{ opacity: 0, y: 8 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.03 * i }}
+                    whileTap={{ scale: 0.93 }}
+                    onClick={() => setSelectedStyle(isActive ? null : style)}
+                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
+                      isActive
+                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
+                        : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
+                    }`}
+                  >
+                    <span className="text-base">{EATING_STYLE_ICONS[style]}</span>
+                    {style}
+                  </motion.button>
+                );
+              })}
+              <div className="w-px h-8 bg-border my-auto mx-0.5 shrink-0" />
+              <motion.button
+                initial={{ opacity: 0, y: 8 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.03 * EATING_STYLES.length }}
+                whileTap={{ scale: 0.93 }}
+                onClick={() => setVeganOnly((prev) => !prev)}
+                className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
+                  veganOnly
+                    ? 'border-green-500 bg-green-500/15 text-green-700 ring-1 ring-green-500/30 shadow-sm'
+                    : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
+                }`}
+              >
+                <span className="text-base">🌱</span>
+                Vegan
+              </motion.button>
+            </div>
+            {(selectedStyle || veganOnly) && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex justify-center mt-2"
+              >
+                <button
+                  onClick={() => { setSelectedStyle(null); setVeganOnly(false); }}
+                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+                >
+                  Clear
+                </button>
+              </motion.div>
+            )}
+          </div>
+
           {/* Savings type */}
           <div className="w-full max-w-2xl mb-8">
-            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Favorites</p>
+            <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Favorites</p>
             <div className="flex gap-2 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
               {DEAL_TYPES.map((deal, i) => {
                 const isActive = selectedDealTypes.includes(deal);
@@ -447,10 +542,10 @@ const Index = () => {
                     transition={{ delay: 0.03 * i }}
                     whileTap={{ scale: 0.93 }}
                     onClick={() => toggleDealType(deal)}
-                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-medium whitespace-nowrap flex-shrink-0 ${
+                    className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
                       isActive
                         ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
-                        : 'border-border bg-muted/50 text-foreground/70 hover:bg-accent/10 hover:border-accent/40'
+                        : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
                     }`}
                   >
                     <span className="text-base">{DEAL_ICONS[deal]}</span>
@@ -477,7 +572,7 @@ const Index = () => {
 
           {/* Group size */}
           <div className="w-full max-w-sm mb-8">
-            <p className="text-xs font-body font-semibold text-muted-foreground text-center mb-3 uppercase tracking-widest">Group size</p>
+            <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Group size</p>
 
             {/* Mobile: horizontal pill buttons */}
             <div className="flex sm:hidden gap-2 justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 pb-1">
@@ -489,10 +584,10 @@ const Index = () => {
                     key={feeds}
                     whileTap={{ scale: 0.93 }}
                     onClick={() => setSelectedFeeds(isActive ? null : feeds)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-medium whitespace-nowrap flex-shrink-0 ${
+                    className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
                       isActive
                         ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
-                        : 'border-border bg-muted/50 text-foreground/70'
+                        : 'border-border bg-muted/50 text-foreground'
                     }`}
                   >
                     <span className="text-sm">{icons[feeds]}</span>
@@ -515,7 +610,7 @@ const Index = () => {
               >
                 <div className="flex items-center gap-3">
                   <Users className={`w-5 h-5 ${selectedFeeds ? 'text-accent' : 'text-muted-foreground'}`} />
-                  <span className={`text-sm font-body font-semibold ${selectedFeeds ? 'text-foreground' : 'text-muted-foreground'}`}>
+                  <span className={`text-sm font-body font-semibold ${selectedFeeds ? 'text-foreground' : 'text-foreground'}`}>
                     {selectedFeeds ? `Feeds ${selectedFeeds} people` : 'Select group size'}
                   </span>
                 </div>
@@ -589,6 +684,7 @@ const Index = () => {
               <ArrowRight className="w-4 h-4" />
             </motion.button>
           </motion.div>
+          </div>
         </section>
 
 

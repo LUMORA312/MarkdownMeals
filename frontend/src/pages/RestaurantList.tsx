@@ -242,8 +242,14 @@ export default function RestaurantList() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      className="min-h-screen bg-background safe-bottom"
+      className="relative min-h-screen bg-background safe-bottom"
     >
+      {/* Full-page background image */}
+      <div className="fixed inset-0 z-0 pointer-events-none"
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.06 }}
+      />
+
+      <div className="relative z-10">
       <div className="max-w-2xl mx-auto px-4 py-4 sm:py-6">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
@@ -414,7 +420,9 @@ export default function RestaurantList() {
             </AnimatePresence>
           </button>
         </div>
+      </div>
 
+      <div className="max-w-2xl mx-auto px-4">
         {/* Loading state */}
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 gap-3">
@@ -513,6 +521,7 @@ export default function RestaurantList() {
             )}
           </motion.div>
         )}
+      </div>
       </div>
 
       {/* Scroll button — right side, swaps direction */}
