@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DishCard } from '@/components/DishCard';
 import { useRestaurant, useCreateToken } from '@/hooks/use-api';
 import { Feeds, PRICE_RANGE_MAX, PriceRange, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, EatingStyle, Category } from '@/types/food';
-import { ArrowLeft, Tag, Loader2, MapPin } from 'lucide-react';
+import { ArrowLeft, Tag, Loader2, MapPin, ChevronUp, ChevronDown } from 'lucide-react';
 
 export default function RestaurantDetail() {
   const { id } = useParams<{ id: string }>();
@@ -21,6 +21,43 @@ export default function RestaurantDetail() {
   const { data: restaurant, isLoading } = useRestaurant(id);
   const createTokenMutation = useCreateToken();
   const [loadingDishId, setLoadingDishId] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  const activeDishes = restaurant?.dishes.filter((d) => {
+    if (d.dealExpiresAt <= Date.now()) return false;
+    if (feedsFilter && d.feeds !== feedsFilter) return false;
+    if (priceMax && d.price > priceMax) return false;
+    if (tasteFilters.length > 0 && !tasteFilters.includes(d.primaryTaste as PrimaryTaste)) return false;
+    if (dealFilters.length > 0 && (!d.dealType || !dealFilters.includes(d.dealType as DealType))) return false;
+    if (styleFilter && d.category !== (styleFilter as Category)) return false;
+    return true;
+  }) ?? [];
+  const activeDealCount = activeDishes.length;
+  const visibleDishes = activeDishes.slice(0, visibleCount);
+  const hasMore = visibleCount < activeDishes.length;
+
+  const loadMore = useCallback(() => {
+    if (hasMore) setVisibleCount((prev) => prev + 10);
+  }, [hasMore]);
+
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => { if (entry.isIntersecting) loadMore(); },
+      { rootMargin: '200px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const handleDealTap = async (dishId: string) => {
     if (!restaurant || loadingDishId) return;
@@ -66,17 +103,6 @@ export default function RestaurantDetail() {
       </div>
     );
   }
-
-  const activeDishes = restaurant.dishes.filter((d) => {
-    if (d.dealExpiresAt <= Date.now()) return false;
-    if (feedsFilter && d.feeds !== feedsFilter) return false;
-    if (priceMax && d.price > priceMax) return false;
-    if (tasteFilters.length > 0 && !tasteFilters.includes(d.primaryTaste as PrimaryTaste)) return false;
-    if (dealFilters.length > 0 && (!d.dealType || !dealFilters.includes(d.dealType as DealType))) return false;
-    if (styleFilter && d.category !== (styleFilter as Category)) return false;
-    return true;
-  });
-  const activeDealCount = activeDishes.length;
 
   return (
     <div className="min-h-screen bg-background safe-bottom">
@@ -175,21 +201,35 @@ export default function RestaurantDetail() {
       {/* Dish Grid */}
       <div className="px-4 py-5 pb-10 max-w-2xl mx-auto">
         {activeDishes.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-            {activeDishes.map((dish, i) => (
-              <motion.div
-                key={dish.id}
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.04 }}
-              >
-                <DishCard
-                  dish={dish}
-                  onTap={() => handleDealTap(dish.id)}
-                />
-              </motion.div>
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
+              {visibleDishes.map((dish, i) => (
+                <motion.div
+                  key={dish.id}
+                  initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                  whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                  viewport={{ once: true, margin: '-40px' }}
+                  transition={{
+                    duration: 0.45,
+                    delay: (i % 10) * 0.06,
+                    ease: [0.25, 0.1, 0.25, 1],
+                  }}
+                >
+                  <DishCard
+                    dish={dish}
+                    onTap={() => handleDealTap(dish.id)}
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Load more sentinel */}
+            {hasMore && (
+              <div ref={loadMoreRef} className="flex justify-center py-8">
+                <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />
+              </div>
+            )}
+          </>
         ) : (
           <motion.div
             initial={{ opacity: 0 }}
@@ -211,6 +251,39 @@ export default function RestaurantDetail() {
           </motion.div>
         )}
       </div>
+
+      {/* Scroll button — right side, swaps direction */}
+      <AnimatePresence mode="wait">
+        {showScrollTop ? (
+          <motion.button
+            key="scroll-up"
+            initial={{ opacity: 0, y: 20, scale: 0.6 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.6 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-accent text-accent-foreground shadow-elevated flex items-center justify-center cursor-pointer"
+          >
+            <ChevronUp className="w-5 h-5" />
+          </motion.button>
+        ) : activeDishes.length > 0 ? (
+          <motion.button
+            key="scroll-down"
+            initial={{ opacity: 0, y: -20, scale: 0.6 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.6 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
+            onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-accent text-accent-foreground shadow-elevated flex items-center justify-center cursor-pointer"
+          >
+            <ChevronDown className="w-5 h-5" />
+          </motion.button>
+        ) : null}
+      </AnimatePresence>
     </div>
   );
 }

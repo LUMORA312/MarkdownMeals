@@ -9,7 +9,7 @@ import {
 } from '@/types/food';
 import { RestaurantCard } from '@/components/RestaurantCard';
 import { useRestaurants, useFavorites, useToggleFavorite } from '@/hooks/use-api';
-import { Search, X, ArrowUpDown, Heart, Loader2, ArrowLeft } from 'lucide-react';
+import { Search, X, ArrowUpDown, Heart, Loader2, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 
 type SortOption = 'default' | 'alpha' | 'dishes';
 const PAGE_SIZE = 12;
@@ -78,6 +78,13 @@ export default function RestaurantList() {
   const searchBarRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const [isSearchSticky, setIsSearchSticky] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => setShowScrollTop(window.scrollY > 400);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const priceFilter = searchParams.get('price') as PriceRange | null;
   const priceMax = priceFilter ? PRICE_RANGE_MAX[priceFilter] : null;
@@ -420,13 +427,24 @@ export default function RestaurantList() {
         {!isLoading && visibleList.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {visibleList.map((restaurant, i) => (
-              <RestaurantCard
+              <motion.div
                 key={restaurant.id}
-                restaurant={restaurant}
-                index={i}
-                favorited={favorites.has(restaurant.id)}
-                onToggleFavorite={toggleFavorite}
-              />
+                initial={{ opacity: 0, y: 24, scale: 0.97 }}
+                whileInView={{ opacity: 1, y: 0, scale: 1 }}
+                viewport={{ once: true, margin: '-40px' }}
+                transition={{
+                  duration: 0.45,
+                  delay: (i % PAGE_SIZE) * 0.06,
+                  ease: [0.25, 0.1, 0.25, 1],
+                }}
+              >
+                <RestaurantCard
+                  restaurant={restaurant}
+                  index={i}
+                  favorited={favorites.has(restaurant.id)}
+                  onToggleFavorite={toggleFavorite}
+                />
+              </motion.div>
             ))}
           </div>
         )}
@@ -496,6 +514,39 @@ export default function RestaurantList() {
           </motion.div>
         )}
       </div>
+
+      {/* Scroll button — right side, swaps direction */}
+      <AnimatePresence mode="wait">
+        {showScrollTop ? (
+          <motion.button
+            key="scroll-up"
+            initial={{ opacity: 0, y: 20, scale: 0.6 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.6 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-accent text-accent-foreground shadow-elevated flex items-center justify-center cursor-pointer"
+          >
+            <ChevronUp className="w-5 h-5" />
+          </motion.button>
+        ) : filteredList.length > 0 ? (
+          <motion.button
+            key="scroll-down"
+            initial={{ opacity: 0, y: -20, scale: 0.6 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.6 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
+            onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-accent text-accent-foreground shadow-elevated flex items-center justify-center cursor-pointer"
+          >
+            <ChevronDown className="w-5 h-5" />
+          </motion.button>
+        ) : null}
+      </AnimatePresence>
     </motion.div>
   );
 }

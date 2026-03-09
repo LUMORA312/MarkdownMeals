@@ -36,9 +36,9 @@ export function DishCard({ dish, onTap }: DishCardProps) {
         />
 
         {/* Price badge — always visible */}
-        <div className="absolute top-1.5 right-1.5 sm:top-2 sm:right-2">
-          <div className="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full bg-accent/95 backdrop-blur-sm shadow-md">
-            <span className="text-xs sm:text-sm font-body font-extrabold text-accent-foreground">
+        <div className="absolute top-2 right-2">
+          <div className="px-2.5 py-1 rounded-full bg-accent/95 backdrop-blur-sm shadow-md">
+            <span className="text-sm font-body font-extrabold text-accent-foreground">
               ${dish.price.toFixed(2)}
             </span>
           </div>
@@ -46,9 +46,9 @@ export function DishCard({ dish, onTap }: DishCardProps) {
 
         {/* Deal type tag */}
         {dish.dealType && (
-          <div className="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 flex items-center gap-0.5 px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-full bg-destructive/90 backdrop-blur-sm">
-            <span className="text-[10px] sm:text-xs">{DEAL_ICONS[dish.dealType]}</span>
-            <span className="text-[8px] sm:text-[10px] font-body font-bold text-destructive-foreground hidden sm:inline">{dish.dealType}</span>
+          <div className="absolute top-2 left-2 flex items-center gap-0.5 px-2 py-1 rounded-full bg-destructive/90 backdrop-blur-sm">
+            <span className="text-xs">{DEAL_ICONS[dish.dealType]}</span>
+            <span className="text-[10px] font-body font-bold text-destructive-foreground">{dish.dealType}</span>
           </div>
         )}
 
@@ -59,30 +59,30 @@ export function DishCard({ dish, onTap }: DishCardProps) {
       </div>
 
       {/* Info section below image */}
-      <div className="p-2 sm:p-2.5">
-        <p className="text-xs sm:text-sm font-body font-semibold text-foreground leading-tight line-clamp-2">
+      <div className="p-2.5 sm:p-3">
+        <p className="text-sm sm:text-base font-body font-semibold text-foreground leading-tight line-clamp-2">
           {dish.name}
         </p>
 
-        <div className="flex items-center gap-1.5 mt-1.5 flex-wrap">
+        <div className="flex items-center gap-1.5 mt-2 flex-wrap">
           {/* Feeds */}
-          <span className="flex items-center gap-0.5 text-[10px] sm:text-xs font-body text-muted-foreground">
-            <span className="text-[10px]">👥</span> {dish.feeds}
+          <span className="flex items-center gap-0.5 text-xs font-body text-muted-foreground">
+            <span className="text-xs">👥</span> {dish.feeds}
           </span>
 
           {/* Expiry */}
           {timeLeft && (
-            <span className={`flex items-center gap-0.5 text-[10px] sm:text-xs font-body font-medium ${
+            <span className={`flex items-center gap-0.5 text-xs font-body font-medium ${
               isUrgent ? 'text-destructive' : 'text-muted-foreground'
             }`}>
-              <Clock className="w-2.5 h-2.5 sm:w-3 sm:h-3" />
+              <Clock className="w-3 h-3" />
               {timeLeft}
             </span>
           )}
 
           {/* Modifiers */}
           {dish.modifiers.map((m) => (
-            <span key={m} className="text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-body font-medium">
+            <span key={m} className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-body font-medium">
               {m}
             </span>
           ))}
