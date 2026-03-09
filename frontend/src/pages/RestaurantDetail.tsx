@@ -3,7 +3,7 @@ import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DishCard } from '@/components/DishCard';
 import { useRestaurant, useCreateToken } from '@/hooks/use-api';
-import { Feeds, PRICE_RANGE_MAX, PriceRange } from '@/types/food';
+import { Feeds, PRICE_RANGE_MAX, PriceRange, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, EatingStyle, Category } from '@/types/food';
 import { ArrowLeft, Tag, Loader2, MapPin } from 'lucide-react';
 
 export default function RestaurantDetail() {
@@ -13,6 +13,11 @@ export default function RestaurantDetail() {
   const feedsFilter = searchParams.get('feeds') as Feeds | null;
   const priceFilter = searchParams.get('price') as PriceRange | null;
   const priceMax = priceFilter ? PRICE_RANGE_MAX[priceFilter] : null;
+  const tastesParam = searchParams.get('tastes');
+  const tasteFilters = tastesParam ? tastesParam.split(',').filter((t): t is PrimaryTaste => PRIMARY_TASTES.includes(t as PrimaryTaste)) : [];
+  const dealsParam = searchParams.get('deals');
+  const dealFilters = dealsParam ? dealsParam.split(',').filter((d): d is DealType => DEAL_TYPES.includes(d as DealType)) : [];
+  const styleFilter = searchParams.get('style') as EatingStyle | null;
   const { data: restaurant, isLoading } = useRestaurant(id);
   const createTokenMutation = useCreateToken();
   const [loadingDishId, setLoadingDishId] = useState<string | null>(null);
@@ -66,6 +71,9 @@ export default function RestaurantDetail() {
     if (d.dealExpiresAt <= Date.now()) return false;
     if (feedsFilter && d.feeds !== feedsFilter) return false;
     if (priceMax && d.price > priceMax) return false;
+    if (tasteFilters.length > 0 && !tasteFilters.includes(d.primaryTaste as PrimaryTaste)) return false;
+    if (dealFilters.length > 0 && (!d.dealType || !dealFilters.includes(d.dealType as DealType))) return false;
+    if (styleFilter && d.category !== (styleFilter as Category)) return false;
     return true;
   });
   const activeDealCount = activeDishes.length;

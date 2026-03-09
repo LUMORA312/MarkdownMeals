@@ -5,7 +5,7 @@ import {
   PrimaryTaste, PRIMARY_TASTES, TASTE_ICONS,
   PriceRange, PRICE_RANGE_ICONS, PRICE_RANGE_MAX,
   EatingStyle, EATING_STYLES, EATING_STYLE_ICONS,
-  Restaurant, Feeds, Category,
+  DealType, Restaurant, Feeds, Category,
 } from '@/types/food';
 import { RestaurantCard } from '@/components/RestaurantCard';
 import { useRestaurants, useFavorites, useToggleFavorite } from '@/hooks/use-api';
@@ -101,7 +101,11 @@ export default function RestaurantList() {
   const [feedsFilter, setFeedsFilter] = useState<Feeds | null>(initialFeeds);
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
-  const { data: restaurants = [], isLoading } = useRestaurants({ search: searchQuery });
+  const { data: restaurants = [], isLoading } = useRestaurants({
+    search: searchQuery,
+    tastes: tasteTags.length > 0 ? tasteTags : undefined,
+    deals: dealFilters.length > 0 ? dealFilters as DealType[] : undefined,
+  });
   const { data: favoriteIds = [] } = useFavorites();
   const toggleFavoriteMutation = useToggleFavorite();
 
@@ -124,6 +128,18 @@ export default function RestaurantList() {
     setEatingStyle((prev) => (prev === style ? null : style));
     setVisibleCount(PAGE_SIZE);
   };
+
+  // Keep URL params in sync with current filter state
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (priceFilter) params.set('price', priceFilter);
+    if (tasteTags.length > 0) params.set('tastes', tasteTags.join(','));
+    if (dealFilters.length > 0) params.set('deals', dealFilters.join(','));
+    if (feedsFilter) params.set('feeds', feedsFilter);
+    if (zipCode) params.set('zip', zipCode);
+    if (eatingStyle) params.set('style', eatingStyle);
+    setSearchParams(params, { replace: true });
+  }, [priceFilter, tasteTags, dealFilters, feedsFilter, zipCode, eatingStyle, setSearchParams]);
 
   // Sticky search bar detection
   useEffect(() => {
