@@ -6,12 +6,12 @@ import { TasteTile } from '@/components/TasteTile';
 import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check, Sparkles } from 'lucide-react';
 
 const FLOATING_CARDS = [
-  { image: '/images/burger.jpg', label: '$7.99', x: '5%', y: '10%', rotate: -8, delay: 0.3 },
-  { image: '/images/pizza.jpg', label: 'BOGO', x: '78%', y: '8%', rotate: 6, delay: 0.5 },
-  { image: '/images/tacos.jpg', label: '$6.99', x: '3%', y: '50%', rotate: 12, delay: 0.7 },
-  { image: '/images/poke-bowl.jpg', label: '50% Off', x: '82%', y: '42%', rotate: -5, delay: 0.4 },
-  { image: '/images/salmon.jpg', label: '$14.99', x: '75%', y: '68%', rotate: 8, delay: 0.6 },
-  { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '8%', y: '72%', rotate: -12, delay: 0.8 },
+  { image: '/images/burger.jpg', label: '$7.99', x: '3%', y: '8%', rotate: -8, delay: 0.3 },
+  { image: '/images/pizza.jpg', label: 'BOGO', x: '82%', y: '5%', rotate: 6, delay: 0.5 },
+  { image: '/images/tacos.jpg', label: '$6.99', x: '2%', y: '42%', rotate: 12, delay: 0.7 },
+  { image: '/images/poke-bowl.jpg', label: '50% Off', x: '84%', y: '40%', rotate: -5, delay: 0.4 },
+  { image: '/images/salmon.jpg', label: '$14.99', x: '78%', y: '68%', rotate: 8, delay: 0.6 },
+  { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '5%', y: '70%', rotate: -12, delay: 0.8 },
 ];
 
 const PRICE_DESCRIPTIONS: Record<PriceRange, string> = {
@@ -146,8 +146,7 @@ const Index = () => {
         animate={{ opacity: 1 }}
         className="min-h-screen flex flex-col"
       >
-        {/* Hero — shorter on mobile, parallax zoom */}
-        <section ref={heroRef} id="hero-section" className="relative w-full h-[40vh] sm:h-[55vh] min-h-[280px] sm:min-h-[380px]">
+        <section ref={heroRef} id="hero-section" className="relative w-full h-[40vh] sm:h-[55vh] min-h-[280px] sm:min-h-[380px] overflow-hidden">
           {/* Parallax background — overflow-hidden only here */}
           <div className="absolute inset-0 overflow-hidden">
             <motion.div className="absolute inset-0" style={{ scale: heroScale }}>
@@ -159,42 +158,6 @@ const Index = () => {
               <div className="absolute inset-0 bg-gradient-to-b from-foreground/50 via-foreground/30 to-card" />
             </motion.div>
           </div>
-
-          {/* Floating food cards */}
-          {FLOATING_CARDS.map((card, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, scale: 0, rotate: 0 }}
-              animate={{ opacity: 1, scale: 1, rotate: card.rotate }}
-              transition={{ delay: card.delay, type: 'spring', stiffness: 200, damping: 15 }}
-              className="absolute hidden sm:block"
-              style={{ left: card.x, top: card.y, opacity: heroOpacity as unknown as number }}
-            >
-              <motion.button
-                animate={{ y: [0, -10, 0], rotate: [0, -5, 5, -3, 0] }}
-                transition={{
-                  y: { duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut' },
-                  rotate: { duration: 4 + i * 0.3, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' },
-                }}
-                whileHover={{ scale: 1.15 }}
-                whileTap={{ scale: 0.9 }}
-                onClick={() => document.getElementById('price-section')?.scrollIntoView({ behavior: 'smooth' })}
-                className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl shadow-elevated border-2 border-white/70 cursor-pointer overflow-visible"
-              >
-                <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden">
-                  <img src={card.image} alt={card.label} className="w-full h-full object-cover" />
-                  <div className="absolute inset-x-0 bottom-0 rounded-b-xl sm:rounded-b-2xl bg-destructive/90 px-1 py-0.5 sm:py-1">
-                    <p className="text-[8px] sm:text-[10px] lg:text-xs font-body font-bold text-destructive-foreground text-center">{card.label}</p>
-                  </div>
-                </div>
-                <motion.div
-                  animate={{ scale: [1, 1.4, 1] }}
-                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
-                  className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-destructive border-2 border-primary-foreground/50 z-10"
-                />
-              </motion.button>
-            </motion.div>
-          ))}
 
           {/* Dark mode toggle — top right of hero */}
           <div className="absolute top-4 right-4 z-20 safe-top">
@@ -277,6 +240,42 @@ const Index = () => {
             >
               <ChevronDown className="w-5 h-5 text-primary-foreground/50" />
             </motion.div>
+
+          {/* Floating food cards — inside hero */}
+          {FLOATING_CARDS.map((card, i) => (
+            <motion.div
+              key={i}
+              initial={{ opacity: 0, scale: 0, rotate: 0 }}
+              animate={{ opacity: 1, scale: 1, rotate: card.rotate }}
+              transition={{ delay: card.delay, type: 'spring', stiffness: 200, damping: 15 }}
+              className="absolute hidden sm:block z-20"
+              style={{ left: card.x, top: card.y, opacity: heroOpacity as unknown as number }}
+            >
+              <motion.button
+                animate={{ y: [0, -10, 0], rotate: [0, -5, 5, -3, 0] }}
+                transition={{
+                  y: { duration: 3 + i * 0.5, repeat: Infinity, ease: 'easeInOut' },
+                  rotate: { duration: 4 + i * 0.3, repeat: Infinity, repeatDelay: 1.5, ease: 'easeInOut' },
+                }}
+                whileHover={{ scale: 1.15 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => document.getElementById('price-section')?.scrollIntoView({ behavior: 'smooth' })}
+                className="relative w-16 h-16 sm:w-20 sm:h-20 lg:w-28 lg:h-28 rounded-xl sm:rounded-2xl shadow-elevated border-2 border-white/70 cursor-pointer overflow-visible"
+              >
+                <div className="relative w-full h-full rounded-xl sm:rounded-2xl overflow-hidden">
+                  <img src={card.image} alt={card.label} className="w-full h-full object-cover" />
+                  <div className="absolute inset-x-0 bottom-0 rounded-b-xl sm:rounded-b-2xl bg-destructive/90 px-1 py-0.5 sm:py-1">
+                    <p className="text-[8px] sm:text-[10px] lg:text-xs font-body font-bold text-destructive-foreground text-center">{card.label}</p>
+                  </div>
+                </div>
+                <motion.div
+                  animate={{ scale: [1, 1.4, 1] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: i * 0.3 }}
+                  className="absolute -top-1.5 -right-1.5 sm:-top-2 sm:-right-2 w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-destructive border-2 border-primary-foreground/50 z-10"
+                />
+              </motion.button>
+            </motion.div>
+          ))}
           </motion.div>
         </section>
 
