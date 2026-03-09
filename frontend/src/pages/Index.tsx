@@ -640,16 +640,6 @@ const Index = () => {
                 <p className="text-xs font-body text-muted-foreground/60">
                   &copy; {new Date().getFullYear()} FoodMan. All rights reserved.
                 </p>
-                <div className="flex items-center gap-1.5 text-xs font-body text-muted-foreground/50">
-                  <span>Made with</span>
-                  <motion.span
-                    animate={{ scale: [1, 1.2, 1] }}
-                    transition={{ duration: 1.5, repeat: Infinity, repeatDelay: 1 }}
-                  >
-                    🍔
-                  </motion.span>
-                  <span>for food lovers</span>
-                </div>
               </div>
             </div>
           </div>
