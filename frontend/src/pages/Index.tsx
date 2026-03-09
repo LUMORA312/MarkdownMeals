@@ -6,12 +6,12 @@ import { TasteTile } from '@/components/TasteTile';
 import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check, Sparkles } from 'lucide-react';
 
 const FLOATING_CARDS = [
-  { image: '/images/burger.jpg', label: '$7.99', x: '3%', y: '8%', rotate: -8, delay: 0.3 },
-  { image: '/images/pizza.jpg', label: 'BOGO', x: '82%', y: '5%', rotate: 6, delay: 0.5 },
-  { image: '/images/tacos.jpg', label: '$6.99', x: '2%', y: '42%', rotate: 12, delay: 0.7 },
-  { image: '/images/poke-bowl.jpg', label: '50% Off', x: '84%', y: '40%', rotate: -5, delay: 0.4 },
-  { image: '/images/salmon.jpg', label: '$14.99', x: '78%', y: '68%', rotate: 8, delay: 0.6 },
-  { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '5%', y: '70%', rotate: -12, delay: 0.8 },
+  { image: '/images/burger.jpg', label: '$7.99', x: '10%', y: '10%', rotate: -8, delay: 0.3 },
+  { image: '/images/pizza.jpg', label: 'BOGO', x: '78%', y: '10%', rotate: 6, delay: 0.5 },
+  { image: '/images/tacos.jpg', label: '$6.99', x: '8%', y: '49%', rotate: 12, delay: 0.7 },
+  { image: '/images/poke-bowl.jpg', label: '50% Off', x: '80%', y: '42%', rotate: -5, delay: 0.4 },
+  { image: '/images/salmon.jpg', label: '$14.99', x: '18%', y: '70%', rotate: 8, delay: 0.6 },
+  { image: '/images/chocolate-cake.jpg', label: 'BOGO', x: '73%', y: '70%', rotate: -12, delay: 0.8 },
 ];
 
 const PRICE_DESCRIPTIONS: Record<PriceRange, string> = {
