@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS, Feeds, FEEDS_OPTIONS, EatingStyle, EATING_STYLES, EATING_STYLE_ICONS } from '@/types/food';
 import { TasteTile } from '@/components/TasteTile';
-import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check, Sparkles } from 'lucide-react';
+import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check } from 'lucide-react';
 
 const FLOATING_CARDS = [
   { image: '/images/burger.jpg', label: '$7.99', x: '10%', y: '10%', rotate: -8, delay: 0.3 },
@@ -375,39 +375,6 @@ const Index = () => {
         {/* Optional Refinements */}
         <section id="refine-section" className="flex flex-col items-center px-4 py-10 sm:py-12">
           <div className="flex flex-col items-center w-full">
-          {/* Floating food thumbnails */}
-          <div className="flex items-center justify-center gap-3 sm:gap-4 mb-6">
-            {[
-              { src: '/images/poke-bowl.jpg', rotate: -6, delay: 0.1 },
-              { src: '/images/tacos.jpg', rotate: 4, delay: 0.2 },
-              { src: '/images/salmon.jpg', rotate: -3, delay: 0.3 },
-              { src: '/images/pad-thai.jpg', rotate: 5, delay: 0.4 },
-              { src: '/images/chocolate-cake.jpg', rotate: -5, delay: 0.5 },
-            ].map((img, i) => (
-              <motion.div
-                key={i}
-                initial={{ opacity: 0, scale: 0, rotate: 0 }}
-                whileInView={{ opacity: 1, scale: 1, rotate: img.rotate }}
-                viewport={{ once: true }}
-                transition={{ delay: img.delay, type: 'spring', stiffness: 250, damping: 18 }}
-                className="w-14 h-14 sm:w-18 sm:h-18 md:w-20 md:h-20 rounded-xl sm:rounded-2xl overflow-hidden shadow-card border-2 border-background"
-              >
-                <img src={img.src} alt="" className="w-full h-full object-cover" />
-              </motion.div>
-            ))}
-          </div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="flex items-center gap-2.5 mb-4"
-          >
-            <span className="flex items-center gap-1.5 text-sm font-body font-bold text-accent px-4 py-1.5 rounded-full bg-accent/10 border border-accent/25 shadow-sm">
-              <Sparkles className="w-4 h-4" />
-              Optional
-            </span>
-          </motion.div>
           <motion.h2
             initial={{ opacity: 0, y: 15 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -428,7 +395,7 @@ const Index = () => {
 
           {/* Vibe / Taste */}
           <div className="w-full max-w-2xl mb-8">
-            <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Vibe / Taste</p>
+            <p className="text-xl sm:text-2xl font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Vibe / Taste</p>
             <div className="flex gap-2 sm:gap-3 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
               {PRIMARY_TASTES.map((taste, i) => (
                 <motion.div
@@ -468,7 +435,7 @@ const Index = () => {
 
           {/* Eating Style */}
           <div className="w-full max-w-2xl mb-8">
-            <p className="text-sm sm:text-base font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Eating Style</p>
+            <p className="text-xl sm:text-2xl font-display font-bold text-foreground text-center mb-3 uppercase tracking-widest">Eating Style</p>
             <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center px-2 sm:px-0 pb-1">
               {EATING_STYLES.map((style, i) => {
                 const isActive = selectedStyle === style;

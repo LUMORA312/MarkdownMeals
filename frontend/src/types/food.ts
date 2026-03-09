@@ -18,15 +18,14 @@ export const PRICE_RANGE_MAX: Record<PriceRange, number | null> = {
   'Family Feast': null,
 };
 
-export type PrimaryTaste = 'Crispy' | 'Cheesy' | 'Spicy' | 'Fresh' | 'Sweet' | 'Saucy';
+export type PrimaryTaste = 'Crispy' | 'Cheesy' | 'Spicy' | 'Fresh' | 'Indulgence' | 'Saucy';
 export type Modifier = 'Vegan' | 'Vegetarian';
 export type Category =
   | 'Handheld'
   | 'Bowls & Plates'
   | 'Comfort'
   | 'Fresh & Light'
-  | 'Snacky'
-  | 'Dessert';
+  | 'Snacky';
 
 export type Feeds = '3–4' | '5–7' | '8–10' | '10+';
 export const FEEDS_OPTIONS: Feeds[] = ['3–4', '5–7', '8–10', '10+'];
@@ -92,11 +91,11 @@ export const RATING_TAGS = [
 
 export type RatingTag = typeof RATING_TAGS[number];
 
-export const PRIMARY_TASTES: PrimaryTaste[] = ['Crispy', 'Cheesy', 'Spicy', 'Fresh', 'Sweet', 'Saucy'];
+export const PRIMARY_TASTES: PrimaryTaste[] = ['Crispy', 'Cheesy', 'Spicy', 'Fresh', 'Indulgence', 'Saucy'];
 export const MODIFIERS: Modifier[] = ['Vegan', 'Vegetarian'];
 export const CATEGORIES: Category[] = [
   'Handheld', 'Bowls & Plates', 'Comfort',
-  'Fresh & Light', 'Snacky', 'Dessert',
+  'Fresh & Light', 'Snacky',
 ];
 
 export const TASTE_ICONS: Record<PrimaryTaste, string> = {
@@ -104,17 +103,16 @@ export const TASTE_ICONS: Record<PrimaryTaste, string> = {
   'Cheesy': '🧀',
   'Spicy': '🌶️',
   'Fresh': '🥗',
-  'Sweet': '🍰',
+  'Indulgence': '🍰',
   'Saucy': '🍝',
 };
 
 export type EatingStyle = Category;
-export const EATING_STYLES: EatingStyle[] = ['Handheld', 'Bowls & Plates', 'Comfort', 'Fresh & Light', 'Snacky', 'Dessert'];
+export const EATING_STYLES: EatingStyle[] = ['Handheld', 'Bowls & Plates', 'Comfort', 'Fresh & Light', 'Snacky'];
 export const EATING_STYLE_ICONS: Record<EatingStyle, string> = {
   'Handheld': '🌯',
   'Bowls & Plates': '🍲',
   'Comfort': '🍕',
   'Fresh & Light': '🥗',
   'Snacky': '🍿',
-  'Dessert': '🍰',
 };
