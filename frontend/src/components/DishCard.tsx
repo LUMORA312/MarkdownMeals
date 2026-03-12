@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Dish, DEAL_ICONS } from '@/types/food';
 import { Clock } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/api';
 
 interface DishCardProps {
   dish: Dish;
@@ -29,7 +30,7 @@ export function DishCard({ dish, onTap }: DishCardProps) {
       {/* Image */}
       <div className="relative aspect-square overflow-hidden">
         <img
-          src={dish.image}
+          src={resolveImageUrl(dish.image)}
           alt={dish.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"

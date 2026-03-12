@@ -6,6 +6,8 @@ import { Footer } from '@/components/Footer';
 import { useRestaurant } from '@/hooks/use-api';
 import { Feeds, PRICE_RANGE_MAX, PriceRange, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, EatingStyle, Category } from '@/types/food';
 import { ArrowLeft, Tag, Loader2, MapPin, ChevronUp, ChevronDown } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/api';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export default function RestaurantDetail() {
   const { id } = useParams<{ id: string }>();
@@ -64,12 +66,7 @@ export default function RestaurantDetail() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-3">
-        <Loader2 className="w-8 h-8 text-accent animate-spin" />
-        <p className="text-base text-muted-foreground font-body">Loading deals...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading deals..." />;
   }
 
   if (!restaurant) {
@@ -98,7 +95,7 @@ export default function RestaurantDetail() {
 
       {/* Hero */}
       <div className="relative h-44 sm:h-52 overflow-hidden">
-        <img src={restaurant.coverImage} alt={restaurant.name} className="w-full h-full object-cover" />
+        <img src={resolveImageUrl(restaurant.coverImage)} alt={restaurant.name} className="w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-foreground/10" />
 
         {/* Top bar */}

@@ -7,6 +7,25 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Partner {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  email        String   @unique
+  password     String
+  businessName String
+  phone        String?
+  createdAt    DateTime @default(now())
+
+  restaurants Restaurant[]
+}
+
+model Admin {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  email     String   @unique
+  password  String
+  name      String
+  createdAt DateTime @default(now())
+}
+
 model Restaurant {
   id          String   @id @default(auto()) @map("_id") @db.ObjectId
   name        String
@@ -15,6 +34,8 @@ model Restaurant {
   rating      Float?
   distance    Float     @default(0)
   createdAt   DateTime @default(now())
+  partnerId   String?  @db.ObjectId
+  partner     Partner? @relation(fields: [partnerId], references: [id], onDelete: SetNull)
 
   categories RestaurantCategory[]
   dishes     Dish[]
@@ -22,6 +43,8 @@ model Restaurant {
   ratings    Rating[]
   reviews    Review[]
   favorites  Favorite[]
+
+  @@index([partnerId])
 }
 
 model RestaurantCategory {

@@ -6,6 +6,8 @@ import { DEAL_ICONS, REVIEW_BADGE_ICONS, ReviewBadge, REVIEW_BADGES } from '@/ty
 import { ReviewFlow } from '@/components/ReviewFlow';
 import { Footer } from '@/components/Footer';
 import { ArrowLeft, Clock, ExternalLink, Loader2, Tag, MapPin } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/api';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 function formatExpiry(expiresAt: number): string | null {
   const diff = expiresAt - Date.now();
@@ -46,12 +48,7 @@ export default function DealDetail() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-3">
-        <Loader2 className="w-8 h-8 text-accent animate-spin" />
-        <p className="text-base text-muted-foreground font-body">Loading deal...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading deal..." />;
   }
 
   if (!restaurant || !dish) {
@@ -88,7 +85,7 @@ export default function DealDetail() {
       {/* Hero image */}
       <div className="relative h-44 sm:h-52 overflow-hidden">
         <img
-          src={dish.image}
+          src={resolveImageUrl(dish.image)}
           alt={dish.name}
           className="w-full h-full object-cover"
         />
@@ -137,7 +134,7 @@ export default function DealDetail() {
         {/* Restaurant info */}
         <div className="flex items-center gap-2 mb-4">
           <img
-            src={restaurant.coverImage}
+            src={resolveImageUrl(restaurant.coverImage)}
             alt={restaurant.name}
             className="w-10 h-10 rounded-full object-cover border-2 border-border"
           />

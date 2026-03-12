@@ -1,4 +1,5 @@
 import { UtensilsCrossed } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 export function Footer() {
   return (
@@ -35,6 +36,11 @@ export function Footer() {
                 <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">About</span>
                 <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Contact</span>
                 <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Privacy</span>
+              </div>
+              <div className="flex flex-col gap-2.5">
+                <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Portal</span>
+                <Link to="/partner/login" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Partner Login</Link>
+                <Link to="/admin/login" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Admin Login</Link>
               </div>
             </div>
           </div>

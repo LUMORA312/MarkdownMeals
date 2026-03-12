@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Restaurant, DEAL_ICONS } from '@/types/food';
 import { Tag, Heart, Clock, MapPin } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/api';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 const PARTICLE_COUNT = 8;
@@ -69,7 +70,7 @@ export function RestaurantCard({ restaurant, index, favorited = false, onToggleF
     >
       <div className="aspect-[16/10] sm:aspect-[4/3] overflow-hidden relative">
         <img
-          src={restaurant.coverImage}
+          src={resolveImageUrl(restaurant.coverImage)}
           alt={restaurant.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
           loading="lazy"
@@ -153,7 +154,7 @@ export function RestaurantCard({ restaurant, index, favorited = false, onToggleF
             {restaurant.dishes.slice(0, 3).map((dish) => (
               <img
                 key={dish.id}
-                src={dish.image}
+                src={resolveImageUrl(dish.image)}
                 alt={dish.name}
                 className="w-7 h-7 sm:w-8 sm:h-8 rounded-full object-cover border-2 border-card"
                 loading="lazy"

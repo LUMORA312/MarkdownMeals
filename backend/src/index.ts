@@ -1,10 +1,14 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import { restaurantsRouter } from './routes/restaurants.js';
 import { tokensRouter } from './routes/tokens.js';
 import { ratingsRouter } from './routes/ratings.js';
 import { favoritesRouter } from './routes/favorites.js';
 import { reviewsRouter } from './routes/reviews.js';
+import { authRouter } from './routes/auth.js';
+import { partnerRouter } from './routes/partner.js';
+import { adminRouter } from './routes/admin.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -45,6 +49,12 @@ app.use((req, _res, next) => {
   next();
 });
 
+// Serve uploaded images
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
+
+app.use('/api/auth', authRouter);
+app.use('/api/partner', partnerRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api/restaurants', restaurantsRouter);
 app.use('/api/tokens', tokensRouter);
 app.use('/api/ratings', ratingsRouter);

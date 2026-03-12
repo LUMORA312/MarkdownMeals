@@ -5,6 +5,8 @@ import { EmojiRatingComponent } from '@/components/EmojiRating';
 import { EmojiRating, RatingTag } from '@/types/food';
 import { useToken, useSubmitRating } from '@/hooks/use-api';
 import { ArrowLeft, Clock, UtensilsCrossed, Check, Loader2, Star } from 'lucide-react';
+import { resolveImageUrl } from '@/lib/api';
+import { LoadingScreen } from '@/components/LoadingScreen';
 
 export default function RatingPage() {
   const { tokenId } = useParams<{ tokenId: string }>();
@@ -84,12 +86,7 @@ export default function RatingPage() {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-3">
-        <Loader2 className="w-8 h-8 text-accent animate-spin" />
-        <p className="text-sm text-muted-foreground font-body">Loading your experience...</p>
-      </div>
-    );
+    return <LoadingScreen message="Loading your experience..." />;
   }
 
   if (!token) {
@@ -161,7 +158,7 @@ export default function RatingPage() {
         <div className="flex gap-2 mb-6 overflow-x-auto scrollbar-hide scroll-touch pb-1">
           {token.dishes.map((dish) => (
             <div key={dish.id} className="flex-shrink-0 w-16 sm:w-18">
-              <img src={dish.image} alt={dish.name} className="w-16 h-16 sm:w-18 sm:h-18 rounded-xl object-cover shadow-sm" />
+              <img src={resolveImageUrl(dish.image)} alt={dish.name} className="w-16 h-16 sm:w-18 sm:h-18 rounded-xl object-cover shadow-sm" />
               <p className="text-[10px] text-muted-foreground font-body mt-1 truncate text-center">{dish.name}</p>
             </div>
           ))}

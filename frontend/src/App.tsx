@@ -8,6 +8,10 @@ import RestaurantList from "./pages/RestaurantList";
 import RestaurantDetail from "./pages/RestaurantDetail";
 import RatingPage from "./pages/RatingPage";
 import DealDetail from "./pages/DealDetail";
+import PartnerLogin from "./pages/PartnerLogin";
+import AdminLogin from "./pages/AdminLogin";
+import PartnerDashboard from "./pages/PartnerDashboard";
+import AdminDashboard from "./pages/AdminDashboard";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +28,10 @@ const App = () => (
           <Route path="/restaurant/:id" element={<RestaurantDetail />} />
           <Route path="/deal/:restaurantId/:dishId" element={<DealDetail />} />
           <Route path="/rating/:tokenId" element={<RatingPage />} />
+          <Route path="/partner/login" element={<PartnerLogin />} />
+          <Route path="/partner/dashboard" element={<PartnerDashboard />} />
+          <Route path="/admin/login" element={<AdminLogin />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>

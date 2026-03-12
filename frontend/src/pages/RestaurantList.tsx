@@ -9,6 +9,7 @@ import {
 } from '@/types/food';
 import { RestaurantCard } from '@/components/RestaurantCard';
 import { Footer } from '@/components/Footer';
+import { LoadingScreen } from '@/components/LoadingScreen';
 import { useRestaurants, useFavorites, useToggleFavorite } from '@/hooks/use-api';
 import { Search, X, ArrowUpDown, Heart, Loader2, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -425,12 +426,7 @@ export default function RestaurantList() {
 
       <div className="max-w-2xl mx-auto px-4">
         {/* Loading state */}
-        {isLoading && (
-          <div className="flex flex-col items-center justify-center py-20 gap-3">
-            <Loader2 className="w-8 h-8 text-accent animate-spin" />
-            <p className="text-base text-muted-foreground font-body">Finding deals near you...</p>
-          </div>
-        )}
+        {isLoading && <LoadingScreen message="Finding deals near you..." />}
 
         {/* Restaurant Grid */}
         {!isLoading && visibleList.length > 0 && (
