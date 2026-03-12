@@ -247,23 +247,18 @@ partnerRouter.get('/reviews', async (req, res) => {
   res.json(reviews);
 });
 
-// ── Image upload endpoint ──
+// ── Image upload endpoint (Cloudinary) ──
 import multer from 'multer';
-import path from 'path';
-import fs from 'fs';
+import { v2 as cloudinary } from 'cloudinary';
 
-const uploadDir = path.join(process.cwd(), 'uploads');
-if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
-
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname);
-    cb(null, `deal-${Date.now()}-${Math.random().toString(36).slice(2, 8)}${ext}`);
-  },
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
 });
+
 const upload = multer({
-  storage,
+  storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
   fileFilter: (_req, file, cb) => {
     const allowed = ['image/jpeg', 'image/png', 'image/webp'];
@@ -271,11 +266,27 @@ const upload = multer({
   },
 });
 
-partnerRouter.post('/upload', upload.single('image'), (req, res) => {
+partnerRouter.post('/upload', upload.single('image'), async (req, res) => {
   if (!req.file) {
     res.status(400).json({ error: 'No image uploaded' });
     return;
   }
-  const url = `/uploads/${req.file.filename}`;
-  res.json({ url });
+
+  try {
+    const result = await new Promise<{ secure_url: string }>((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        { folder: 'markdownmeals', resource_type: 'image' },
+        (error, result) => {
+          if (error || !result) reject(error || new Error('Upload failed'));
+          else resolve(result);
+        }
+      );
+      stream.end(req.file!.buffer);
+    });
+
+    res.json({ url: result.secure_url });
+  } catch (err) {
+    console.error('Cloudinary upload error:', err);
+    res.status(500).json({ error: 'Image upload failed' });
+  }
 });

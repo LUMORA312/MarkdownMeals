@@ -262,6 +262,7 @@ function AnalyticsTab() {
 // ── Deals management ──
 function DealsTab() {
   const [page, setPage] = useState(1);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const { data, isLoading } = useAdminDeals(page) as { data: { deals: Array<Record<string, unknown>>; total: number; totalPages: number } | undefined; isLoading: boolean };
   const deleteDeal = useDeleteAdminDeal();
 
@@ -269,12 +270,29 @@ function DealsTab() {
     return <LoadingScreen message="Loading deals..." />;
   }
 
+  const handleDelete = (dealId: string) => {
+    if (!confirm('Delete this deal?')) return;
+    setDeletingId(dealId);
+    deleteDeal.mutate(dealId, {
+      onSettled: () => setDeletingId(null),
+    });
+  };
+
   return (
     <div className="flex flex-col gap-4">
       {data?.deals.map((deal) => {
         const isActive = new Date(deal.dealExpiresAt as string) > new Date();
+        const isDeleting = deletingId === (deal.id as string);
         return (
-          <div key={deal.id as string} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card">
+          <div key={deal.id as string} className={`relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card transition-opacity ${isDeleting ? 'opacity-50' : ''}`}>
+            {isDeleting && (
+              <div className="absolute inset-0 flex items-center justify-center bg-background/60 rounded-xl z-10">
+                <div className="flex items-center gap-2">
+                  <Loader2 className="w-5 h-5 animate-spin text-accent" />
+                  <span className="text-sm font-body text-muted-foreground">Deleting...</span>
+                </div>
+              </div>
+            )}
             <img src={resolveImageUrl(deal.image as string)} alt="" className="w-14 h-14 rounded-lg object-cover flex-shrink-0" />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-body font-semibold text-foreground truncate">{deal.name as string}</p>
@@ -289,8 +307,9 @@ function DealsTab() {
               </div>
             </div>
             <button
-              onClick={() => { if (confirm('Delete this deal?')) deleteDeal.mutate(deal.id as string); }}
-              className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer"
+              onClick={() => handleDelete(deal.id as string)}
+              disabled={isDeleting}
+              className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer disabled:cursor-not-allowed"
             >
               <Trash2 className="w-4 h-4 text-destructive" />
             </button>

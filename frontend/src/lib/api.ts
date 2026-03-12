@@ -12,9 +12,10 @@ function getSessionId(): string {
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-/** Resolve image URLs — prepends API_BASE for backend-hosted uploads */
+/** Resolve image URLs — full URLs (Cloudinary) pass through, legacy /uploads/ paths get API_BASE prepended */
 export function resolveImageUrl(url: string | undefined | null): string {
   if (!url) return '';
+  if (url.startsWith('http://') || url.startsWith('https://')) return url;
   if (url.startsWith('/uploads/')) return `${API_BASE}${url}`;
   return url;
 }
