@@ -20,6 +20,7 @@ model Restaurant {
   dishes     Dish[]
   tokens     RedirectToken[]
   ratings    Rating[]
+  reviews    Review[]
   favorites  Favorite[]
 }
 
@@ -48,6 +49,7 @@ model Dish {
 
   modifiers   DishModifier[]
   tokenDishes TokenDish[]
+  reviews     Review[]
 
   @@index([restaurantId])
 }
@@ -107,6 +109,22 @@ model RatingTag {
   rating   Rating @relation(fields: [ratingId], references: [id], onDelete: Cascade)
 
   @@index([ratingId])
+}
+
+model Review {
+  id           String     @id @default(auto()) @map("_id") @db.ObjectId
+  email        String
+  badge        String
+  comment      String?
+  dishId       String     @db.ObjectId
+  dish         Dish       @relation(fields: [dishId], references: [id], onDelete: Cascade)
+  restaurantId String     @db.ObjectId
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id], onDelete: Cascade)
+  createdAt    DateTime   @default(now())
+
+  @@unique([email, dishId])
+  @@index([dishId])
+  @@index([restaurantId])
 }
 
 model Favorite {

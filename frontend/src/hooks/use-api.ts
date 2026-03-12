@@ -8,8 +8,11 @@ import {
   fetchToken,
   submitRating,
   fetchRatings,
+  submitReview,
+  fetchDishReviews,
+  fetchDishReviewSummary,
 } from '@/lib/api';
-import { PrimaryTaste, DealType, EmojiRating, RatingTag } from '@/types/food';
+import { PrimaryTaste, DealType, EmojiRating, RatingTag, ReviewBadge } from '@/types/food';
 
 export function useRestaurants(params?: {
   tastes?: PrimaryTaste[];
@@ -93,6 +96,41 @@ export function useSubmitRating() {
       queryClient.invalidateQueries({ queryKey: ['restaurants'] });
       queryClient.invalidateQueries({ queryKey: ['token', variables.tokenId] });
       queryClient.invalidateQueries({ queryKey: ['ratings'] });
+    },
+  });
+}
+
+// --- Reviews ---
+
+export function useDishReviews(dishId: string | undefined) {
+  return useQuery({
+    queryKey: ['reviews', dishId],
+    queryFn: () => fetchDishReviews(dishId!),
+    enabled: !!dishId,
+  });
+}
+
+export function useDishReviewSummary(dishId: string | undefined) {
+  return useQuery({
+    queryKey: ['reviewSummary', dishId],
+    queryFn: () => fetchDishReviewSummary(dishId!),
+    enabled: !!dishId,
+  });
+}
+
+export function useSubmitReview() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: ({ email, badge, dishId, restaurantId, comment }: {
+      email: string;
+      badge: ReviewBadge;
+      dishId: string;
+      restaurantId: string;
+      comment?: string;
+    }) => submitReview(email, badge, dishId, restaurantId, comment),
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['reviews', variables.dishId] });
+      queryClient.invalidateQueries({ queryKey: ['reviewSummary', variables.dishId] });
     },
   });
 }

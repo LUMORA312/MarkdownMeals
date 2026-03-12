@@ -107,6 +107,18 @@ export const TASTE_ICONS: Record<PrimaryTaste, string> = {
   'Saucy': '🍝',
 };
 
+// Review badges
+export type ReviewBadge = 'Flavor Bomb' | 'Crave Worthy' | 'Instant Favorite' | 'Low-Key Fire' | "Can't Miss" | 'Next Move';
+export const REVIEW_BADGES: ReviewBadge[] = ['Flavor Bomb', 'Crave Worthy', 'Instant Favorite', 'Low-Key Fire', "Can't Miss", 'Next Move'];
+export const REVIEW_BADGE_ICONS: Record<ReviewBadge, string> = {
+  'Flavor Bomb': '💣',
+  'Crave Worthy': '🤤',
+  'Instant Favorite': '⭐',
+  'Low-Key Fire': '🔥',
+  "Can't Miss": '🎯',
+  'Next Move': '👉',
+};
+
 export type EatingStyle = Category;
 export const EATING_STYLES: EatingStyle[] = ['Handheld', 'Bowls & Plates', 'Comfort', 'Fresh & Light', 'Snacky'];
 export const EATING_STYLE_ICONS: Record<EatingStyle, string> = {

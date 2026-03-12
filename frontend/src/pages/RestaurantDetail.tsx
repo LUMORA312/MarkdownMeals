@@ -2,7 +2,8 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { DishCard } from '@/components/DishCard';
-import { useRestaurant, useCreateToken } from '@/hooks/use-api';
+import { Footer } from '@/components/Footer';
+import { useRestaurant } from '@/hooks/use-api';
 import { Feeds, PRICE_RANGE_MAX, PriceRange, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, EatingStyle, Category } from '@/types/food';
 import { ArrowLeft, Tag, Loader2, MapPin, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -19,8 +20,6 @@ export default function RestaurantDetail() {
   const dealFilters = dealsParam ? dealsParam.split(',').filter((d): d is DealType => DEAL_TYPES.includes(d as DealType)) : [];
   const styleFilter = searchParams.get('style') as EatingStyle | null;
   const { data: restaurant, isLoading } = useRestaurant(id);
-  const createTokenMutation = useCreateToken();
-  const [loadingDishId, setLoadingDishId] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(10);
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const [showScrollTop, setShowScrollTop] = useState(false);
@@ -59,23 +58,9 @@ export default function RestaurantDetail() {
     return () => observer.disconnect();
   }, [loadMore]);
 
-  const handleDealTap = async (dishId: string) => {
-    if (!restaurant || loadingDishId) return;
-
-    setLoadingDishId(dishId);
-    try {
-      await createTokenMutation.mutateAsync({
-        restaurantId: restaurant.id,
-        dishIds: [dishId],
-      });
-      const dish = restaurant.dishes.find((d) => d.id === dishId);
-      const url = dish?.destinationUrl || restaurant.redirectUrl;
-      window.open(url, '_blank', 'noopener,noreferrer');
-    } catch (err) {
-      console.error('Failed to log redirect:', err);
-    } finally {
-      setLoadingDishId(null);
-    }
+  const handleDealTap = (dishId: string) => {
+    if (!restaurant) return;
+    navigate(`/deal/${restaurant.id}/${dishId}`);
   };
 
   if (isLoading) {
@@ -173,36 +158,6 @@ export default function RestaurantDetail() {
         </div>
       </div>
 
-      {/* Loading overlay on tapped card */}
-      <AnimatePresence>
-        {loadingDishId && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-foreground/40 backdrop-blur-sm"
-          >
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="flex flex-col items-center gap-4 px-8 py-6 rounded-2xl bg-card shadow-elevated"
-            >
-              <Loader2 className="w-7 h-7 text-accent animate-spin" />
-              <p className="text-base font-body font-medium text-foreground">Opening deal...</p>
-              <div className="w-48 h-1.5 rounded-full bg-muted overflow-hidden">
-                <motion.div
-                  initial={{ width: '0%' }}
-                  animate={{ width: '100%' }}
-                  transition={{ duration: 2, ease: 'easeInOut' }}
-                  className="h-full rounded-full bg-accent"
-                />
-              </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Dish Grid */}
       <div className="px-4 py-5 pb-10 max-w-2xl mx-auto">
         {activeDishes.length > 0 ? (
@@ -289,6 +244,8 @@ export default function RestaurantDetail() {
           </motion.button>
         ) : null}
       </AnimatePresence>
+
+      <Footer />
     </div>
   );
 }

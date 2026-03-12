@@ -1,4 +1,4 @@
-import { Restaurant, RedirectToken, EmojiRating, RatingTag } from '@/types/food';
+import { Restaurant, RedirectToken, EmojiRating, RatingTag, ReviewBadge } from '@/types/food';
 
 // Simple persistent session ID
 function getSessionId(): string {
@@ -111,6 +111,51 @@ export interface RatingListItem {
 
 export async function fetchRatings(restaurantId: string): Promise<RatingListItem[]> {
   return apiFetch<RatingListItem[]>(`/api/ratings/restaurant/${restaurantId}`);
+}
+
+// --- Reviews ---
+
+export interface ReviewResponse {
+  id: string;
+  email: string;
+  badge: string;
+  comment: string | null;
+  dishId: string;
+  restaurantId: string;
+  createdAt: number;
+}
+
+export interface ReviewListItem {
+  id: string;
+  badge: string;
+  comment: string | null;
+  createdAt: number;
+}
+
+export interface ReviewSummary {
+  total: number;
+  badges: Record<string, number>;
+}
+
+export async function submitReview(
+  email: string,
+  badge: ReviewBadge,
+  dishId: string,
+  restaurantId: string,
+  comment?: string,
+): Promise<ReviewResponse> {
+  return apiFetch<ReviewResponse>('/api/reviews', {
+    method: 'POST',
+    body: JSON.stringify({ email, badge, comment, dishId, restaurantId }),
+  });
+}
+
+export async function fetchDishReviews(dishId: string): Promise<ReviewListItem[]> {
+  return apiFetch<ReviewListItem[]>(`/api/reviews/dish/${dishId}`);
+}
+
+export async function fetchDishReviewSummary(dishId: string): Promise<ReviewSummary> {
+  return apiFetch<ReviewSummary>(`/api/reviews/dish/${dishId}/summary`);
 }
 
 // --- Favorites ---

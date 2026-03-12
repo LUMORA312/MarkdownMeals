@@ -8,6 +8,7 @@ import {
   DealType, Restaurant, Feeds, Category,
 } from '@/types/food';
 import { RestaurantCard } from '@/components/RestaurantCard';
+import { Footer } from '@/components/Footer';
 import { useRestaurants, useFavorites, useToggleFavorite } from '@/hooks/use-api';
 import { Search, X, ArrowUpDown, Heart, Loader2, ArrowLeft, ChevronUp, ChevronDown } from 'lucide-react';
 
@@ -556,6 +557,8 @@ export default function RestaurantList() {
           </motion.button>
         ) : null}
       </AnimatePresence>
+
+      <Footer />
     </motion.div>
   );
 }
