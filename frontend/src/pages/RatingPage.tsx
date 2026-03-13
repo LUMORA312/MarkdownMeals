@@ -138,9 +138,9 @@ export default function RatingPage() {
 
   return (
     <div className="min-h-screen bg-background safe-bottom">
-      <div className="max-w-md mx-auto px-4 py-4 sm:py-6">
+      <div className="max-w-md mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
-        <div className="flex items-center gap-3 mb-6 sm:mb-8">
+        <div className="flex items-center gap-2 mb-4">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => navigate(-1)}

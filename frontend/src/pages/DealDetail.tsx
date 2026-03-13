@@ -92,7 +92,7 @@ export default function DealDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/20 to-transparent" />
 
         {/* Back button */}
-        <div className="absolute top-4 left-4 pt-4 safe-top">
+        <div className="absolute top-0 left-0 px-4 pt-8 safe-top">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => navigate(-1)}
@@ -103,7 +103,7 @@ export default function DealDetail() {
         </div>
 
         {/* Price badge */}
-        <div className="absolute top-4 right-4 pt-4 safe-top">
+        <div className="absolute top-0 right-0 px-4 pt-8 safe-top">
           <div className="px-4 py-2 rounded-full bg-accent/95 backdrop-blur-sm shadow-md">
             <span className="text-lg font-body font-extrabold text-accent-foreground">
               ${dish.price.toFixed(2)}

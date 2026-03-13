@@ -252,7 +252,7 @@ export default function RestaurantList() {
       />
 
       <div className="relative z-10">
-      <div className="max-w-2xl mx-auto px-4 py-4 sm:py-6">
+      <div className="max-w-2xl mx-auto px-4 py-6 sm:py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
@@ -554,7 +554,7 @@ export default function RestaurantList() {
         ) : null}
       </AnimatePresence>
 
-      <Footer />
+      {!isLoading && <Footer />}
     </motion.div>
   );
 }

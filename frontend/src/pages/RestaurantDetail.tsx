@@ -99,7 +99,7 @@ export default function RestaurantDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-foreground/80 via-foreground/30 to-foreground/10" />
 
         {/* Top bar */}
-        <div className="absolute top-4 left-0 right-0 flex items-center justify-between px-4 pt-4 pb-3 sm:py-6 safe-top">
+        <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-4 pt-8 safe-top">
           <motion.button
             whileTap={{ scale: 0.9 }}
             onClick={() => navigate(-1)}

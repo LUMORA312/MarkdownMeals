@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { adminLogin, setAuth } from '@/lib/api';
-import { Shield, Mail, Lock, Loader2, ArrowLeft } from 'lucide-react';
+import { Shield, Mail, Lock, Loader2, UtensilsCrossed, Search, Sun, Moon } from 'lucide-react';
+import { Footer } from '@/components/Footer';
 
 export default function AdminLogin() {
   const navigate = useNavigate();
@@ -10,6 +11,7 @@ export default function AdminLogin() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,11 +30,39 @@ export default function AdminLogin() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      <div className="flex items-center gap-3 px-4 pt-6 pb-4">
-        <Link to="/" className="w-10 h-10 rounded-full bg-muted flex items-center justify-center hover:bg-accent/10 transition-colors">
-          <ArrowLeft className="w-5 h-5 text-foreground" />
-        </Link>
-      </div>
+      {/* Sticky Nav */}
+      <nav className="sticky top-0 z-50 glass safe-top">
+        <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-2.5">
+          <Link to="/" className="flex items-center gap-2">
+            <div className="p-1.5 rounded-lg bg-accent">
+              <UtensilsCrossed className="w-4 h-4 text-accent-foreground" />
+            </div>
+            <span className="text-lg font-display text-foreground">FoodMan</span>
+          </Link>
+          <div className="flex items-center gap-2">
+            <motion.button
+              whileTap={{ scale: 0.95 }}
+              onClick={() => navigate('/restaurants')}
+              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Find Markdowns</span>
+              <span className="sm:hidden">Go</span>
+            </motion.button>
+            <button
+              onClick={() => {
+                const next = !isDark;
+                setIsDark(next);
+                document.documentElement.classList.toggle('dark', next);
+              }}
+              className="p-2 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+              aria-label="Toggle dark mode"
+            >
+              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </button>
+          </div>
+        </div>
+      </nav>
 
       <div className="flex-1 flex items-center justify-center px-4 pb-12">
         <motion.div
@@ -90,6 +120,8 @@ export default function AdminLogin() {
           </form>
         </motion.div>
       </div>
+
+      <Footer />
     </div>
   );
 }
