@@ -195,6 +195,8 @@ function DealsTab({
   setSelectedRestaurant: (id: string) => void;
   deals: Array<Record<string, unknown>>;
 }) {
+  const [togglingId, setTogglingId] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const toggleDeal = useTogglePartnerDeal();
   const deleteDeal = useDeletePartnerDeal();
 
@@ -240,17 +242,37 @@ function DealsTab({
                 </div>
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() => toggleDeal.mutate(deal.id as string)}
-                    className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer"
+                    onClick={() => {
+                      setTogglingId(deal.id as string);
+                      toggleDeal.mutate(deal.id as string, { onSettled: () => setTogglingId(null) });
+                    }}
+                    disabled={togglingId === (deal.id as string)}
+                    className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
                     title={isActive ? 'Pause' : 'Activate'}
                   >
-                    {isActive ? <Pause className="w-4 h-4 text-amber-600" /> : <Play className="w-4 h-4 text-green-600" />}
+                    {togglingId === (deal.id as string) ? (
+                      <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
+                    ) : isActive ? (
+                      <Pause className="w-4 h-4 text-amber-600" />
+                    ) : (
+                      <Play className="w-4 h-4 text-green-600" />
+                    )}
                   </button>
                   <button
-                    onClick={() => { if (confirm('Delete this deal?')) deleteDeal.mutate(deal.id as string); }}
-                    className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer"
+                    onClick={() => {
+                      if (confirm('Delete this deal?')) {
+                        setDeletingId(deal.id as string);
+                        deleteDeal.mutate(deal.id as string, { onSettled: () => setDeletingId(null) });
+                      }
+                    }}
+                    disabled={deletingId === (deal.id as string)}
+                    className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer disabled:opacity-50"
                   >
-                    <Trash2 className="w-4 h-4 text-destructive" />
+                    {deletingId === (deal.id as string) ? (
+                      <Loader2 className="w-4 h-4 text-destructive animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    )}
                   </button>
                 </div>
               </div>
