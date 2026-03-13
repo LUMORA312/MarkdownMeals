@@ -138,7 +138,7 @@ export default function RatingPage() {
 
   return (
     <div className="min-h-screen bg-background safe-bottom">
-      <div className="max-w-md mx-auto px-4 py-6 sm:py-8">
+      <div className="max-w-md mx-auto px-4 pt-8 pb-6 sm:pb-8">
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
           <motion.button
