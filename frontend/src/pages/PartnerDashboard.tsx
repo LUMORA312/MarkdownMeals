@@ -167,12 +167,11 @@ function OverviewTab({ stats }: { stats: { totalDeals: number; activeDeals: numb
   const cards = [
     { label: 'Active Deals', value: stats.activeDeals, color: 'bg-green-500/10 text-green-700' },
     { label: 'Total Deals', value: stats.totalDeals, color: 'bg-accent/10 text-accent' },
-    { label: 'Total Views', value: stats.totalViews, color: 'bg-blue-500/10 text-blue-700' },
     { label: 'Total Ratings', value: stats.totalRatings, color: 'bg-amber-500/10 text-amber-700' },
     { label: 'Total Reviews', value: stats.totalReviews, color: 'bg-purple-500/10 text-purple-700' },
   ];
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
       {cards.map((c) => (
         <div key={c.label} className={`flex flex-col gap-1 p-4 rounded-xl border border-border ${c.color}`}>
           <span className="text-2xl font-display">{c.value}</span>
