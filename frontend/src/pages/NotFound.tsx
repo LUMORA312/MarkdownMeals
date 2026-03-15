@@ -18,29 +18,34 @@ const NotFound = () => {
         animate={{ opacity: 1, scale: 1 }}
         className="flex flex-col items-center gap-4"
       >
-        <div className="w-20 h-20 rounded-full bg-muted flex items-center justify-center">
-          <Search className="w-10 h-10 text-muted-foreground/50" />
-        </div>
-        <h1 className="text-4xl font-display text-foreground">404</h1>
+        <motion.div
+          animate={{ rotate: [0, -5, 5, -3, 0] }}
+          transition={{ duration: 4, repeat: Infinity, repeatDelay: 2, ease: 'easeInOut' }}
+          className="w-20 h-20 rounded-full bg-muted flex items-center justify-center"
+        >
+          <Search className="w-10 h-10 text-muted-foreground/50" strokeWidth={2} />
+        </motion.div>
+        <h1 className="text-5xl font-display text-foreground">404</h1>
         <p className="text-lg text-muted-foreground font-body text-center max-w-xs">
           This page doesn't exist. Maybe the deal expired?
         </p>
-        <div className="flex items-center gap-3 mt-2">
+        <div className="flex items-center gap-3 mt-3">
           <motion.button
-            whileTap={{ scale: 0.93 }}
-            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 px-5 py-2.5 rounded-full border-2 border-accent text-accent font-body font-semibold cursor-pointer text-sm hover:bg-accent/10 transition-colors"
+            className="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-accent text-accent font-body font-bold cursor-pointer text-sm hover:bg-accent/10 shadow-sm hover:shadow-md transition-all"
           >
-            <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
+            <ArrowLeft className="w-4 h-4" strokeWidth={3} />
             Go back
           </motion.button>
           <motion.button
-            whileTap={{ scale: 0.93 }}
-            whileHover={{ scale: 1.03 }}
+            whileTap={{ scale: 0.9 }}
+            whileHover={{ scale: 1.05 }}
             onClick={() => navigate('/')}
-            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold cursor-pointer text-sm shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
+            className="btn-shine btn-glow flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold cursor-pointer text-sm tracking-wide"
           >
+            <Search className="w-4 h-4" strokeWidth={3} />
             Find Deals
           </motion.button>
         </div>

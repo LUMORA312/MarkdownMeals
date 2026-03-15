@@ -120,9 +120,9 @@ const Index = () => {
                 <motion.button
                   whileTap={{ scale: 0.95 }}
                   onClick={() => goToRestaurants()}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer"
+                  className="btn-shine flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-sm font-body font-bold cursor-pointer shadow-md shadow-accent/20 hover:shadow-accent/40 transition-shadow"
                 >
-                  <Search className="w-3.5 h-3.5" />
+                  <Search className="w-3.5 h-3.5" strokeWidth={2.5} />
                   <span className="hidden sm:inline">Find Markdowns</span>
                   <span className="sm:hidden">Go</span>
                 </motion.button>
@@ -231,9 +231,9 @@ const Index = () => {
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.03 }}
               onClick={() => goToRestaurants()}
-              className="flex items-center justify-center gap-2 mt-8 sm:mt-10 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm sm:text-base shadow-lg shadow-accent/30 hover:shadow-accent/50 cursor-pointer transition-shadow"
+              className="btn-shine btn-glow icon-bounce flex items-center justify-center gap-2.5 mt-8 sm:mt-10 px-7 sm:px-10 py-3.5 sm:py-4 rounded-full bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-base sm:text-lg tracking-wide cursor-pointer transition-all"
             >
-              <Search className="w-4 h-4 sm:w-5 sm:h-5" />
+              <Search className="w-5 h-5 sm:w-6 sm:h-6" strokeWidth={2.5} />
               Find Markdowns Near Me
             </motion.button>
 
@@ -650,7 +650,7 @@ const Index = () => {
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => goToRestaurants()}
-              className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-base shadow-lg shadow-accent/30 hover:shadow-accent/50 cursor-pointer transition-shadow"
+              className="btn-shine btn-glow flex items-center justify-center gap-2.5 w-full sm:w-auto px-9 py-4 rounded-full bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-base sm:text-lg tracking-wide cursor-pointer transition-all"
             >
               {hasFilters ? 'Show Markdowns' : 'Browse All Markdowns'}
               {filterCount > 0 && (

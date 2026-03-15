@@ -257,11 +257,12 @@ export default function RestaurantList() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex gap-2">
             <motion.button
-              whileTap={{ scale: 0.9 }}
+              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.1 }}
               onClick={() => navigate('/')}
-              className="w-10 h-10 rounded-full bg-accent flex items-center justify-center cursor-pointer"
+              className="w-10 h-10 rounded-full bg-accent/90 backdrop-blur-sm flex items-center justify-center cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
             >
-              <ArrowLeft className="w-5 h-5 text-accent-foreground" />
+              <ArrowLeft className="w-5 h-5 text-accent-foreground" strokeWidth={2.5} />
             </motion.button>
             <div>
               <h2 className="text-2xl sm:text-3xl font-display text-foreground leading-tight">
@@ -542,9 +543,9 @@ export default function RestaurantList() {
             whileTap={{ scale: 0.85 }}
             whileHover={{ scale: 1.1 }}
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-accent text-accent-foreground shadow-elevated flex items-center justify-center cursor-pointer"
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-accent to-accent/80 text-accent-foreground shadow-xl shadow-accent/30 ring-2 ring-accent/20 flex items-center justify-center cursor-pointer"
           >
-            <ChevronUp className="w-5 h-5" />
+            <ChevronUp className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
         ) : filteredList.length > 0 ? (
           <motion.button
@@ -556,9 +557,9 @@ export default function RestaurantList() {
             whileTap={{ scale: 0.85 }}
             whileHover={{ scale: 1.1 }}
             onClick={() => window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })}
-            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-accent text-accent-foreground shadow-elevated flex items-center justify-center cursor-pointer"
+            className="fixed bottom-6 right-4 z-40 w-12 h-12 rounded-full bg-gradient-to-br from-accent to-accent/80 text-accent-foreground shadow-xl shadow-accent/30 ring-2 ring-accent/20 flex items-center justify-center cursor-pointer"
           >
-            <ChevronDown className="w-5 h-5" />
+            <ChevronDown className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
         ) : null}
       </AnimatePresence>

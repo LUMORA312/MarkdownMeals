@@ -43,7 +43,7 @@ export default function AdminLogin() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/restaurants')}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer"
+              className="btn-shine flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-sm font-body font-bold cursor-pointer shadow-md shadow-accent/20 hover:shadow-accent/40 transition-shadow"
             >
               <Search className="w-3.5 h-3.5" strokeWidth={2.5} />
               <span className="hidden sm:inline">Find Markdowns</span>
@@ -116,7 +116,7 @@ export default function AdminLogin() {
               whileHover={{ scale: 1.01 }}
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-foreground to-foreground/85 text-background font-body font-bold text-base cursor-pointer shadow-lg shadow-foreground/20 hover:shadow-foreground/30 transition-shadow disabled:opacity-50"
+              className="btn-shine flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-foreground via-foreground/95 to-foreground/80 text-background font-body font-extrabold text-base tracking-wide cursor-pointer shadow-xl shadow-foreground/25 hover:shadow-foreground/40 transition-all disabled:opacity-50"
             >
               {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : 'Sign In'}
             </motion.button>

@@ -127,10 +127,10 @@ export default function RatingPage() {
           Your verified review helps others discover great food.
         </p>
         <motion.button
-          whileTap={{ scale: 0.95 }}
-          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.9 }}
+          whileHover={{ scale: 1.05 }}
           onClick={() => navigate('/')}
-          className="mt-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
+          className="btn-shine btn-glow mt-2 px-8 py-3.5 rounded-full bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold cursor-pointer tracking-wide"
         >
           Explore More Deals
         </motion.button>
@@ -144,11 +144,12 @@ export default function RatingPage() {
         {/* Header */}
         <div className="flex items-center gap-2 mb-4">
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-accent flex items-center justify-center cursor-pointer shrink-0"
+            className="w-10 h-10 rounded-full bg-accent/90 backdrop-blur-sm flex items-center justify-center cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow shrink-0"
           >
-            <ArrowLeft className="w-5 h-5 text-accent-foreground" />
+            <ArrowLeft className="w-5 h-5 text-accent-foreground" strokeWidth={2.5} />
           </motion.button>
           <div className="min-w-0">
             <h2 className="text-lg sm:text-xl font-display text-foreground leading-tight">Rate your experience</h2>
@@ -213,7 +214,7 @@ export default function RatingPage() {
                   whileHover={{ scale: 1.03 }}
                   onClick={handleSubmit}
                   disabled={submitRatingMutation.isPending}
-                  className="px-8 py-3 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold shadow-lg shadow-accent/25 hover:shadow-accent/40 cursor-pointer disabled:opacity-50 transition-shadow"
+                  className="btn-shine px-8 py-3.5 rounded-full bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold shadow-xl shadow-accent/30 hover:shadow-accent/50 cursor-pointer disabled:opacity-50 tracking-wide transition-all"
                 >
                   {submitRatingMutation.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin inline mr-2" />

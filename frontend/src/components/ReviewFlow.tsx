@@ -141,7 +141,7 @@ export function ReviewFlow({ dishId, restaurantId }: ReviewFlowProps) {
               <motion.button
                 whileTap={{ scale: 0.93 }}
                 type="submit"
-                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-sm hover:shadow-accent/30 transition-shadow"
+                className="btn-shine px-5 py-2.5 rounded-xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-sm cursor-pointer shadow-md shadow-accent/20 hover:shadow-accent/40 transition-all"
               >
                 Go
               </motion.button>
@@ -172,7 +172,7 @@ export function ReviewFlow({ dishId, restaurantId }: ReviewFlowProps) {
               whileHover={{ scale: 1.01 }}
               onClick={handleSubmitReview}
               disabled={submitReview.isPending}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
+              className="btn-shine flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-sm tracking-wide cursor-pointer shadow-xl shadow-accent/30 hover:shadow-accent/50 transition-all disabled:opacity-50"
             >
               {submitReview.isPending ? (
                 <span>Submitting...</span>

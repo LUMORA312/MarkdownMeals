@@ -180,4 +180,48 @@
   .press-scale {
     @apply transition-transform duration-100 active:scale-[0.97];
   }
+
+  /* Shimmer shine sweep on primary CTA buttons */
+  .btn-shine {
+    position: relative;
+    overflow: hidden;
+  }
+  .btn-shine::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      105deg,
+      transparent 40%,
+      rgba(255, 255, 255, 0.25) 45%,
+      rgba(255, 255, 255, 0.35) 50%,
+      rgba(255, 255, 255, 0.25) 55%,
+      transparent 60%
+    );
+    transform: translateX(-120%);
+    animation: shimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes shimmer {
+    0%, 100% { transform: translateX(-120%); }
+    50% { transform: translateX(120%); }
+  }
+
+  /* Pulsing glow ring for high-energy buttons */
+  .btn-glow {
+    animation: glow-pulse 2.5s ease-in-out infinite;
+  }
+  @keyframes glow-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 hsl(var(--accent) / 0.4), 0 8px 24px -4px hsl(var(--accent) / 0.3); }
+    50% { box-shadow: 0 0 0 6px hsl(var(--accent) / 0.15), 0 12px 32px -4px hsl(var(--accent) / 0.4); }
+  }
+
+  /* Icon bounce for attention-grabbing buttons */
+  .icon-bounce > svg:first-child {
+    animation: icon-bob 2s ease-in-out infinite;
+  }
+  @keyframes icon-bob {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+  }
 }

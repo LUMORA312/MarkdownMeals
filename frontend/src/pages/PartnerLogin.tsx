@@ -52,7 +52,7 @@ export default function PartnerLogin() {
             <motion.button
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/restaurants')}
-              className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer"
+              className="btn-shine flex items-center gap-1.5 px-4 py-2 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-sm font-body font-bold cursor-pointer shadow-md shadow-accent/20 hover:shadow-accent/40 transition-shadow"
             >
               <Search className="w-3.5 h-3.5" strokeWidth={2.5} />
               <span className="hidden sm:inline">Find Markdowns</span>
@@ -154,7 +154,7 @@ export default function PartnerLogin() {
               whileHover={{ scale: 1.01 }}
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-base cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
+              className="btn-shine flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-base tracking-wide cursor-pointer shadow-xl shadow-accent/30 hover:shadow-accent/50 transition-all disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />
@@ -169,12 +169,13 @@ export default function PartnerLogin() {
           {/* Toggle */}
           <p className="text-sm font-body text-muted-foreground text-center mt-6">
             {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={() => { setIsSignup(!isSignup); setError(''); }}
-              className="text-accent font-semibold cursor-pointer hover:underline"
+              className="text-accent font-bold cursor-pointer hover:underline underline-offset-2 transition-colors hover:text-accent/80"
             >
               {isSignup ? 'Sign In' : 'Sign Up'}
-            </button>
+            </motion.button>
           </p>
         </motion.div>
       </div>

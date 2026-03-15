@@ -95,11 +95,12 @@ export default function DealDetail() {
         {/* Back button */}
         <div className="absolute top-0 left-0 px-4 pt-8 safe-top">
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.1 }}
             onClick={() => navigate(-1)}
-            className="w-10 h-10 rounded-full bg-accent flex items-center justify-center cursor-pointer"
+            className="w-10 h-10 rounded-full bg-accent/90 backdrop-blur-sm flex items-center justify-center cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
           >
-            <ArrowLeft className="w-5 h-5 text-accent-foreground" />
+            <ArrowLeft className="w-5 h-5 text-accent-foreground" strokeWidth={2.5} />
           </motion.button>
         </div>
 
@@ -213,7 +214,7 @@ export default function DealDetail() {
           whileHover={{ scale: 1.01 }}
           onClick={handleGetDeal}
           disabled={redirecting}
-          className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-lg cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50 mb-6"
+          className="btn-shine btn-glow icon-bounce flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-lg tracking-wide cursor-pointer transition-all disabled:opacity-50 mb-6"
         >
           {redirecting ? (
             <>

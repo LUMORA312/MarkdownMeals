@@ -42,11 +42,11 @@ export default function AdminDashboard() {
   };
 
   const tabs: Array<{ key: Tab; label: string; icon: React.ReactNode }> = [
-    { key: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" /> },
-    { key: 'deals', label: 'Deals', icon: <Tag className="w-4 h-4" /> },
-    { key: 'partners', label: 'Partners', icon: <Users className="w-4 h-4" /> },
-    { key: 'reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" /> },
+    { key: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} /> },
+    { key: 'analytics', label: 'Analytics', icon: <BarChart3 className="w-4 h-4" strokeWidth={2.5} /> },
+    { key: 'deals', label: 'Deals', icon: <Tag className="w-4 h-4" strokeWidth={2.5} /> },
+    { key: 'partners', label: 'Partners', icon: <Users className="w-4 h-4" strokeWidth={2.5} /> },
+    { key: 'reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" strokeWidth={2.5} /> },
   ];
 
   if (isLoading) {
@@ -65,7 +65,7 @@ export default function AdminDashboard() {
               <p className="text-xs font-body opacity-70">{user?.email}</p>
             </div>
           </div>
-          <motion.button whileTap={{ scale: 0.93 }} onClick={handleLogout} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-body opacity-70 hover:opacity-100 hover:bg-background/10 cursor-pointer transition-all">
+          <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.03 }} onClick={handleLogout} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-body font-semibold opacity-70 hover:opacity-100 hover:bg-background/15 cursor-pointer transition-all">
             <LogOut className="w-4 h-4" strokeWidth={2.5} /> Logout
           </motion.button>
         </div>
@@ -323,7 +323,7 @@ function DealsTab() {
               whileHover={{ scale: 1.1 }}
               onClick={() => handleDelete(deal.id as string)}
               disabled={isDeleting}
-              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 hover:ring-1 hover:ring-destructive/30 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
             </motion.button>
@@ -335,23 +335,25 @@ function DealsTab() {
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-4">
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.05 }}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors"
+            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all"
           >
-            <ChevronLeft className="w-5 h-5" />
+            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
-          <span className="text-sm font-body font-semibold text-muted-foreground">
+          <span className="text-sm font-body font-bold text-muted-foreground">
             Page {page} of {data.totalPages}
           </span>
           <motion.button
-            whileTap={{ scale: 0.9 }}
+            whileTap={{ scale: 0.85 }}
+            whileHover={{ scale: 1.05 }}
             onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
             disabled={page >= data.totalPages}
-            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors"
+            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all"
           >
-            <ChevronRight className="w-5 h-5" />
+            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
         </div>
       )}
@@ -429,7 +431,7 @@ function ReviewsTab() {
               whileTap={{ scale: 0.85 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => { if (confirm('Delete this review?')) deleteReview.mutate(r.id as string); }}
-              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 transition-all cursor-pointer flex-shrink-0"
+              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 hover:ring-1 hover:ring-destructive/30 shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0"
             >
               <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
             </motion.button>
@@ -439,14 +441,14 @@ function ReviewsTab() {
 
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-4">
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
-            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors">
-            <ChevronLeft className="w-5 h-5" />
+          <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.05 }} onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
+            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all">
+            <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
-          <span className="text-sm font-body font-semibold text-muted-foreground">Page {page} of {data.totalPages}</span>
-          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages}
-            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors">
-            <ChevronRight className="w-5 h-5" />
+          <span className="text-sm font-body font-bold text-muted-foreground">Page {page} of {data.totalPages}</span>
+          <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.05 }} onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages}
+            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all">
+            <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
         </div>
       )}

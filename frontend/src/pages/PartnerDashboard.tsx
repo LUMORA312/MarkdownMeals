@@ -58,9 +58,9 @@ export default function PartnerDashboard() {
   };
 
   const tabs: Array<{ key: Tab; label: string; icon: React.ReactNode }> = [
-    { key: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
-    { key: 'deals', label: 'Deals', icon: <Tag className="w-4 h-4" /> },
-    { key: 'reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" /> },
+    { key: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" strokeWidth={2.5} /> },
+    { key: 'deals', label: 'Deals', icon: <Tag className="w-4 h-4" strokeWidth={2.5} /> },
+    { key: 'reviews', label: 'Reviews', icon: <MessageSquare className="w-4 h-4" strokeWidth={2.5} /> },
   ];
 
   if (dashLoading) {
@@ -81,7 +81,7 @@ export default function PartnerDashboard() {
               <p className="text-xs font-body text-muted-foreground">{user?.email}</p>
             </div>
           </div>
-          <motion.button whileTap={{ scale: 0.93 }} onClick={handleLogout} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-body text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer transition-all">
+          <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.03 }} onClick={handleLogout} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-body font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer transition-all">
             <LogOut className="w-4 h-4" strokeWidth={2.5} /> Logout
           </motion.button>
         </div>
@@ -122,18 +122,18 @@ export default function PartnerDashboard() {
             whileTap={{ scale: 0.93 }}
             whileHover={{ scale: 1.02 }}
             onClick={() => setShowDealForm(true)}
-            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
+            className="btn-shine flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-sm tracking-wide cursor-pointer shadow-xl shadow-accent/30 hover:shadow-accent/50 transition-all"
           >
-            <Plus className="w-5 h-5" strokeWidth={2.5} /> Add Deal
+            <Plus className="w-5 h-5" strokeWidth={3} /> Add Deal
           </motion.button>
           {(!restaurants || restaurants.length === 0) && (
             <motion.button
               whileTap={{ scale: 0.93 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => setShowRestaurantForm(true)}
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-foreground to-foreground/80 text-background font-body font-bold text-sm cursor-pointer shadow-lg shadow-foreground/20 hover:shadow-foreground/30 transition-shadow"
+              className="btn-shine flex items-center gap-2 px-6 py-3 rounded-2xl bg-gradient-to-r from-foreground via-foreground/95 to-foreground/80 text-background font-body font-extrabold text-sm tracking-wide cursor-pointer shadow-xl shadow-foreground/25 hover:shadow-foreground/40 transition-all"
             >
-              <Building2 className="w-5 h-5" strokeWidth={2.5} /> Add Restaurant
+              <Building2 className="w-5 h-5" strokeWidth={3} /> Add Restaurant
             </motion.button>
           )}
         </div>
@@ -268,10 +268,10 @@ function DealsTab({
                       toggleDeal.mutate(deal.id as string, { onSettled: () => setTogglingId(null) });
                     }}
                     disabled={togglingId === (deal.id as string)}
-                    className={`p-2.5 rounded-xl transition-all cursor-pointer disabled:opacity-50 ${
+                    className={`p-2.5 rounded-xl transition-all cursor-pointer disabled:opacity-50 shadow-sm hover:shadow-md ${
                       isActive
-                        ? 'bg-amber-500/10 hover:bg-amber-500/20'
-                        : 'bg-green-500/10 hover:bg-green-500/20'
+                        ? 'bg-amber-500/10 hover:bg-amber-500/20 hover:ring-1 hover:ring-amber-500/30'
+                        : 'bg-green-500/10 hover:bg-green-500/20 hover:ring-1 hover:ring-green-500/30'
                     }`}
                     title={isActive ? 'Pause' : 'Activate'}
                   >
@@ -293,7 +293,7 @@ function DealsTab({
                       }
                     }}
                     disabled={deletingId === (deal.id as string)}
-                    className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 transition-all cursor-pointer disabled:opacity-50"
+                    className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 hover:ring-1 hover:ring-destructive/30 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {deletingId === (deal.id as string) ? (
                       <Loader2 className="w-4 h-4 text-destructive animate-spin" />
@@ -459,8 +459,8 @@ function DealFormModal({
             You need to create a restaurant first before adding deals.
           </p>
           <div className="flex gap-2">
-            <motion.button whileTap={{ scale: 0.95 }} onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-body font-medium cursor-pointer hover:bg-muted transition-colors">Cancel</motion.button>
-            <motion.button whileTap={{ scale: 0.95 }} onClick={onNeedRestaurant} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-sm font-body font-bold cursor-pointer shadow-sm hover:shadow-accent/30 transition-shadow">Add Restaurant</motion.button>
+            <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.02 }} onClick={onClose} className="flex-1 py-2.5 rounded-xl border-2 border-border text-sm font-body font-bold cursor-pointer hover:bg-muted hover:border-accent/30 transition-all">Cancel</motion.button>
+            <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.02 }} onClick={onNeedRestaurant} className="btn-shine flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground text-sm font-body font-extrabold cursor-pointer shadow-md shadow-accent/20 hover:shadow-accent/40 tracking-wide transition-all">Add Restaurant</motion.button>
           </div>
         </motion.div>
       </motion.div>
@@ -596,7 +596,7 @@ function DealFormModal({
             whileHover={{ scale: 1.01 }}
             type="submit"
             disabled={uploading}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
+            className="btn-shine flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-sm tracking-wide cursor-pointer shadow-xl shadow-accent/30 hover:shadow-accent/50 transition-all disabled:opacity-50"
           >
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploading ? 'Creating...' : 'Create Deal'}
@@ -676,7 +676,7 @@ function RestaurantFormModal({ onClose }: { onClose: () => void }) {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={createRestaurant.isPending}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
+            className="btn-shine flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground font-body font-extrabold text-sm tracking-wide cursor-pointer shadow-xl shadow-accent/30 hover:shadow-accent/50 transition-all disabled:opacity-50"
           >
             {createRestaurant.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Building2 className="w-4 h-4" />}
             {createRestaurant.isPending ? 'Creating...' : 'Create Restaurant'}
