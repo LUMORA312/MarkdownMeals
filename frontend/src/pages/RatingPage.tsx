@@ -96,12 +96,13 @@ export default function RatingPage() {
           <Star className="w-8 h-8 text-muted-foreground/50" />
         </div>
         <p className="text-muted-foreground font-body text-center">Rating link not found or expired.</p>
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate('/')}
-          className="text-sm font-body text-accent underline underline-offset-2 cursor-pointer py-2"
+          className="text-sm font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer py-2 transition-colors"
         >
           Browse deals
-        </button>
+        </motion.button>
       </div>
     );
   }
@@ -126,9 +127,10 @@ export default function RatingPage() {
           Your verified review helps others discover great food.
         </p>
         <motion.button
-          whileTap={{ scale: 0.97 }}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.03 }}
           onClick={() => navigate('/')}
-          className="mt-2 px-6 py-3 rounded-full bg-accent text-accent-foreground font-body font-semibold cursor-pointer shadow-food"
+          className="mt-2 px-6 py-3 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
         >
           Explore More Deals
         </motion.button>
@@ -179,12 +181,13 @@ export default function RatingPage() {
             <p className="text-sm text-muted-foreground font-body max-w-xs mx-auto">
               To keep reviews authentic, you can rate after enjoying your meal.
             </p>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={() => setIsAvailable(true)}
-              className="text-xs text-muted-foreground underline cursor-pointer mt-4 py-2"
+              className="text-xs text-muted-foreground underline cursor-pointer mt-4 py-2 hover:text-foreground transition-colors"
             >
               (Demo: unlock now)
-            </button>
+            </motion.button>
           </motion.div>
         ) : (
           <motion.div
@@ -206,10 +209,11 @@ export default function RatingPage() {
                 className="flex justify-center"
               >
                 <motion.button
-                  whileTap={{ scale: 0.97 }}
+                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.03 }}
                   onClick={handleSubmit}
                   disabled={submitRatingMutation.isPending}
-                  className="px-8 py-3 rounded-full bg-accent text-accent-foreground font-body font-semibold shadow-food cursor-pointer disabled:opacity-50 transition-opacity"
+                  className="px-8 py-3 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold shadow-lg shadow-accent/25 hover:shadow-accent/40 cursor-pointer disabled:opacity-50 transition-shadow"
                 >
                   {submitRatingMutation.isPending ? (
                     <Loader2 className="w-4 h-4 animate-spin inline mr-2" />

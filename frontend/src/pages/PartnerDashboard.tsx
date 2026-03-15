@@ -81,9 +81,9 @@ export default function PartnerDashboard() {
               <p className="text-xs font-body text-muted-foreground">{user?.email}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">
-            <LogOut className="w-4 h-4" /> Logout
-          </button>
+          <motion.button whileTap={{ scale: 0.93 }} onClick={handleLogout} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-body text-muted-foreground hover:text-foreground hover:bg-muted cursor-pointer transition-all">
+            <LogOut className="w-4 h-4" strokeWidth={2.5} /> Logout
+          </motion.button>
         </div>
       </div>
 
@@ -91,38 +91,49 @@ export default function PartnerDashboard() {
       <div className="sticky top-[61px] z-20 bg-background border-b border-border">
         <div className="max-w-5xl mx-auto flex">
           {tabs.map((t) => (
-            <button
+            <motion.button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 px-5 py-3 text-sm font-body font-medium border-b-2 transition-colors cursor-pointer ${
+              whileTap={{ scale: 0.95 }}
+              className={`relative flex items-center gap-2 px-5 py-3.5 text-sm font-body font-semibold transition-colors cursor-pointer ${
                 tab === t.key
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  ? 'text-accent'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {t.icon} {t.label}
-            </button>
+              <span className={`transition-transform ${tab === t.key ? 'scale-110' : ''}`}>{t.icon}</span>
+              {t.label}
+              {tab === t.key && (
+                <motion.div
+                  layoutId="partner-tab-indicator"
+                  className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-accent"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 py-6">
         {/* Quick add button — always visible */}
-        <div className="flex gap-2 mb-6">
+        <div className="flex gap-3 mb-6">
           <motion.button
-            whileTap={{ scale: 0.96 }}
+            whileTap={{ scale: 0.93 }}
+            whileHover={{ scale: 1.02 }}
             onClick={() => setShowDealForm(true)}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-accent text-accent-foreground font-body font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity"
+            className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
           >
-            <Plus className="w-4 h-4" /> Add Deal
+            <Plus className="w-5 h-5" strokeWidth={2.5} /> Add Deal
           </motion.button>
           {(!restaurants || restaurants.length === 0) && (
             <motion.button
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.93 }}
+              whileHover={{ scale: 1.02 }}
               onClick={() => setShowRestaurantForm(true)}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-foreground text-background font-body font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-foreground to-foreground/80 text-background font-body font-bold text-sm cursor-pointer shadow-lg shadow-foreground/20 hover:shadow-foreground/30 transition-shadow"
             >
-              <Building2 className="w-4 h-4" /> Add Restaurant
+              <Building2 className="w-5 h-5" strokeWidth={2.5} /> Add Restaurant
             </motion.button>
           )}
         </div>
@@ -165,18 +176,27 @@ export default function PartnerDashboard() {
 // ── Overview Tab ──
 function OverviewTab({ stats }: { stats: { totalDeals: number; activeDeals: number; totalViews: number; totalRatings: number; totalReviews: number } }) {
   const cards = [
-    { label: 'Active Deals', value: stats.activeDeals, color: 'bg-green-500/10 text-green-700' },
-    { label: 'Total Deals', value: stats.totalDeals, color: 'bg-accent/10 text-accent' },
-    { label: 'Total Ratings', value: stats.totalRatings, color: 'bg-amber-500/10 text-amber-700' },
-    { label: 'Total Reviews', value: stats.totalReviews, color: 'bg-purple-500/10 text-purple-700' },
+    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-green-500/10 text-green-700', iconBg: 'bg-green-500/20' },
+    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-accent/10 text-accent', iconBg: 'bg-accent/20' },
+    { label: 'Total Ratings', value: stats.totalRatings, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-amber-500/10 text-amber-700', iconBg: 'bg-amber-500/20' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-purple-500/10 text-purple-700', iconBg: 'bg-purple-500/20' },
   ];
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-      {cards.map((c) => (
-        <div key={c.label} className={`flex flex-col gap-1 p-4 rounded-xl border border-border ${c.color}`}>
-          <span className="text-2xl font-display">{c.value}</span>
-          <span className="text-xs font-body font-medium opacity-80">{c.label}</span>
-        </div>
+      {cards.map((c, i) => (
+        <motion.div
+          key={c.label}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.06 }}
+          className={`flex flex-col gap-2 p-4 rounded-2xl border border-border ${c.color}`}
+        >
+          <div className={`w-9 h-9 rounded-xl ${c.iconBg} flex items-center justify-center`}>
+            {c.icon}
+          </div>
+          <span className="text-3xl font-display">{c.value}</span>
+          <span className="text-xs font-body font-semibold uppercase tracking-wider opacity-70">{c.label}</span>
+        </motion.div>
       ))}
     </div>
   );
@@ -239,25 +259,33 @@ function DealsTab({
                     <span className="text-xs font-body text-muted-foreground">{deal.views as number || 0} views</span>
                   </div>
                 </div>
-                <div className="flex items-center gap-1">
-                  <button
+                <div className="flex items-center gap-1.5">
+                  <motion.button
+                    whileTap={{ scale: 0.85 }}
+                    whileHover={{ scale: 1.1 }}
                     onClick={() => {
                       setTogglingId(deal.id as string);
                       toggleDeal.mutate(deal.id as string, { onSettled: () => setTogglingId(null) });
                     }}
                     disabled={togglingId === (deal.id as string)}
-                    className="p-2 rounded-lg hover:bg-muted transition-colors cursor-pointer disabled:opacity-50"
+                    className={`p-2.5 rounded-xl transition-all cursor-pointer disabled:opacity-50 ${
+                      isActive
+                        ? 'bg-amber-500/10 hover:bg-amber-500/20'
+                        : 'bg-green-500/10 hover:bg-green-500/20'
+                    }`}
                     title={isActive ? 'Pause' : 'Activate'}
                   >
                     {togglingId === (deal.id as string) ? (
                       <Loader2 className="w-4 h-4 text-muted-foreground animate-spin" />
                     ) : isActive ? (
-                      <Pause className="w-4 h-4 text-amber-600" />
+                      <Pause className="w-4 h-4 text-amber-600" strokeWidth={2.5} />
                     ) : (
-                      <Play className="w-4 h-4 text-green-600" />
+                      <Play className="w-4 h-4 text-green-600" strokeWidth={2.5} />
                     )}
-                  </button>
-                  <button
+                  </motion.button>
+                  <motion.button
+                    whileTap={{ scale: 0.85 }}
+                    whileHover={{ scale: 1.1 }}
                     onClick={() => {
                       if (confirm('Delete this deal?')) {
                         setDeletingId(deal.id as string);
@@ -265,14 +293,14 @@ function DealsTab({
                       }
                     }}
                     disabled={deletingId === (deal.id as string)}
-                    className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer disabled:opacity-50"
+                    className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 transition-all cursor-pointer disabled:opacity-50"
                   >
                     {deletingId === (deal.id as string) ? (
                       <Loader2 className="w-4 h-4 text-destructive animate-spin" />
                     ) : (
-                      <Trash2 className="w-4 h-4 text-destructive" />
+                      <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
                     )}
-                  </button>
+                  </motion.button>
                 </div>
               </div>
             );
@@ -431,8 +459,8 @@ function DealFormModal({
             You need to create a restaurant first before adding deals.
           </p>
           <div className="flex gap-2">
-            <button onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-body cursor-pointer">Cancel</button>
-            <button onClick={onNeedRestaurant} className="flex-1 py-2.5 rounded-xl bg-accent text-accent-foreground text-sm font-body font-bold cursor-pointer">Add Restaurant</button>
+            <motion.button whileTap={{ scale: 0.95 }} onClick={onClose} className="flex-1 py-2.5 rounded-xl border border-border text-sm font-body font-medium cursor-pointer hover:bg-muted transition-colors">Cancel</motion.button>
+            <motion.button whileTap={{ scale: 0.95 }} onClick={onNeedRestaurant} className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground text-sm font-body font-bold cursor-pointer shadow-sm hover:shadow-accent/30 transition-shadow">Add Restaurant</motion.button>
           </div>
         </motion.div>
       </motion.div>
@@ -455,7 +483,7 @@ function DealFormModal({
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h2 className="text-xl font-display text-foreground">Add New Deal</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer"><X className="w-5 h-5" /></button>
+          <motion.button whileTap={{ scale: 0.85 }} onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer transition-colors"><X className="w-5 h-5" strokeWidth={2.5} /></motion.button>
         </div>
 
         <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4 max-h-[70vh] overflow-y-auto">
@@ -564,10 +592,11 @@ function DealFormModal({
 
           {/* Submit */}
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.01 }}
             type="submit"
             disabled={uploading}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-accent text-accent-foreground font-body font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
           >
             {uploading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
             {uploading ? 'Creating...' : 'Create Deal'}
@@ -616,7 +645,7 @@ function RestaurantFormModal({ onClose }: { onClose: () => void }) {
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-border">
           <h2 className="text-xl font-display text-foreground">Add Restaurant</h2>
-          <button onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer"><X className="w-5 h-5" /></button>
+          <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.1 }} onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer"><X className="w-5 h-5" strokeWidth={2.5} /></motion.button>
         </div>
         <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4">
           <input
@@ -647,7 +676,7 @@ function RestaurantFormModal({ onClose }: { onClose: () => void }) {
             whileTap={{ scale: 0.97 }}
             type="submit"
             disabled={createRestaurant.isPending}
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-accent text-accent-foreground font-body font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
           >
             {createRestaurant.isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Building2 className="w-4 h-4" />}
             {createRestaurant.isPending ? 'Creating...' : 'Create Restaurant'}

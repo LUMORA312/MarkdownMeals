@@ -76,12 +76,13 @@ export default function RestaurantDetail() {
           <Tag className="w-8 h-8 text-muted-foreground/50" />
         </div>
         <p className="text-base text-muted-foreground font-body text-center">Restaurant not found.</p>
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate(-1)}
-          className="text-base font-body text-accent underline underline-offset-2 cursor-pointer py-2"
+          className="text-base font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer py-2 transition-colors"
         >
           Go back
-        </button>
+        </motion.button>
       </div>
     );
   }
@@ -199,12 +200,13 @@ export default function RestaurantDetail() {
             <p className="text-base text-muted-foreground font-body text-center max-w-xs">
               No active deals match your filters right now. Check back soon!
             </p>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.95 }}
               onClick={() => navigate(-1)}
-              className="text-base font-body text-accent underline underline-offset-2 cursor-pointer py-2"
+              className="text-base font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer py-2 transition-colors"
             >
               Browse other restaurants
-            </button>
+            </motion.button>
           </motion.div>
         )}
       </div>

@@ -54,21 +54,23 @@ export default function PartnerLogin() {
               onClick={() => navigate('/restaurants')}
               className="flex items-center gap-1.5 px-4 py-2 rounded-full bg-accent text-accent-foreground text-sm font-body font-semibold cursor-pointer"
             >
-              <Search className="w-3.5 h-3.5" />
+              <Search className="w-3.5 h-3.5" strokeWidth={2.5} />
               <span className="hidden sm:inline">Find Markdowns</span>
               <span className="sm:hidden">Go</span>
             </motion.button>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.1 }}
               onClick={() => {
                 const next = !isDark;
                 setIsDark(next);
                 document.documentElement.classList.toggle('dark', next);
               }}
-              className="p-2 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+              className="p-2.5 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
               aria-label="Toggle dark mode"
             >
-              {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </button>
+              {isDark ? <Sun className="w-4 h-4" strokeWidth={2.5} /> : <Moon className="w-4 h-4" strokeWidth={2.5} />}
+            </motion.button>
           </div>
         </div>
       </nav>
@@ -148,10 +150,11 @@ export default function PartnerLogin() {
             )}
 
             <motion.button
-              whileTap={{ scale: 0.97 }}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.01 }}
               type="submit"
               disabled={loading}
-              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-accent text-accent-foreground font-body font-bold text-base cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="flex items-center justify-center gap-2 w-full py-3.5 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-base cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
             >
               {loading ? (
                 <Loader2 className="w-5 h-5 animate-spin" />

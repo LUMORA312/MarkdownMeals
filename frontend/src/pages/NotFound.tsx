@@ -27,17 +27,19 @@ const NotFound = () => {
         </p>
         <div className="flex items-center gap-3 mt-2">
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.93 }}
+            whileHover={{ scale: 1.03 }}
             onClick={() => navigate(-1)}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-full bg-accent text-accent-foreground font-body font-medium cursor-pointer text-sm"
+            className="flex items-center gap-1.5 px-5 py-2.5 rounded-full border-2 border-accent text-accent font-body font-semibold cursor-pointer text-sm hover:bg-accent/10 transition-colors"
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" strokeWidth={2.5} />
             Go back
           </motion.button>
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.93 }}
+            whileHover={{ scale: 1.03 }}
             onClick={() => navigate('/')}
-            className="px-5 py-2.5 rounded-full bg-accent text-accent-foreground font-body font-semibold cursor-pointer text-sm shadow-food"
+            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold cursor-pointer text-sm shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow"
           >
             Find Deals
           </motion.button>

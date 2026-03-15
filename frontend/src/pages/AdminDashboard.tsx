@@ -65,9 +65,9 @@ export default function AdminDashboard() {
               <p className="text-xs font-body opacity-70">{user?.email}</p>
             </div>
           </div>
-          <button onClick={handleLogout} className="flex items-center gap-1.5 text-sm font-body opacity-70 hover:opacity-100 cursor-pointer transition-opacity">
-            <LogOut className="w-4 h-4" /> Logout
-          </button>
+          <motion.button whileTap={{ scale: 0.93 }} onClick={handleLogout} className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-body opacity-70 hover:opacity-100 hover:bg-background/10 cursor-pointer transition-all">
+            <LogOut className="w-4 h-4" strokeWidth={2.5} /> Logout
+          </motion.button>
         </div>
       </div>
 
@@ -75,17 +75,26 @@ export default function AdminDashboard() {
       <div className="sticky top-[53px] z-20 bg-background border-b border-border overflow-x-auto scrollbar-hide">
         <div className="max-w-6xl mx-auto flex">
           {tabs.map((t) => (
-            <button
+            <motion.button
               key={t.key}
               onClick={() => setTab(t.key)}
-              className={`flex items-center gap-2 px-4 sm:px-5 py-3 text-sm font-body font-medium border-b-2 transition-colors cursor-pointer whitespace-nowrap ${
+              whileTap={{ scale: 0.95 }}
+              className={`relative flex items-center gap-2 px-4 sm:px-5 py-3.5 text-sm font-body font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                 tab === t.key
-                  ? 'border-accent text-accent'
-                  : 'border-transparent text-muted-foreground hover:text-foreground'
+                  ? 'text-accent'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
-              {t.icon} {t.label}
-            </button>
+              <span className={`transition-transform ${tab === t.key ? 'scale-110' : ''}`}>{t.icon}</span>
+              {t.label}
+              {tab === t.key && (
+                <motion.div
+                  layoutId="admin-tab-indicator"
+                  className="absolute bottom-0 left-2 right-2 h-[3px] rounded-full bg-accent"
+                  transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+                />
+              )}
+            </motion.button>
           ))}
         </div>
       </div>
@@ -104,25 +113,28 @@ export default function AdminDashboard() {
 // ── Overview ──
 function OverviewTab({ stats }: { stats: Record<string, number> }) {
   const cards = [
-    { label: 'Total Partners', value: stats.totalPartners, icon: <Users className="w-5 h-5" />, color: 'bg-blue-500/10 text-blue-700' },
-    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-green-500/10 text-green-700' },
-    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-accent/10 text-accent' },
-    { label: 'Total Views', value: stats.totalViews, icon: <Eye className="w-5 h-5" />, color: 'bg-purple-500/10 text-purple-700' },
-    { label: 'Total Ratings', value: stats.totalRatings, icon: <Star className="w-5 h-5" />, color: 'bg-amber-500/10 text-amber-700' },
-    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-pink-500/10 text-pink-700' },
+    { label: 'Total Partners', value: stats.totalPartners, icon: <Users className="w-5 h-5" />, color: 'bg-blue-500/10 text-blue-700', iconBg: 'bg-blue-500/20' },
+    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-green-500/10 text-green-700', iconBg: 'bg-green-500/20' },
+    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-accent/10 text-accent', iconBg: 'bg-accent/20' },
+    { label: 'Total Views', value: stats.totalViews, icon: <Eye className="w-5 h-5" />, color: 'bg-purple-500/10 text-purple-700', iconBg: 'bg-purple-500/20' },
+    { label: 'Total Ratings', value: stats.totalRatings, icon: <Star className="w-5 h-5" />, color: 'bg-amber-500/10 text-amber-700', iconBg: 'bg-amber-500/20' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-pink-500/10 text-pink-700', iconBg: 'bg-pink-500/20' },
   ];
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-      {cards.map((c) => (
+      {cards.map((c, i) => (
         <motion.div
           key={c.label}
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
-          className={`flex flex-col gap-2 p-4 rounded-xl border border-border ${c.color}`}
+          transition={{ delay: i * 0.05 }}
+          className={`flex flex-col gap-2 p-4 rounded-2xl border border-border ${c.color}`}
         >
-          {c.icon}
-          <span className="text-2xl font-display">{c.value}</span>
-          <span className="text-xs font-body font-medium opacity-80">{c.label}</span>
+          <div className={`w-9 h-9 rounded-xl ${c.iconBg} flex items-center justify-center`}>
+            {c.icon}
+          </div>
+          <span className="text-3xl font-display">{c.value}</span>
+          <span className="text-xs font-body font-semibold uppercase tracking-wider opacity-70">{c.label}</span>
         </motion.div>
       ))}
     </div>
@@ -306,13 +318,15 @@ function DealsTab() {
                 <span className="text-xs font-body text-muted-foreground">{deal.reviewCount as number || 0} reviews</span>
               </div>
             </div>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.1 }}
               onClick={() => handleDelete(deal.id as string)}
               disabled={isDeleting}
-              className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer disabled:cursor-not-allowed"
+              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <Trash2 className="w-4 h-4 text-destructive" />
-            </button>
+              <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
+            </motion.button>
           </div>
         );
       })}
@@ -320,23 +334,25 @@ function DealsTab() {
       {/* Pagination */}
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-4">
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="p-2 rounded-lg hover:bg-muted disabled:opacity-30 cursor-pointer"
+            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
-          </button>
-          <span className="text-sm font-body text-muted-foreground">
+          </motion.button>
+          <span className="text-sm font-body font-semibold text-muted-foreground">
             Page {page} of {data.totalPages}
           </span>
-          <button
+          <motion.button
+            whileTap={{ scale: 0.9 }}
             onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
             disabled={page >= data.totalPages}
-            className="p-2 rounded-lg hover:bg-muted disabled:opacity-30 cursor-pointer"
+            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
       )}
     </div>
@@ -409,27 +425,29 @@ function ReviewsTab() {
                 {r.email as string} &middot; {dish?.name as string} &middot; {restaurant?.name as string}
               </p>
             </div>
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.1 }}
               onClick={() => { if (confirm('Delete this review?')) deleteReview.mutate(r.id as string); }}
-              className="p-2 rounded-lg hover:bg-destructive/10 transition-colors cursor-pointer flex-shrink-0"
+              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 transition-all cursor-pointer flex-shrink-0"
             >
-              <Trash2 className="w-4 h-4 text-destructive" />
-            </button>
+              <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
+            </motion.button>
           </div>
         );
       })}
 
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-4">
-          <button onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
-            className="p-2 rounded-lg hover:bg-muted disabled:opacity-30 cursor-pointer">
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
+            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors">
             <ChevronLeft className="w-5 h-5" />
-          </button>
-          <span className="text-sm font-body text-muted-foreground">Page {page} of {data.totalPages}</span>
-          <button onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages}
-            className="p-2 rounded-lg hover:bg-muted disabled:opacity-30 cursor-pointer">
+          </motion.button>
+          <span className="text-sm font-body font-semibold text-muted-foreground">Page {page} of {data.totalPages}</span>
+          <motion.button whileTap={{ scale: 0.9 }} onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages}
+            className="p-2.5 rounded-xl border border-border hover:bg-muted disabled:opacity-30 cursor-pointer transition-colors">
             <ChevronRight className="w-5 h-5" />
-          </button>
+          </motion.button>
         </div>
       )}
     </div>

@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion'
 import { PriceRange, PRICE_RANGES, PRICE_RANGE_ICONS, PrimaryTaste, PRIMARY_TASTES, DealType, DEAL_TYPES, DEAL_ICONS, Feeds, FEEDS_OPTIONS, EatingStyle, EATING_STYLES, EATING_STYLE_ICONS } from '@/types/food';
 import { TasteTile } from '@/components/TasteTile';
 import { Footer } from '@/components/Footer';
-import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check } from 'lucide-react';
+import { UtensilsCrossed, Search, Moon, Sun, ArrowRight, ChevronDown, MapPin, Users, Check, X } from 'lucide-react';
 
 const FLOATING_CARDS = [
   { image: '/images/burger.jpg', label: '$7.99', x: '10%', y: '10%', rotate: -8, delay: 0.3 },
@@ -106,7 +106,8 @@ const Index = () => {
             className="fixed top-0 left-0 right-0 z-50 glass safe-top"
           >
             <div className="max-w-2xl mx-auto flex items-center justify-between px-4 py-2.5">
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
                 className="flex items-center gap-2 cursor-pointer bg-transparent border-none p-0"
               >
@@ -114,7 +115,7 @@ const Index = () => {
                   <UtensilsCrossed className="w-4 h-4 text-accent-foreground" />
                 </div>
                 <span className="text-lg font-display text-foreground">FoodMan</span>
-              </button>
+              </motion.button>
               <div className="flex items-center gap-2">
                 <motion.button
                   whileTap={{ scale: 0.95 }}
@@ -125,17 +126,19 @@ const Index = () => {
                   <span className="hidden sm:inline">Find Markdowns</span>
                   <span className="sm:hidden">Go</span>
                 </motion.button>
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  whileHover={{ scale: 1.1 }}
                   onClick={() => {
                     const next = !isDark;
                     setIsDark(next);
                     document.documentElement.classList.toggle('dark', next);
                   }}
-                  className="p-2 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+                  className="p-2.5 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
                   aria-label="Toggle dark mode"
                 >
-                  {isDark ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-                </button>
+                  {isDark ? <Sun className="w-4 h-4" strokeWidth={2.5} /> : <Moon className="w-4 h-4" strokeWidth={2.5} />}
+                </motion.button>
               </div>
             </div>
           </motion.nav>
@@ -162,7 +165,9 @@ const Index = () => {
 
           {/* Dark mode toggle — top right of hero */}
           <div className="absolute top-4 right-4 z-20 safe-top">
-            <button
+            <motion.button
+              whileTap={{ scale: 0.85 }}
+              whileHover={{ scale: 1.1 }}
               onClick={() => {
                 const next = !isDark;
                 setIsDark(next);
@@ -171,8 +176,8 @@ const Index = () => {
               className="p-2.5 rounded-full bg-card/30 backdrop-blur-md text-primary-foreground cursor-pointer transition-colors hover:bg-card/50"
               aria-label="Toggle dark mode"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
-            </button>
+              {isDark ? <Sun className="w-5 h-5" strokeWidth={2.5} /> : <Moon className="w-5 h-5" strokeWidth={2.5} />}
+            </motion.button>
           </div>
 
           {/* Hero content */}
@@ -226,7 +231,7 @@ const Index = () => {
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.03 }}
               onClick={() => goToRestaurants()}
-              className="flex items-center justify-center gap-2 mt-8 sm:mt-10 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-accent text-accent-foreground font-body font-bold text-sm sm:text-base shadow-food cursor-pointer"
+              className="flex items-center justify-center gap-2 mt-8 sm:mt-10 px-6 sm:px-8 py-3 sm:py-3.5 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm sm:text-base shadow-lg shadow-accent/30 hover:shadow-accent/50 cursor-pointer transition-shadow"
             >
               <Search className="w-4 h-4 sm:w-5 sm:h-5" />
               Find Markdowns Near Me
@@ -318,12 +323,13 @@ const Index = () => {
                 className="bg-transparent text-sm font-body text-foreground placeholder:text-muted-foreground outline-none w-full"
               />
               {zipCode && (
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.8 }}
                   onClick={() => saveZip('')}
-                  className="text-muted-foreground hover:text-foreground p-0.5 cursor-pointer"
+                  className="text-muted-foreground hover:text-foreground p-1 rounded-full hover:bg-muted cursor-pointer transition-colors"
                 >
-                  <span className="text-xs">✕</span>
-                </button>
+                  <X className="w-3.5 h-3.5" strokeWidth={2.5} />
+                </motion.button>
               )}
             </motion.div>
             <div className="flex flex-col gap-2.5 sm:gap-3 w-full">
@@ -424,12 +430,13 @@ const Index = () => {
                 <span className="text-xs text-muted-foreground font-body">
                   {selectedTastes.length} selected
                 </span>
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setSelectedTastes([])}
-                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2.5 py-1 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-all cursor-pointer"
                 >
                   Clear
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </div>
@@ -484,12 +491,13 @@ const Index = () => {
                 animate={{ opacity: 1 }}
                 className="flex justify-center mt-2"
               >
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => { setSelectedStyle(null); setVeganOnly(false); }}
-                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2.5 py-1 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-all cursor-pointer"
                 >
                   Clear
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </div>
@@ -527,12 +535,13 @@ const Index = () => {
                 animate={{ opacity: 1 }}
                 className="flex justify-center mt-2"
               >
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.9 }}
                   onClick={() => setSelectedDealTypes([])}
-                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2 py-0.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-colors cursor-pointer"
+                  className="text-xs font-body font-medium text-destructive/80 hover:text-destructive px-2.5 py-1 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-all cursor-pointer"
                 >
                   Clear
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </div>
@@ -598,8 +607,9 @@ const Index = () => {
                       const icons: Record<string, string> = { '3–4': '👥', '5–7': '👨‍👩‍👧', '8–10': '👨‍👩‍👧‍👦', '10+': '🎉' };
                       const labels: Record<string, string> = { '3–4': 'Small group', '5–7': 'Medium group', '8–10': 'Large group', '10+': 'Party size' };
                       return (
-                        <button
+                        <motion.button
                           key={feeds}
+                          whileTap={{ scale: 0.98 }}
                           onClick={() => {
                             setSelectedFeeds(isActive ? null : feeds);
                             setFeedsOpen(false);
@@ -616,7 +626,7 @@ const Index = () => {
                             <span className="text-[11px] font-body text-muted-foreground">{labels[feeds]}</span>
                           </div>
                           {isActive && <Check className="w-4 h-4 text-accent" />}
-                        </button>
+                        </motion.button>
                       );
                     })}
                   </motion.div>
@@ -640,7 +650,7 @@ const Index = () => {
               whileTap={{ scale: 0.97 }}
               whileHover={{ scale: 1.02 }}
               onClick={() => goToRestaurants()}
-              className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 rounded-full bg-accent text-accent-foreground font-body font-bold text-base shadow-food cursor-pointer"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto px-8 py-3.5 rounded-full bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-base shadow-lg shadow-accent/30 hover:shadow-accent/50 cursor-pointer transition-shadow"
             >
               {hasFilters ? 'Show Markdowns' : 'Browse All Markdowns'}
               {filterCount > 0 && (

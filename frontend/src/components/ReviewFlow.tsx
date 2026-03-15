@@ -138,12 +138,13 @@ export function ReviewFlow({ dishId, restaurantId }: ReviewFlowProps) {
                   className="w-full pl-10 pr-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
                 />
               </div>
-              <button
+              <motion.button
+                whileTap={{ scale: 0.93 }}
                 type="submit"
-                className="px-4 py-2.5 rounded-xl bg-accent text-accent-foreground font-body font-semibold text-sm cursor-pointer hover:opacity-90 transition-opacity"
+                className="px-4 py-2.5 rounded-xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-sm hover:shadow-accent/30 transition-shadow"
               >
                 Go
-              </button>
+              </motion.button>
             </div>
           </motion.form>
         )}
@@ -167,16 +168,17 @@ export function ReviewFlow({ dishId, restaurantId }: ReviewFlowProps) {
               className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent resize-none"
             />
             <motion.button
-              whileTap={{ scale: 0.96 }}
+              whileTap={{ scale: 0.95 }}
+              whileHover={{ scale: 1.01 }}
               onClick={handleSubmitReview}
               disabled={submitReview.isPending}
-              className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-accent text-accent-foreground font-body font-bold text-sm cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50"
+              className="flex items-center justify-center gap-2 w-full py-3 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-sm cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50"
             >
               {submitReview.isPending ? (
                 <span>Submitting...</span>
               ) : (
                 <>
-                  <Send className="w-4 h-4" />
+                  <Send className="w-4 h-4" strokeWidth={2.5} />
                   Submit Review
                 </>
               )}

@@ -58,12 +58,13 @@ export default function DealDetail() {
           <Tag className="w-8 h-8 text-muted-foreground/50" />
         </div>
         <p className="text-base text-muted-foreground font-body text-center">Deal not found.</p>
-        <button
+        <motion.button
+          whileTap={{ scale: 0.95 }}
           onClick={() => navigate(-1)}
-          className="text-base font-body text-accent underline underline-offset-2 cursor-pointer py-2"
+          className="text-base font-body font-medium text-accent hover:text-accent/80 underline underline-offset-2 cursor-pointer py-2 transition-colors"
         >
           Go back
-        </button>
+        </motion.button>
       </div>
     );
   }
@@ -208,10 +209,11 @@ export default function DealDetail() {
 
         {/* Get Deal button */}
         <motion.button
-          whileTap={{ scale: 0.96 }}
+          whileTap={{ scale: 0.95 }}
+          whileHover={{ scale: 1.01 }}
           onClick={handleGetDeal}
           disabled={redirecting}
-          className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl bg-accent text-accent-foreground font-body font-bold text-lg cursor-pointer hover:opacity-90 transition-opacity disabled:opacity-50 shadow-food mb-6"
+          className="flex items-center justify-center gap-2.5 w-full py-4 rounded-2xl bg-gradient-to-r from-accent to-accent/80 text-accent-foreground font-body font-bold text-lg cursor-pointer shadow-lg shadow-accent/25 hover:shadow-accent/40 transition-shadow disabled:opacity-50 mb-6"
         >
           {redirecting ? (
             <>
@@ -220,7 +222,7 @@ export default function DealDetail() {
             </>
           ) : (
             <>
-              <ExternalLink className="w-5 h-5" />
+              <ExternalLink className="w-5 h-5" strokeWidth={2.5} />
               Get Deal
             </>
           )}
