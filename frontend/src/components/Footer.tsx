@@ -27,9 +27,9 @@ export function Footer() {
             <div className="flex gap-12 sm:gap-16">
               <div className="flex flex-col gap-2.5">
                 <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Explore</span>
-                <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Browse Deals</span>
-                <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Top Rated</span>
-                <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Near Me</span>
+                <Link to="/restaurants" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Browse Deals</Link>
+                <Link to="/restaurants" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Top Rated</Link>
+                <Link to="/restaurants" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Near Me</Link>
               </div>
               <div className="flex flex-col gap-2.5">
                 <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Company</span>
