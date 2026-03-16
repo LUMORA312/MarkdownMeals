@@ -1,5 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useLayoutEffect } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -701,45 +700,21 @@ function AnimatedSelect({
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
-  const [menuPos, setMenuPos] = useState({ top: 0, left: 0, width: 0 });
-
-  useLayoutEffect(() => {
-    if (open && btnRef.current) {
-      const rect = btnRef.current.getBoundingClientRect();
-      setMenuPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
-    }
-  }, [open]);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!open) return;
     const handler = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (
-        btnRef.current && !btnRef.current.contains(target) &&
-        menuRef.current && !menuRef.current.contains(target)
-      ) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
-  useEffect(() => {
-    if (!open) return;
-    const handler = () => setOpen(false);
-    window.addEventListener('scroll', handler, true);
-    return () => window.removeEventListener('scroll', handler, true);
-  }, [open]);
+  }, []);
 
   const selected = options.find((o) => o.value === value);
 
   return (
-    <div className={`relative ${className}`}>
+    <div className={`relative ${className}`} ref={ref}>
       <button
-        ref={btnRef}
         type="button"
         onClick={() => setOpen(!open)}
         className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-border bg-card text-sm font-body text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors"
@@ -749,39 +724,40 @@ function AnimatedSelect({
           <ChevronDown className="w-4 h-4 text-muted-foreground" />
         </motion.div>
       </button>
-      {open && createPortal(
-        <motion.ul
-          ref={menuRef}
-          initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
-          animate={{ opacity: 1, y: 0, scaleY: 1 }}
-          transition={{ duration: 0.15, ease: 'easeOut' }}
-          style={{ position: 'fixed', top: menuPos.top, left: menuPos.left, width: menuPos.width, transformOrigin: 'top', zIndex: 9999 }}
-          className="max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
-        >
-          {options.map((o, i) => (
-            <motion.li
-              key={o.value}
-              initial={{ opacity: 0, x: -6 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.025, duration: 0.12 }}
-              onClick={() => { onChange(o.value); setOpen(false); }}
-              className={`px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
-                o.value === value
-                  ? 'bg-accent/15 text-accent font-semibold'
-                  : 'text-foreground hover:bg-accent/10'
-              }`}
-            >
-              {o.label}
-            </motion.li>
-          ))}
-        </motion.ul>,
-        document.body
-      )}
+      <AnimatePresence>
+        {open && (
+          <motion.ul
+            initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
+            animate={{ opacity: 1, y: 0, scaleY: 1 }}
+            exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
+            transition={{ duration: 0.15, ease: 'easeOut' }}
+            style={{ transformOrigin: 'top' }}
+            className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
+          >
+            {options.map((o, i) => (
+              <motion.li
+                key={o.value}
+                initial={{ opacity: 0, x: -6 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: i * 0.025, duration: 0.12 }}
+                onClick={() => { onChange(o.value); setOpen(false); }}
+                className={`px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
+                  o.value === value
+                    ? 'bg-accent/15 text-accent font-semibold'
+                    : 'text-foreground hover:bg-accent/10'
+                }`}
+              >
+                {o.label}
+              </motion.li>
+            ))}
+          </motion.ul>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
 
-// ── Reusable Animated Dropdown (portal-based so it escapes overflow containers) ──
+// ── Reusable Animated Dropdown ──
 function DropdownField({
   label,
   value,
@@ -796,41 +772,15 @@ function DropdownField({
   placeholder?: string;
 }) {
   const [open, setOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLUListElement>(null);
-  const [menuPos, setMenuPos] = useState({ top: 0, left: 0, width: 0 });
+  const ref = useRef<HTMLDivElement>(null);
 
-  // Position the portal menu below the button
-  useLayoutEffect(() => {
-    if (open && btnRef.current) {
-      const rect = btnRef.current.getBoundingClientRect();
-      setMenuPos({ top: rect.bottom + 4, left: rect.left, width: rect.width });
-    }
-  }, [open]);
-
-  // Close on outside click
   useEffect(() => {
-    if (!open) return;
     const handler = (e: MouseEvent) => {
-      const target = e.target as Node;
-      if (
-        btnRef.current && !btnRef.current.contains(target) &&
-        menuRef.current && !menuRef.current.contains(target)
-      ) {
-        setOpen(false);
-      }
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
     document.addEventListener('mousedown', handler);
     return () => document.removeEventListener('mousedown', handler);
-  }, [open]);
-
-  // Close on scroll (the form scrolls and would misalign the menu)
-  useEffect(() => {
-    if (!open) return;
-    const handler = () => setOpen(false);
-    window.addEventListener('scroll', handler, true);
-    return () => window.removeEventListener('scroll', handler, true);
-  }, [open]);
+  }, []);
 
   const display = value || placeholder || 'Select...';
   const filtered = options.filter(Boolean);
@@ -838,9 +788,8 @@ function DropdownField({
   return (
     <div>
       <label className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-wider mb-1.5 block">{label}</label>
-      <div className="relative">
+      <div className="relative" ref={ref}>
         <button
-          ref={btnRef}
           type="button"
           onClick={() => setOpen(!open)}
           className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors"
@@ -850,45 +799,46 @@ function DropdownField({
             <ChevronDown className="w-4 h-4 text-muted-foreground" />
           </motion.div>
         </button>
-        {open && createPortal(
-          <motion.ul
-            ref={menuRef}
-            initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
-            animate={{ opacity: 1, y: 0, scaleY: 1 }}
-            transition={{ duration: 0.15, ease: 'easeOut' }}
-            style={{ position: 'fixed', top: menuPos.top, left: menuPos.left, width: menuPos.width, transformOrigin: 'top', zIndex: 9999 }}
-            className="max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
-          >
-            {placeholder && (
-              <motion.li
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.02 }}
-                onClick={() => { onChange(''); setOpen(false); }}
-                className="px-3 py-2 text-sm font-body text-muted-foreground cursor-pointer hover:bg-accent/10 transition-colors"
-              >
-                {placeholder}
-              </motion.li>
-            )}
-            {filtered.map((o, i) => (
-              <motion.li
-                key={o}
-                initial={{ opacity: 0, x: -6 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: i * 0.025, duration: 0.12 }}
-                onClick={() => { onChange(o); setOpen(false); }}
-                className={`px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
-                  o === value
-                    ? 'bg-accent/15 text-accent font-semibold'
-                    : 'text-foreground hover:bg-accent/10'
-                }`}
-              >
-                {o}
-              </motion.li>
-            ))}
-          </motion.ul>,
-          document.body
-        )}
+        <AnimatePresence>
+          {open && (
+            <motion.ul
+              initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              style={{ transformOrigin: 'top' }}
+              className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
+            >
+              {placeholder && (
+                <motion.li
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.02 }}
+                  onClick={() => { onChange(''); setOpen(false); }}
+                  className="px-3 py-2 text-sm font-body text-muted-foreground cursor-pointer hover:bg-accent/10 transition-colors"
+                >
+                  {placeholder}
+                </motion.li>
+              )}
+              {filtered.map((o, i) => (
+                <motion.li
+                  key={o}
+                  initial={{ opacity: 0, x: -6 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: i * 0.025, duration: 0.12 }}
+                  onClick={() => { onChange(o); setOpen(false); }}
+                  className={`px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
+                    o === value
+                      ? 'bg-accent/15 text-accent font-semibold'
+                      : 'text-foreground hover:bg-accent/10'
+                  }`}
+                >
+                  {o}
+                </motion.li>
+              ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
