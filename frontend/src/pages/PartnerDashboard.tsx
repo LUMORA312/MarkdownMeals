@@ -12,22 +12,21 @@ import {
   useCreatePartnerRestaurant,
 } from '@/hooks/use-api';
 import { getAuthToken, getStoredUser, clearAuth, uploadDealImage, resolveImageUrl } from '@/lib/api';
-import { REVIEW_BADGE_ICONS } from '@/types/food';
+import {
+  REVIEW_BADGE_ICONS,
+  PRIMARY_TASTES,
+  DEAL_TYPES,
+  EATING_STYLES,
+  FEEDS_OPTIONS as FEEDS_LIST,
+} from '@/types/food';
 import {
   LayoutDashboard, Tag, MessageSquare, Plus, Trash2, Pause, Play,
-  LogOut, Loader2, Upload, Building2, X, ChevronDown, Image as ImageIcon,
+  LogOut, Loader2, Upload, Building2, X, ChevronDown, Image as ImageIcon, Check,
 } from 'lucide-react';
 import { LoadingScreen } from '@/components/LoadingScreen';
 
 type Tab = 'overview' | 'deals' | 'reviews';
 
-const CATEGORIES = ['Handheld', 'Pizza', 'Bowls & Plates', 'Comfort', 'Fresh & Light', 'Snacky'];
-const MEAL_TYPES = ['Lunch Special', 'Late Night', 'BOGO', 'Under $10'];
-const TASTES = ['Crispy', 'Cheesy', 'Spicy', 'Fresh', 'Indulgence', 'Saucy'];
-const FEEDS_OPTIONS = ['1–2', '3–4', '5–7', '8–10', '10+'];
-const DIETARY_TAGS = ['Vegan', 'Vegetarian', 'Gluten-Free', 'Dairy-Free', 'Keto', 'Halal'];
-const SPICE_LEVELS = ['Mild', 'Medium', 'Hot', 'Extra Hot'];
-const POPULARITY_OPTIONS = ['New', 'Trending', 'Best Seller', 'Staff Pick'];
 
 export default function PartnerDashboard() {
   const navigate = useNavigate();
@@ -383,14 +382,12 @@ function DealFormModal({
   const createDeal = useCreatePartnerDeal();
   const [restaurantId, setRestaurantId] = useState(restaurants[0]?.id || '');
   const [name, setName] = useState('');
-  const [category, setCategory] = useState(CATEGORIES[0]);
-  const [dealType, setDealType] = useState(MEAL_TYPES[0]);
-  const [primaryTaste, setPrimaryTaste] = useState(TASTES[0]);
+  const [categories, setCategories] = useState<string[]>([EATING_STYLES[0]]);
+  const [dealTypes, setDealTypes] = useState<string[]>([DEAL_TYPES[0]]);
+  const [primaryTastes, setPrimaryTastes] = useState<string[]>([PRIMARY_TASTES[0]]);
   const [price, setPrice] = useState('');
-  const [feeds, setFeeds] = useState(FEEDS_OPTIONS[0]);
-  const [modifiers, setModifiers] = useState<string[]>([]);
-  const [spiceLevel, setSpiceLevel] = useState('');
-  const [popularity, setPopularity] = useState('');
+  const [feedsList, setFeedsList] = useState<string[]>([FEEDS_LIST[0]]);
+  const [modifiers] = useState<string[]>([]);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState('');
   const [uploading, setUploading] = useState(false);
@@ -422,15 +419,13 @@ function DealFormModal({
         data: {
           name,
           image: url,
-          category,
-          primaryTaste,
+          category: categories.join(', '),
+          primaryTaste: primaryTastes.join(', '),
           price: parseFloat(price),
-          feeds,
-          dealType,
+          feeds: feedsList.join(', '),
+          dealType: dealTypes.join(', '),
           dealExpiresAt: new Date(Date.now() + 86400000).toISOString(),
           modifiers,
-          spiceLevel: spiceLevel || undefined,
-          popularity: popularity || undefined,
         },
       });
       onClose();
@@ -512,10 +507,10 @@ function DealFormModal({
 
           {/* Deal Setup dropdowns */}
           <div className="grid grid-cols-2 gap-3">
-            <DropdownField label="Category" value={category} onChange={setCategory} options={CATEGORIES} />
-            <DropdownField label="Meal Type" value={dealType} onChange={setDealType} options={MEAL_TYPES} />
-            <DropdownField label="Taste" value={primaryTaste} onChange={setPrimaryTaste} options={TASTES} />
-            <DropdownField label="Feeds" value={feeds} onChange={setFeeds} options={FEEDS_OPTIONS} />
+            <MultiDropdownField label="Eating Style" values={categories} onChange={setCategories} options={[...EATING_STYLES]} />
+            <MultiDropdownField label="Deal Type" values={dealTypes} onChange={setDealTypes} options={[...DEAL_TYPES]} />
+            <MultiDropdownField label="Taste" values={primaryTastes} onChange={setPrimaryTastes} options={[...PRIMARY_TASTES]} />
+            <MultiDropdownField label="Feeds" values={feedsList} onChange={setFeedsList} options={[...FEEDS_LIST]} />
           </div>
 
           {/* Price */}
@@ -560,32 +555,6 @@ function DealFormModal({
                 className="hidden"
               />
             </div>
-          </div>
-
-          {/* Tags */}
-          <div>
-            <label className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-wider mb-1.5 block">Dietary Tags</label>
-            <div className="flex flex-wrap gap-2">
-              {DIETARY_TAGS.map((tag) => (
-                <button
-                  key={tag}
-                  type="button"
-                  onClick={() => setModifiers((prev) => prev.includes(tag) ? prev.filter((t) => t !== tag) : [...prev, tag])}
-                  className={`px-3 py-1.5 rounded-full text-xs font-body font-medium border cursor-pointer transition-all ${
-                    modifiers.includes(tag)
-                      ? 'border-accent bg-accent/15 text-accent'
-                      : 'border-border bg-background text-muted-foreground hover:border-accent/40'
-                  }`}
-                >
-                  {tag}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            <DropdownField label="Spice Level" value={spiceLevel} onChange={setSpiceLevel} options={['', ...SPICE_LEVELS]} placeholder="Select..." />
-            <DropdownField label="Popularity" value={popularity} onChange={setPopularity} options={['', ...POPULARITY_OPTIONS]} placeholder="Select..." />
           </div>
 
           {error && <p className="text-sm font-body text-destructive text-center">{error}</p>}
@@ -836,6 +805,95 @@ function DropdownField({
                   {o}
                 </motion.li>
               ))}
+            </motion.ul>
+          )}
+        </AnimatePresence>
+      </div>
+    </div>
+  );
+}
+
+// ── Multi-select Dropdown (stays open, toggles items) ──
+function MultiDropdownField({
+  label,
+  values,
+  onChange,
+  options,
+}: {
+  label: string;
+  values: string[];
+  onChange: (v: string[]) => void;
+  options: string[];
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const toggle = (item: string) => {
+    onChange(
+      values.includes(item)
+        ? values.filter((v) => v !== item)
+        : [...values, item]
+    );
+  };
+
+  const display = values.length > 0 ? values.join(', ') : 'Select...';
+
+  return (
+    <div>
+      <label className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-wider mb-1.5 block">{label}</label>
+      <div className="relative" ref={ref}>
+        <button
+          type="button"
+          onClick={() => setOpen(!open)}
+          className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors"
+        >
+          <span className={`truncate ${values.length > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>{display}</span>
+          <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
+            <ChevronDown className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+          </motion.div>
+        </button>
+        <AnimatePresence>
+          {open && (
+            <motion.ul
+              initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
+              animate={{ opacity: 1, y: 0, scaleY: 1 }}
+              exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
+              transition={{ duration: 0.15, ease: 'easeOut' }}
+              style={{ transformOrigin: 'top' }}
+              className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
+            >
+              {options.filter(Boolean).map((o, i) => {
+                const selected = values.includes(o);
+                return (
+                  <motion.li
+                    key={o}
+                    initial={{ opacity: 0, x: -6 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.025, duration: 0.12 }}
+                    onClick={() => toggle(o)}
+                    className={`flex items-center gap-2 px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
+                      selected
+                        ? 'bg-accent/15 text-accent font-semibold'
+                        : 'text-foreground hover:bg-accent/10'
+                    }`}
+                  >
+                    <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
+                      selected ? 'border-accent bg-accent' : 'border-border'
+                    }`}>
+                      {selected && <Check className="w-3 h-3 text-accent-foreground" />}
+                    </div>
+                    {o}
+                  </motion.li>
+                );
+              })}
             </motion.ul>
           )}
         </AnimatePresence>
