@@ -288,30 +288,6 @@ const Index = () => {
         {/* Gradient divider */}
         <div className="w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
 
-        {/* Standalone TACOS button */}
-        <section className="w-full py-6 sm:py-8">
-          <div className="max-w-2xl mx-auto px-4 flex justify-center">
-            <motion.button
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              whileTap={{ scale: 0.95 }}
-              whileHover={{ scale: 1.04, rotate: [0, -3, 3, -2, 2, 0], transition: { rotate: { duration: 1.5, repeat: Infinity, ease: 'easeInOut' } } }}
-              onClick={() => {
-                const params = new URLSearchParams();
-                params.set('tastes', 'Savory');
-                params.set('style', 'Casual');
-                navigate(`/restaurants?${params.toString()}`);
-              }}
-              className="btn-shine btn-glow icon-bounce group relative flex items-center gap-3 px-8 sm:px-10 py-4 sm:py-5 rounded-2xl bg-gradient-to-r from-orange-500 via-red-500 to-yellow-500 text-white font-display font-bold text-3xl sm:text-4xl tracking-wider cursor-pointer shadow-xl shadow-orange-500/30 hover:shadow-orange-500/50 transition-shadow overflow-hidden"
-            >
-              <span className="text-3xl sm:text-4xl" role="img" aria-label="taco">🌮</span>
-              <span className="drop-shadow-md">TACOS</span>
-              <ArrowRight className="w-6 h-6 sm:w-7 sm:h-7 opacity-70 group-hover:opacity-100 group-hover:translate-x-1 transition-all" strokeWidth={3} />
-            </motion.button>
-          </div>
-        </section>
-
         {/* Price/Value Selection — first interaction */}
         <section id="price-section" className="w-full overflow-hidden">
           <div className="max-w-2xl mx-auto px-4 py-6 sm:py-12">
@@ -401,6 +377,39 @@ const Index = () => {
 
           {/* Smooth gradient divider */}
           <div className="w-full h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
+        </section>
+
+        {/* Quick Food Category Buttons */}
+        <section className="w-full py-6 sm:py-8">
+          <div className="max-w-2xl mx-auto px-4">
+            <div className="flex flex-wrap justify-center gap-2.5 sm:gap-3">
+              {([
+                { emoji: '🌮', label: 'TACOS', from: 'from-orange-500', via: 'via-red-500', to: 'to-yellow-500', shadow: 'shadow-orange-500/25 hover:shadow-orange-500/40' },
+                { emoji: '🍔', label: 'BURGERS', from: 'from-amber-600', via: 'via-orange-500', to: 'to-yellow-500', shadow: 'shadow-amber-500/25 hover:shadow-amber-500/40' },
+                { emoji: '🍕', label: 'PIZZA', from: 'from-red-500', via: 'via-rose-500', to: 'to-orange-400', shadow: 'shadow-red-500/25 hover:shadow-red-500/40' },
+                { emoji: '🍗', label: 'WINGS', from: 'from-yellow-500', via: 'via-amber-500', to: 'to-orange-500', shadow: 'shadow-yellow-500/25 hover:shadow-yellow-500/40' },
+              ] as const).map((item, i) => (
+                <motion.button
+                  key={item.label}
+                  initial={{ opacity: 0, scale: 0.85 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.06 * i, type: 'spring', stiffness: 300, damping: 20 }}
+                  whileTap={{ scale: 0.93 }}
+                  whileHover={{ scale: 1.05, rotate: [0, -2, 2, -1, 1, 0], transition: { rotate: { duration: 1.8, repeat: Infinity, ease: 'easeInOut' } } }}
+                  onClick={() => {
+                    const params = new URLSearchParams();
+                    params.set('search', item.label.toLowerCase());
+                    navigate(`/restaurants?${params.toString()}`);
+                  }}
+                  className={`btn-shine group relative flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 rounded-xl bg-gradient-to-r ${item.from} ${item.via} ${item.to} text-white font-display font-bold text-lg sm:text-xl tracking-wider cursor-pointer shadow-lg ${item.shadow} transition-shadow overflow-hidden`}
+                >
+                  <span className="text-lg sm:text-xl">{item.emoji}</span>
+                  <span className="drop-shadow-sm">{item.label}</span>
+                </motion.button>
+              ))}
+            </div>
+          </div>
         </section>
 
         {/* Optional Refinements */}
