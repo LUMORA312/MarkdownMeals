@@ -508,7 +508,7 @@ function DealFormModal({
           {/* Deal Setup dropdowns */}
           <div className="grid grid-cols-2 gap-3">
             <MultiDropdownField label="Eating Style" values={categories} onChange={setCategories} options={[...EATING_STYLES]} />
-            <MultiDropdownField label="Deal Type" values={dealTypes} onChange={setDealTypes} options={[...DEAL_TYPES]} />
+            <MultiDropdownField label="Deal Type" values={dealTypes} onChange={setDealTypes} options={[...DEAL_TYPES, 'Under $15', 'Under $20', 'Best Value', 'Family Feast']} />
             <MultiDropdownField label="Taste" values={primaryTastes} onChange={setPrimaryTastes} options={[...PRIMARY_TASTES]} />
             <MultiDropdownField label="Feeds" values={feedsList} onChange={setFeedsList} options={[...FEEDS_LIST]} />
           </div>
