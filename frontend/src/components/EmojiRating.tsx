@@ -30,10 +30,10 @@ export function EmojiRatingComponent({ selectedEmoji, selectedTags, onEmojiSelec
                 key={emoji}
                 whileTap={{ scale: 0.85 }}
                 onClick={() => onEmojiSelect(emoji)}
-                className={`flex flex-col items-center gap-1 p-2 sm:p-3 rounded-2xl transition-all cursor-pointer min-w-[56px] sm:min-w-[64px] ${
+                className={`flex flex-col items-center gap-1 p-2 sm:p-3 rounded-2xl transition-all cursor-pointer min-w-[56px] sm:min-w-[64px] border ${
                   isSelected
-                    ? 'bg-primary/15 ring-2 ring-primary shadow-sm'
-                    : 'hover:bg-muted active:bg-muted/80'
+                    ? 'bg-violet-100 border-violet-400 ring-2 ring-violet-300 shadow-sm'
+                    : 'bg-violet-50 border-violet-200 hover:bg-violet-100 active:bg-violet-200'
                 }`}
               >
                 <span className={`text-3xl sm:text-4xl transition-transform ${isSelected ? 'scale-110' : ''}`}>
@@ -63,10 +63,10 @@ export function EmojiRatingComponent({ selectedEmoji, selectedTags, onEmojiSelec
                 key={tag}
                 whileTap={{ scale: 0.93 }}
                 onClick={() => onTagToggle(tag)}
-                className={`px-3 py-2 rounded-full text-sm font-body transition-all cursor-pointer ${
+                className={`px-3 py-2 rounded-full text-sm font-body transition-all cursor-pointer border ${
                   selectedTags.includes(tag)
-                    ? 'bg-primary text-primary-foreground shadow-sm'
-                    : 'bg-muted text-muted-foreground hover:bg-secondary active:bg-secondary/80'
+                    ? 'bg-sky-500 text-white border-sky-500 shadow-sm'
+                    : 'bg-sky-50 text-sky-700 border-sky-300 hover:bg-sky-100 active:bg-sky-200'
                 }`}
               >
                 {tag}

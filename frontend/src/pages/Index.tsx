@@ -23,6 +23,29 @@ const PRICE_DESCRIPTIONS: Record<PriceRange, string> = {
   'Family Feast': 'Feed the whole crew for less',
 };
 
+const PRICE_COLORS: Record<PriceRange, { bg: string; bgLight: string; border: string; borderLight: string; hover: string; text: string }> = {
+  'Under $10':    { bg: 'bg-emerald-500',  bgLight: 'bg-emerald-100',  border: 'border-emerald-500',  borderLight: 'border-emerald-300', hover: 'hover:bg-emerald-200 hover:border-emerald-400', text: 'text-emerald-800' },
+  'Under $15':    { bg: 'bg-sky-500',      bgLight: 'bg-sky-100',      border: 'border-sky-500',      borderLight: 'border-sky-300',     hover: 'hover:bg-sky-200 hover:border-sky-400',         text: 'text-sky-800' },
+  'Under $20':    { bg: 'bg-violet-500',   bgLight: 'bg-violet-100',   border: 'border-violet-500',   borderLight: 'border-violet-300',  hover: 'hover:bg-violet-200 hover:border-violet-400',   text: 'text-violet-800' },
+  'Best Value':   { bg: 'bg-amber-500',    bgLight: 'bg-amber-100',    border: 'border-amber-500',    borderLight: 'border-amber-300',   hover: 'hover:bg-amber-200 hover:border-amber-400',     text: 'text-amber-800' },
+  'Family Feast': { bg: 'bg-rose-500',     bgLight: 'bg-rose-100',     border: 'border-rose-500',     borderLight: 'border-rose-300',    hover: 'hover:bg-rose-200 hover:border-rose-400',       text: 'text-rose-800' },
+};
+
+const STYLE_COLORS: Record<EatingStyle, { bg: string; border: string; activeBorder: string; activeBg: string; activeText: string; hover: string; text: string }> = {
+  'Handheld':       { bg: 'bg-orange-50',   border: 'border-orange-300',  activeBorder: 'border-orange-500',  activeBg: 'bg-orange-200',  activeText: 'text-orange-900',  hover: 'hover:bg-orange-100 hover:border-orange-400',  text: 'text-orange-700' },
+  'Bowls & Plates': { bg: 'bg-sky-50',      border: 'border-sky-300',     activeBorder: 'border-sky-500',     activeBg: 'bg-sky-200',     activeText: 'text-sky-900',     hover: 'hover:bg-sky-100 hover:border-sky-400',        text: 'text-sky-700' },
+  'Comfort':        { bg: 'bg-amber-50',    border: 'border-amber-300',   activeBorder: 'border-amber-500',   activeBg: 'bg-amber-200',   activeText: 'text-amber-900',   hover: 'hover:bg-amber-100 hover:border-amber-400',    text: 'text-amber-700' },
+  'Fresh & Light':  { bg: 'bg-emerald-50',  border: 'border-emerald-300', activeBorder: 'border-emerald-500', activeBg: 'bg-emerald-200', activeText: 'text-emerald-900', hover: 'hover:bg-emerald-100 hover:border-emerald-400', text: 'text-emerald-700' },
+  'Snacky':         { bg: 'bg-pink-50',     border: 'border-pink-300',    activeBorder: 'border-pink-500',    activeBg: 'bg-pink-200',    activeText: 'text-pink-900',    hover: 'hover:bg-pink-100 hover:border-pink-400',      text: 'text-pink-700' },
+};
+
+const DEAL_COLORS: Record<DealType, { bg: string; border: string; activeBorder: string; activeBg: string; activeText: string; hover: string; text: string }> = {
+  'Under $10':      { bg: 'bg-emerald-50',  border: 'border-emerald-300', activeBorder: 'border-emerald-500', activeBg: 'bg-emerald-200', activeText: 'text-emerald-900', hover: 'hover:bg-emerald-100 hover:border-emerald-400', text: 'text-emerald-700' },
+  'BOGO':           { bg: 'bg-violet-50',   border: 'border-violet-300',  activeBorder: 'border-violet-500',  activeBg: 'bg-violet-200',  activeText: 'text-violet-900',  hover: 'hover:bg-violet-100 hover:border-violet-400',   text: 'text-violet-700' },
+  'Late Night':     { bg: 'bg-indigo-50',   border: 'border-indigo-300',  activeBorder: 'border-indigo-500',  activeBg: 'bg-indigo-200',  activeText: 'text-indigo-900',  hover: 'hover:bg-indigo-100 hover:border-indigo-400',   text: 'text-indigo-700' },
+  'Lunch Special':  { bg: 'bg-amber-50',    border: 'border-amber-300',   activeBorder: 'border-amber-500',   activeBg: 'bg-amber-200',   activeText: 'text-amber-900',   hover: 'hover:bg-amber-100 hover:border-amber-400',    text: 'text-amber-700' },
+};
+
 const Index = () => {
   const navigate = useNavigate();
   const heroRef = useRef<HTMLElement>(null);
@@ -90,10 +113,12 @@ const Index = () => {
 
   return (
     <div className="relative min-h-screen bg-background safe-bottom">
-      {/* Full-page background image — different from hero steak */}
-      <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, mixBlendMode: 'multiply' }}
-      />
+      {/* Full-page background image — isolated behind all content */}
+      <div className="fixed inset-0 z-0 pointer-events-none" style={{ isolation: 'isolate' }}>
+        <div className="absolute inset-0"
+          style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.3 }}
+        />
+      </div>
 
       {/* Sticky Nav */}
       <AnimatePresence>
@@ -148,7 +173,7 @@ const Index = () => {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        className="min-h-screen flex flex-col"
+        className="relative z-10 min-h-screen flex flex-col"
       >
         <section ref={heroRef} id="hero-section" className="relative w-full h-[40vh] sm:h-[55vh] min-h-[280px] sm:min-h-[380px] overflow-hidden">
           {/* Parallax background — overflow-hidden only here */}
@@ -311,7 +336,7 @@ const Index = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ delay: 0.1 }}
-              className="flex items-center gap-2 mb-5 sm:mb-6 px-4 py-2.5 rounded-xl border border-border bg-muted/40 focus-within:border-accent/50 focus-within:bg-card transition-all max-w-xs mx-auto"
+              className="flex items-center gap-2 mb-5 sm:mb-6 px-4 py-2.5 rounded-xl border-2 border-amber-300 bg-amber-50 focus-within:border-amber-500 focus-within:bg-amber-100 transition-all max-w-xs mx-auto"
             >
               <MapPin className="w-4 h-4 text-muted-foreground shrink-0" />
               <input
@@ -335,6 +360,7 @@ const Index = () => {
             <div className="flex flex-col gap-2.5 sm:gap-3 w-full">
               {PRICE_RANGES.map((price, i) => {
                 const isActive = selectedPrice === price;
+                const colors = PRICE_COLORS[price];
                 return (
                   <motion.button
                     key={price}
@@ -351,25 +377,25 @@ const Index = () => {
                     }}
                     className={`flex items-center gap-3 sm:gap-5 w-full px-4 sm:px-7 py-3.5 sm:py-6 rounded-2xl border-2 transition-all cursor-pointer group ${
                       isActive
-                        ? 'border-accent bg-accent text-white shadow-lg ring-2 ring-accent/40'
-                        : 'border-border bg-card hover:bg-accent/20 hover:border-accent/50 shadow-card hover:shadow-food'
+                        ? `${colors.bg} ${colors.border} text-white shadow-lg ring-2 ring-white/30`
+                        : `${colors.bgLight} ${colors.borderLight} ${colors.hover} shadow-card hover:shadow-food`
                     }`}
                   >
                     <span className="text-2xl sm:text-4xl">{PRICE_RANGE_ICONS[price]}</span>
                     <div className="flex flex-col items-start flex-1 min-w-0">
                       <span className={`text-sm sm:text-xl font-display font-bold truncate ${
-                        isActive ? 'text-white' : 'text-foreground/90 group-hover:text-foreground'
+                        isActive ? 'text-white' : `${colors.text} group-hover:text-foreground`
                       }`}>
                         {price}
                       </span>
                       <span className={`text-xs sm:text-base font-body truncate ${
-                        isActive ? 'text-white/80' : 'text-muted-foreground'
+                        isActive ? 'text-white/80' : `${colors.text} opacity-70`
                       }`}>
                         {PRICE_DESCRIPTIONS[price]}
                       </span>
                     </div>
                     <ArrowRight className={`w-5 h-5 shrink-0 transition-transform ${
-                      isActive ? 'text-white translate-x-1' : 'text-muted-foreground group-hover:translate-x-1 group-hover:text-foreground'
+                      isActive ? 'text-white translate-x-1' : `${colors.text} group-hover:translate-x-1`
                     }`} />
                   </motion.button>
                 );
@@ -482,6 +508,7 @@ const Index = () => {
             <div className="flex flex-wrap gap-1.5 sm:gap-2 justify-center px-2 sm:px-0 pb-1">
               {EATING_STYLES.map((style, i) => {
                 const isActive = selectedStyle === style;
+                const sc = STYLE_COLORS[style];
                 return (
                   <motion.button
                     key={style}
@@ -493,8 +520,8 @@ const Index = () => {
                     onClick={() => setSelectedStyle(isActive ? null : style)}
                     className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-full border transition-all cursor-pointer text-xs sm:text-sm font-body font-semibold whitespace-nowrap ${
                       isActive
-                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
-                        : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
+                        ? `${sc.activeBorder} ${sc.activeBg} ${sc.activeText} ring-1 ring-current/30 shadow-sm`
+                        : `${sc.border} ${sc.bg} ${sc.text} ${sc.hover}`
                     }`}
                   >
                     <span className="text-sm sm:text-base">{EATING_STYLE_ICONS[style]}</span>
@@ -512,8 +539,8 @@ const Index = () => {
                 onClick={() => setVeganOnly((prev) => !prev)}
                 className={`flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-4 py-1.5 sm:py-2.5 rounded-full border transition-all cursor-pointer text-xs sm:text-sm font-body font-semibold whitespace-nowrap ${
                   veganOnly
-                    ? 'border-green-500 bg-green-500/15 text-green-700 ring-1 ring-green-500/30 shadow-sm'
-                    : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
+                    ? 'border-green-500 bg-green-200 text-green-900 ring-1 ring-green-500/30 shadow-sm'
+                    : 'border-green-300 bg-green-50 text-green-700 hover:bg-green-100 hover:border-green-400'
                 }`}
               >
                 <span className="text-base">🌱</span>
@@ -543,6 +570,7 @@ const Index = () => {
             <div className="flex gap-2 justify-start sm:justify-center overflow-x-auto scrollbar-hide scroll-touch px-2 sm:px-0 pb-1">
               {DEAL_TYPES.map((deal, i) => {
                 const isActive = selectedDealTypes.includes(deal);
+                const dc = DEAL_COLORS[deal];
                 return (
                   <motion.button
                     key={deal}
@@ -554,8 +582,8 @@ const Index = () => {
                     onClick={() => toggleDealType(deal)}
                     className={`flex items-center gap-1.5 px-4 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
                       isActive
-                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
-                        : 'border-border bg-muted/50 text-foreground hover:bg-accent/10 hover:border-accent/40'
+                        ? `${dc.activeBorder} ${dc.activeBg} ${dc.activeText} ring-1 ring-current/30 shadow-sm`
+                        : `${dc.border} ${dc.bg} ${dc.text} ${dc.hover}`
                     }`}
                   >
                     <span className="text-base">{DEAL_ICONS[deal]}</span>
@@ -597,8 +625,8 @@ const Index = () => {
                     onClick={() => setSelectedFeeds(isActive ? null : feeds)}
                     className={`flex items-center gap-1.5 px-3.5 py-2.5 rounded-full border transition-all cursor-pointer text-sm font-body font-semibold whitespace-nowrap flex-shrink-0 ${
                       isActive
-                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
-                        : 'border-border bg-muted/50 text-foreground'
+                        ? 'border-teal-500 bg-teal-200 text-teal-900 ring-1 ring-teal-500/30 shadow-sm'
+                        : 'border-teal-300 bg-teal-50 text-teal-700 hover:bg-teal-100 hover:border-teal-400'
                     }`}
                   >
                     <span className="text-sm">{icons[feeds]}</span>
@@ -615,9 +643,9 @@ const Index = () => {
                 onClick={() => setFeedsOpen((prev) => !prev)}
                 className={`flex items-center justify-between w-full px-5 py-3.5 rounded-2xl border-2 transition-all cursor-pointer ${
                   selectedFeeds
-                    ? 'border-accent bg-accent/10 shadow-sm'
-                    : 'border-border bg-muted/50 hover:border-accent/40'
-                } ${feedsOpen ? 'ring-2 ring-accent/30 border-accent' : ''}`}
+                    ? 'border-teal-500 bg-teal-100 shadow-sm'
+                    : 'border-teal-300 bg-teal-50 hover:border-teal-400 hover:bg-teal-100'
+                } ${feedsOpen ? 'ring-2 ring-teal-400/30 border-teal-500' : ''}`}
               >
                 <div className="flex items-center gap-3">
                   <Users className={`w-5 h-5 ${selectedFeeds ? 'text-accent' : 'text-muted-foreground'}`} />
@@ -635,7 +663,7 @@ const Index = () => {
                     animate={{ opacity: 1, y: 0, scaleY: 1 }}
                     exit={{ opacity: 0, y: -8, scaleY: 0.95 }}
                     transition={{ duration: 0.15, ease: 'easeOut' }}
-                    className="absolute z-20 mt-2 w-full rounded-2xl border-2 border-border bg-card shadow-elevated overflow-hidden origin-top"
+                    className="absolute z-20 mt-2 w-full rounded-2xl border-2 border-teal-300 bg-teal-50 shadow-elevated overflow-hidden origin-top"
                   >
                     {FEEDS_OPTIONS.map((feeds) => {
                       const isActive = selectedFeeds === feeds;

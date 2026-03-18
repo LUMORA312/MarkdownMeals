@@ -2,11 +2,11 @@ import { motion } from 'framer-motion';
 import { PrimaryTaste, TASTE_ICONS } from '@/types/food';
 
 const TASTE_BG: Record<PrimaryTaste, string> = {
-  'Crispy': 'bg-taste-crispy/15 border-taste-crispy/40',
-  'Cheesy': 'bg-taste-cheesy/15 border-taste-cheesy/40',
-  'Spicy': 'bg-destructive/15 border-destructive/40',
-  'Fresh': 'bg-taste-fresh/15 border-taste-fresh/40',
-  'Sweet': 'bg-taste-sweet/15 border-taste-sweet/40',
+  'Crispy': 'bg-amber-100 border-amber-300',
+  'Cheesy': 'bg-yellow-100 border-yellow-300',
+  'Spicy': 'bg-rose-100 border-rose-300',
+  'Fresh': 'bg-emerald-100 border-emerald-300',
+  'Sweet': 'bg-pink-100 border-pink-300',
 };
 
 const TASTE_BG_SELECTED: Record<PrimaryTaste, string> = {

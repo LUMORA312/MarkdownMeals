@@ -72,8 +72,8 @@ export default function RestaurantDetail() {
   if (!restaurant) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-          <Tag className="w-8 h-8 text-muted-foreground/50" />
+        <div className="w-16 h-16 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center">
+          <Tag className="w-8 h-8 text-amber-400" />
         </div>
         <p className="text-base text-muted-foreground font-body text-center">Restaurant not found.</p>
         <motion.button
@@ -91,7 +91,7 @@ export default function RestaurantDetail() {
     <div className="relative min-h-screen bg-background safe-bottom">
       {/* Full-page background image */}
       <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.08}}
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.2}}
       />
 
       {/* Hero */}
@@ -140,7 +140,7 @@ export default function RestaurantDetail() {
       </div>
 
       {/* Subheader with instruction */}
-      <div className="px-4 py-4 border-b border-border/50">
+      <div className="px-4 py-4 border-b border-amber-200">
         <div className="max-w-2xl mx-auto flex flex-col items-center gap-2">
           <div className="flex items-center gap-2">
             <h2 className="text-lg sm:text-xl font-display text-foreground">Active Deals</h2>
@@ -150,7 +150,7 @@ export default function RestaurantDetail() {
               </span>
             )}
           </div>
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-accent/10 border border-accent/20 text-sm font-body font-semibold text-accent">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-sky-100 border border-sky-300 text-sm font-body font-semibold text-sky-700">
             <span className="text-base">👆</span>
             Tap any deal to claim it
           </span>
@@ -195,8 +195,8 @@ export default function RestaurantDetail() {
             animate={{ opacity: 1 }}
             className="flex flex-col items-center justify-center py-12 gap-3"
           >
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-              <Tag className="w-8 h-8 text-muted-foreground/50" />
+            <div className="w-16 h-16 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center">
+              <Tag className="w-8 h-8 text-amber-400" />
             </div>
             <p className="text-base text-muted-foreground font-body text-center max-w-xs">
               No active deals match your filters right now. Check back soon!

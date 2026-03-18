@@ -72,7 +72,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Tab bar */}
-      <div className="sticky top-[53px] z-20 bg-background border-b border-border overflow-x-auto scrollbar-hide">
+      <div className="sticky top-[53px] z-20 bg-background border-b border-amber-200 overflow-x-auto scrollbar-hide">
         <div className="max-w-6xl mx-auto flex">
           {tabs.map((t) => (
             <motion.button
@@ -113,12 +113,12 @@ export default function AdminDashboard() {
 // ── Overview ──
 function OverviewTab({ stats }: { stats: Record<string, number> }) {
   const cards = [
-    { label: 'Total Partners', value: stats.totalPartners, icon: <Users className="w-5 h-5" />, color: 'bg-blue-500/10 text-blue-700', iconBg: 'bg-blue-500/20' },
-    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-green-500/10 text-green-700', iconBg: 'bg-green-500/20' },
-    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-accent/10 text-accent', iconBg: 'bg-accent/20' },
-    { label: 'Total Views', value: stats.totalViews, icon: <Eye className="w-5 h-5" />, color: 'bg-purple-500/10 text-purple-700', iconBg: 'bg-purple-500/20' },
-    { label: 'Total Ratings', value: stats.totalRatings, icon: <Star className="w-5 h-5" />, color: 'bg-amber-500/10 text-amber-700', iconBg: 'bg-amber-500/20' },
-    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-pink-500/10 text-pink-700', iconBg: 'bg-pink-500/20' },
+    { label: 'Total Partners', value: stats.totalPartners, icon: <Users className="w-5 h-5" />, color: 'bg-sky-100 border-sky-200 text-blue-700', iconBg: 'bg-sky-200' },
+    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-emerald-100 border-emerald-200 text-emerald-700', iconBg: 'bg-emerald-200' },
+    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-amber-100 border-amber-200 text-amber-700', iconBg: 'bg-amber-200' },
+    { label: 'Total Views', value: stats.totalViews, icon: <Eye className="w-5 h-5" />, color: 'bg-violet-100 border-violet-200 text-purple-700', iconBg: 'bg-violet-200' },
+    { label: 'Total Ratings', value: stats.totalRatings, icon: <Star className="w-5 h-5" />, color: 'bg-amber-100 border-amber-200 text-amber-700', iconBg: 'bg-amber-200' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-rose-100 border-rose-200 text-pink-700', iconBg: 'bg-rose-200' },
   ];
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -128,7 +128,7 @@ function OverviewTab({ stats }: { stats: Record<string, number> }) {
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.05 }}
-          className={`flex flex-col gap-2 p-4 rounded-2xl border border-border ${c.color}`}
+          className={`flex flex-col gap-2 p-4 rounded-2xl border ${c.color}`}
         >
           <div className={`w-9 h-9 rounded-xl ${c.iconBg} flex items-center justify-center`}>
             {c.icon}
@@ -153,7 +153,7 @@ function AnalyticsTab() {
     <div className="flex flex-col gap-6">
       {/* Trend chart (simple bar visualization) */}
       {trend && trend.length > 0 && (
-        <div className="p-4 rounded-xl border border-border bg-card">
+        <div className="p-4 rounded-xl border border-amber-200 bg-amber-50">
           <h3 className="text-base font-body font-semibold text-foreground mb-3 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-accent" /> 30-Day Activity
           </h3>
@@ -164,7 +164,7 @@ function AnalyticsTab() {
               return (
                 <div
                   key={d.date}
-                  className="flex-1 bg-accent/60 rounded-t hover:bg-accent transition-colors"
+                  className="flex-1 bg-amber-400 rounded-t hover:bg-amber-500 transition-colors"
                   style={{ height: `${Math.max(h, 2)}%` }}
                   title={`${d.date}: ${d.views} views, ${d.reviews} reviews`}
                 />
@@ -180,7 +180,7 @@ function AnalyticsTab() {
 
       {/* Deals by category */}
       {byCategory && byCategory.length > 0 && (
-        <div className="p-4 rounded-xl border border-border bg-card">
+        <div className="p-4 rounded-xl border border-amber-200 bg-amber-50">
           <h3 className="text-base font-body font-semibold text-foreground mb-3">Deals by Category</h3>
           <div className="flex flex-col gap-2">
             {byCategory.map((c) => {
@@ -188,9 +188,9 @@ function AnalyticsTab() {
               return (
                 <div key={c.category} className="flex items-center gap-3">
                   <span className="text-sm font-body text-foreground w-28 truncate">{c.category}</span>
-                  <div className="flex-1 h-5 rounded-full bg-muted overflow-hidden">
+                  <div className="flex-1 h-5 rounded-full bg-amber-100 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-accent/70"
+                      className="h-full rounded-full bg-amber-400"
                       style={{ width: `${(c.count / maxCount) * 100}%` }}
                     />
                   </div>
@@ -205,7 +205,7 @@ function AnalyticsTab() {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {/* Most viewed */}
         {mostViewed && (
-          <div className="p-4 rounded-xl border border-border bg-card">
+          <div className="p-4 rounded-xl border border-violet-200 bg-violet-50">
             <h3 className="text-base font-body font-semibold text-foreground mb-3 flex items-center gap-2">
               <Eye className="w-4 h-4 text-purple-500" /> Most Viewed Deals
             </h3>
@@ -227,7 +227,7 @@ function AnalyticsTab() {
 
         {/* Most active partners */}
         {mostActive && (
-          <div className="p-4 rounded-xl border border-border bg-card">
+          <div className="p-4 rounded-xl border border-sky-200 bg-sky-50">
             <h3 className="text-base font-body font-semibold text-foreground mb-3 flex items-center gap-2">
               <Users className="w-4 h-4 text-blue-500" /> Most Active Partners
             </h3>
@@ -249,19 +249,19 @@ function AnalyticsTab() {
 
       {/* Newest deals */}
       {newest && (
-        <div className="p-4 rounded-xl border border-border bg-card">
+        <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50">
           <h3 className="text-base font-body font-semibold text-foreground mb-3 flex items-center gap-2">
             <Clock className="w-4 h-4 text-green-500" /> Newest Deals
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {newest.map((d) => (
-              <div key={d.id as string} className="flex items-center gap-3 p-2 rounded-lg border border-border">
+              <div key={d.id as string} className="flex items-center gap-3 p-2 rounded-lg border border-emerald-200 bg-emerald-50/50">
                 <img src={resolveImageUrl(d.image as string)} alt="" className="w-12 h-12 rounded-lg object-cover" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-body font-medium text-foreground truncate">{d.name as string}</p>
                   <p className="text-xs font-body text-muted-foreground">{d.restaurantName as string} &middot; ${(d.price as number)?.toFixed(2)}</p>
                 </div>
-                <span className="text-xs px-2 py-0.5 rounded-full bg-accent/10 text-accent font-body font-medium">{d.category as string}</span>
+                <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 border border-amber-200 text-amber-700 font-body font-medium">{d.category as string}</span>
               </div>
             ))}
           </div>
@@ -296,7 +296,7 @@ function DealsTab() {
         const isActive = new Date(deal.dealExpiresAt as string) > new Date();
         const isDeleting = deletingId === (deal.id as string);
         return (
-          <div key={deal.id as string} className={`relative flex items-center gap-3 p-3 rounded-xl border border-border bg-card transition-opacity ${isDeleting ? 'opacity-50' : ''}`}>
+          <div key={deal.id as string} className={`relative flex items-center gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50 transition-opacity ${isDeleting ? 'opacity-50' : ''}`}>
             {isDeleting && (
               <div className="absolute inset-0 flex items-center justify-center bg-background/60 rounded-xl z-10">
                 <div className="flex items-center gap-2">
@@ -311,7 +311,7 @@ function DealsTab() {
               <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                 <span className="text-xs font-body text-muted-foreground">{deal.restaurantName as string}</span>
                 <span className="text-xs font-body text-muted-foreground">${(deal.price as number)?.toFixed(2)}</span>
-                <span className={`text-xs font-body font-medium px-2 py-0.5 rounded-full ${isActive ? 'bg-green-500/10 text-green-700' : 'bg-muted text-muted-foreground'}`}>
+                <span className={`text-xs font-body font-medium px-2 py-0.5 rounded-full ${isActive ? 'bg-emerald-100 border border-emerald-200 text-emerald-700' : 'bg-gray-100 border border-gray-200 text-gray-600'}`}>
                   {isActive ? 'Active' : 'Expired'}
                 </span>
                 <span className="text-xs font-body text-muted-foreground">{deal.views as number || 0} views</span>
@@ -323,7 +323,7 @@ function DealsTab() {
               whileHover={{ scale: 1.1 }}
               onClick={() => handleDelete(deal.id as string)}
               disabled={isDeleting}
-              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 hover:ring-1 hover:ring-destructive/30 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
+              className="p-2.5 rounded-xl bg-rose-100 border border-rose-200 text-rose-700 hover:bg-rose-200 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:cursor-not-allowed disabled:opacity-50"
             >
               <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
             </motion.button>
@@ -339,11 +339,11 @@ function DealsTab() {
             whileHover={{ scale: 1.05 }}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all"
+            className="p-2.5 rounded-xl bg-gray-100 border-2 border-gray-200 hover:bg-gray-200 hover:border-gray-300 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all"
           >
             <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
-          <span className="text-sm font-body font-bold text-muted-foreground">
+          <span className="text-sm font-body font-bold text-gray-600">
             Page {page} of {data.totalPages}
           </span>
           <motion.button
@@ -351,7 +351,7 @@ function DealsTab() {
             whileHover={{ scale: 1.05 }}
             onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))}
             disabled={page >= data.totalPages}
-            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all"
+            className="p-2.5 rounded-xl bg-gray-100 border-2 border-gray-200 hover:bg-gray-200 hover:border-gray-300 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all"
           >
             <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
@@ -374,8 +374,8 @@ function PartnersTab() {
       {partners?.map((p) => {
         const restaurants = (p.restaurants as Array<Record<string, unknown>>) || [];
         return (
-          <div key={p.id as string} className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card">
-            <div className="w-10 h-10 rounded-full bg-blue-500/10 flex items-center justify-center flex-shrink-0">
+          <div key={p.id as string} className="flex items-center gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50">
+            <div className="w-10 h-10 rounded-full bg-sky-100 border border-sky-200 flex items-center justify-center flex-shrink-0">
               <Users className="w-5 h-5 text-blue-600" />
             </div>
             <div className="flex-1 min-w-0">
@@ -411,7 +411,7 @@ function ReviewsTab() {
         const dish = r.dish as Record<string, unknown> | undefined;
         const restaurant = r.restaurant as Record<string, unknown> | undefined;
         return (
-          <div key={r.id as string} className="flex items-start gap-3 p-3 rounded-xl border border-border bg-card">
+          <div key={r.id as string} className="flex items-start gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50">
             {dish?.image && (
               <img src={resolveImageUrl(dish.image as string)} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
             )}
@@ -431,7 +431,7 @@ function ReviewsTab() {
               whileTap={{ scale: 0.85 }}
               whileHover={{ scale: 1.1 }}
               onClick={() => { if (confirm('Delete this review?')) deleteReview.mutate(r.id as string); }}
-              className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 hover:ring-1 hover:ring-destructive/30 shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0"
+              className="p-2.5 rounded-xl bg-rose-100 border border-rose-200 text-rose-700 hover:bg-rose-200 shadow-sm hover:shadow-md transition-all cursor-pointer flex-shrink-0"
             >
               <Trash2 className="w-4 h-4 text-destructive" strokeWidth={2.5} />
             </motion.button>
@@ -442,12 +442,12 @@ function ReviewsTab() {
       {data && data.totalPages > 1 && (
         <div className="flex items-center justify-center gap-4 mt-4">
           <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.05 }} onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page <= 1}
-            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all">
+            className="p-2.5 rounded-xl bg-gray-100 border-2 border-gray-200 hover:bg-gray-200 hover:border-gray-300 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all">
             <ChevronLeft className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
-          <span className="text-sm font-body font-bold text-muted-foreground">Page {page} of {data.totalPages}</span>
+          <span className="text-sm font-body font-bold text-gray-600">Page {page} of {data.totalPages}</span>
           <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.05 }} onClick={() => setPage((p) => Math.min(data.totalPages, p + 1))} disabled={page >= data.totalPages}
-            className="p-2.5 rounded-xl border-2 border-border hover:bg-muted hover:border-accent/30 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all">
+            className="p-2.5 rounded-xl bg-gray-100 border-2 border-gray-200 hover:bg-gray-200 hover:border-gray-300 disabled:opacity-30 cursor-pointer shadow-sm hover:shadow-md transition-all">
             <ChevronRight className="w-5 h-5" strokeWidth={2.5} />
           </motion.button>
         </div>

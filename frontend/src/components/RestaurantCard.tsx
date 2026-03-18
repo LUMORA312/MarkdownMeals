@@ -66,7 +66,7 @@ export function RestaurantCard({ restaurant, index, favorited = false, onToggleF
         const qs = searchParams.toString();
         navigate(`/restaurant/${restaurant.id}${qs ? `?${qs}` : ''}`);
       }}
-      className="cursor-pointer rounded-2xl overflow-hidden shadow-card bg-card group active:shadow-sm transition-shadow"
+      className="cursor-pointer rounded-2xl overflow-hidden shadow-card bg-orange-50 border border-orange-200 group active:shadow-sm transition-shadow"
     >
       <div className="aspect-[16/10] sm:aspect-[4/3] overflow-hidden relative">
         <img
@@ -82,7 +82,7 @@ export function RestaurantCard({ restaurant, index, favorited = false, onToggleF
           <motion.button
             whileTap={{ scale: 1.3 }}
             onClick={handleFavorite}
-            className="relative flex items-center justify-center w-9 h-9 rounded-full bg-card/80 backdrop-blur-sm shadow-sm"
+            className="relative flex items-center justify-center w-9 h-9 rounded-full bg-white/90 backdrop-blur-sm shadow-sm border border-orange-200"
           >
             <AnimatePresence>
               {burstKey > 0 && PARTICLES.map((p) => (

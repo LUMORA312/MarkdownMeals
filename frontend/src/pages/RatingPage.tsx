@@ -92,8 +92,8 @@ export default function RatingPage() {
   if (!token) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-          <Star className="w-8 h-8 text-muted-foreground/50" />
+        <div className="w-16 h-16 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center">
+          <Star className="w-8 h-8 text-amber-400" />
         </div>
         <p className="text-muted-foreground font-body text-center">Rating link not found or expired.</p>
         <motion.button
@@ -118,7 +118,7 @@ export default function RatingPage() {
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: 'spring', stiffness: 200, delay: 0.2 }}
-          className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center"
+          className="w-16 h-16 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center"
         >
           <Check className="w-8 h-8 text-primary" />
         </motion.div>
@@ -174,8 +174,8 @@ export default function RatingPage() {
             animate={{ opacity: 1 }}
             className="text-center py-10 sm:py-12 space-y-4"
           >
-            <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto">
-              <Clock className="w-8 h-8 text-muted-foreground" />
+            <div className="w-16 h-16 rounded-full bg-sky-100 border border-sky-300 flex items-center justify-center mx-auto">
+              <Clock className="w-8 h-8 text-sky-500" />
             </div>
             <p className="text-lg font-display text-foreground">Rating unlocks soon</p>
             <p className="text-3xl font-body font-bold text-primary tabular-nums">{formatTime(timeLeft)}</p>

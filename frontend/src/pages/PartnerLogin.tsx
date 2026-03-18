@@ -66,7 +66,7 @@ export default function PartnerLogin() {
                 setIsDark(next);
                 document.documentElement.classList.toggle('dark', next);
               }}
-              className="p-2.5 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+              className="p-2.5 rounded-full bg-amber-100 border border-amber-300 text-amber-700 cursor-pointer transition-colors hover:bg-amber-200 hover:text-amber-900"
               aria-label="Toggle dark mode"
             >
               {isDark ? <Sun className="w-4 h-4" strokeWidth={2.5} /> : <Moon className="w-4 h-4" strokeWidth={2.5} />}
@@ -104,7 +104,7 @@ export default function PartnerLogin() {
                     onChange={(e) => setBusinessName(e.target.value)}
                     placeholder="Business Name"
                     required
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-card text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
                   />
                 </div>
                 <div className="relative">
@@ -114,7 +114,7 @@ export default function PartnerLogin() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value)}
                     placeholder="Phone (optional)"
-                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-card text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                    className="w-full pl-11 pr-4 py-3 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
                   />
                 </div>
               </>
@@ -128,7 +128,7 @@ export default function PartnerLogin() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Email"
                 required
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-card text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
               />
             </div>
 
@@ -141,7 +141,7 @@ export default function PartnerLogin() {
                 placeholder="Password"
                 required
                 minLength={6}
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-card text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
               />
             </div>
 

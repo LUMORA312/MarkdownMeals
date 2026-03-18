@@ -57,7 +57,7 @@ export default function AdminLogin() {
                 setIsDark(next);
                 document.documentElement.classList.toggle('dark', next);
               }}
-              className="p-2.5 rounded-full bg-muted/80 text-muted-foreground cursor-pointer transition-colors hover:bg-accent hover:text-accent-foreground"
+              className="p-2.5 rounded-full bg-gray-100 border border-gray-300 text-gray-700 cursor-pointer transition-colors hover:bg-gray-200 hover:text-gray-900"
               aria-label="Toggle dark mode"
             >
               {isDark ? <Sun className="w-4 h-4" strokeWidth={2.5} /> : <Moon className="w-4 h-4" strokeWidth={2.5} />}
@@ -91,7 +91,7 @@ export default function AdminLogin() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Admin Email"
                 required
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-card text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-gray-400/40 focus:border-gray-500"
               />
             </div>
 
@@ -103,7 +103,7 @@ export default function AdminLogin() {
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="Password"
                 required
-                className="w-full pl-11 pr-4 py-3 rounded-xl border border-border bg-card text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent"
+                className="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-300 bg-gray-50 text-sm font-body text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-gray-400/40 focus:border-gray-500"
               />
             </div>
 

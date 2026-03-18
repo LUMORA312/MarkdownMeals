@@ -21,7 +21,7 @@ const NotFound = () => {
         <motion.div
           animate={{ rotate: [0, -5, 5, -3, 0] }}
           transition={{ duration: 4, repeat: Infinity, repeatDelay: 2, ease: 'easeInOut' }}
-          className="w-20 h-20 rounded-full bg-muted flex items-center justify-center"
+          className="w-20 h-20 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center"
         >
           <Search className="w-10 h-10 text-muted-foreground/50" strokeWidth={2} />
         </motion.div>
@@ -34,7 +34,7 @@ const NotFound = () => {
             whileTap={{ scale: 0.9 }}
             whileHover={{ scale: 1.05 }}
             onClick={() => navigate(-1)}
-            className="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-accent text-accent font-body font-bold cursor-pointer text-sm hover:bg-accent/10 shadow-sm hover:shadow-md transition-all"
+            className="flex items-center gap-2 px-6 py-3 rounded-full border-2 border-amber-400 bg-amber-50 text-amber-700 font-body font-bold cursor-pointer text-sm hover:bg-amber-100 hover:border-amber-500 shadow-sm hover:shadow-md transition-all"
           >
             <ArrowLeft className="w-4 h-4" strokeWidth={3} />
             Go back

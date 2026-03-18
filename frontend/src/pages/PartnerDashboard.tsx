@@ -69,7 +69,7 @@ export default function PartnerDashboard() {
   return (
     <div className="min-h-screen bg-background">
       {/* Top bar */}
-      <div className="sticky top-0 z-30 bg-card border-b border-border px-4 py-3">
+      <div className="sticky top-0 z-30 bg-amber-50 border-b border-amber-200 px-4 py-3">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-xl bg-accent">
@@ -80,14 +80,14 @@ export default function PartnerDashboard() {
               <p className="text-xs font-body text-muted-foreground">{user?.email}</p>
             </div>
           </div>
-          <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.03 }} onClick={handleLogout} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-body font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 cursor-pointer transition-all">
+          <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.03 }} onClick={handleLogout} className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-body font-semibold text-muted-foreground hover:text-rose-700 hover:bg-rose-100 cursor-pointer transition-all">
             <LogOut className="w-4 h-4" strokeWidth={2.5} /> Logout
           </motion.button>
         </div>
       </div>
 
       {/* Tab bar */}
-      <div className="sticky top-[61px] z-20 bg-background border-b border-border">
+      <div className="sticky top-[61px] z-20 bg-amber-50 border-b border-amber-200">
         <div className="max-w-5xl mx-auto flex">
           {tabs.map((t) => (
             <motion.button
@@ -175,10 +175,10 @@ export default function PartnerDashboard() {
 // ── Overview Tab ──
 function OverviewTab({ stats }: { stats: { totalDeals: number; activeDeals: number; totalViews: number; totalRatings: number; totalReviews: number } }) {
   const cards = [
-    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-green-500/10 text-green-700', iconBg: 'bg-green-500/20' },
-    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-accent/10 text-accent', iconBg: 'bg-accent/20' },
-    { label: 'Total Ratings', value: stats.totalRatings, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-amber-500/10 text-amber-700', iconBg: 'bg-amber-500/20' },
-    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-purple-500/10 text-purple-700', iconBg: 'bg-purple-500/20' },
+    { label: 'Active Deals', value: stats.activeDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-emerald-100 border border-emerald-200 text-emerald-700', iconBg: 'bg-emerald-200' },
+    { label: 'Total Deals', value: stats.totalDeals, icon: <Tag className="w-5 h-5" />, color: 'bg-sky-100 border border-sky-200 text-sky-700', iconBg: 'bg-sky-200' },
+    { label: 'Total Ratings', value: stats.totalRatings, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-amber-100 border border-amber-200 text-amber-700', iconBg: 'bg-amber-200' },
+    { label: 'Total Reviews', value: stats.totalReviews, icon: <MessageSquare className="w-5 h-5" />, color: 'bg-purple-100 border border-purple-200 text-purple-700', iconBg: 'bg-purple-200' },
   ];
   return (
     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
@@ -188,7 +188,7 @@ function OverviewTab({ stats }: { stats: { totalDeals: number; activeDeals: numb
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: i * 0.06 }}
-          className={`flex flex-col gap-2 p-4 rounded-2xl border border-border ${c.color}`}
+          className={`flex flex-col gap-2 p-4 rounded-2xl ${c.color}`}
         >
           <div className={`w-9 h-9 rounded-xl ${c.iconBg} flex items-center justify-center`}>
             {c.icon}
@@ -241,7 +241,7 @@ function DealsTab({
             return (
               <div
                 key={deal.id as string}
-                className="flex items-center gap-3 p-3 rounded-xl border border-border bg-card"
+                className="flex items-center gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50"
               >
                 <img
                   src={resolveImageUrl(deal.image as string)}
@@ -252,7 +252,7 @@ function DealsTab({
                   <p className="text-sm font-body font-semibold text-foreground truncate">{deal.name as string}</p>
                   <div className="flex items-center gap-2 mt-0.5">
                     <span className="text-xs font-body text-muted-foreground">${(deal.price as number)?.toFixed(2)}</span>
-                    <span className={`text-xs font-body font-medium px-2 py-0.5 rounded-full ${isActive ? 'bg-green-500/10 text-green-700' : 'bg-muted text-muted-foreground'}`}>
+                    <span className={`text-xs font-body font-medium px-2 py-0.5 rounded-full ${isActive ? 'bg-emerald-100 border border-emerald-200 text-emerald-700' : 'bg-gray-100 border border-gray-200 text-gray-600'}`}>
                       {isActive ? 'Active' : 'Expired'}
                     </span>
                     <span className="text-xs font-body text-muted-foreground">{deal.views as number || 0} views</span>
@@ -269,8 +269,8 @@ function DealsTab({
                     disabled={togglingId === (deal.id as string)}
                     className={`p-2.5 rounded-xl transition-all cursor-pointer disabled:opacity-50 shadow-sm hover:shadow-md ${
                       isActive
-                        ? 'bg-amber-500/10 hover:bg-amber-500/20 hover:ring-1 hover:ring-amber-500/30'
-                        : 'bg-green-500/10 hover:bg-green-500/20 hover:ring-1 hover:ring-green-500/30'
+                        ? 'bg-amber-100 border border-amber-200 hover:bg-amber-200 hover:ring-1 hover:ring-amber-300'
+                        : 'bg-emerald-100 border border-emerald-200 hover:bg-emerald-200 hover:ring-1 hover:ring-emerald-300'
                     }`}
                     title={isActive ? 'Pause' : 'Activate'}
                   >
@@ -292,7 +292,7 @@ function DealsTab({
                       }
                     }}
                     disabled={deletingId === (deal.id as string)}
-                    className="p-2.5 rounded-xl bg-destructive/10 hover:bg-destructive/20 hover:ring-1 hover:ring-destructive/30 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
+                    className="p-2.5 rounded-xl bg-rose-100 border border-rose-200 text-rose-700 hover:bg-rose-200 hover:ring-1 hover:ring-rose-300 shadow-sm hover:shadow-md transition-all cursor-pointer disabled:opacity-50"
                   >
                     {deletingId === (deal.id as string) ? (
                       <Loader2 className="w-4 h-4 text-destructive animate-spin" />
@@ -324,10 +324,10 @@ function ReviewsTab({ reviews }: { reviews: Array<Record<string, unknown>> }) {
       {/* Badge summary */}
       <div className="flex flex-wrap gap-2">
         {Object.entries(badgeCounts).map(([badge, count]) => (
-          <div key={badge} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-accent/10 border border-accent/20">
+          <div key={badge} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-sky-100 border border-sky-200">
             <span className="text-lg">{REVIEW_BADGE_ICONS[badge as keyof typeof REVIEW_BADGE_ICONS] || ''}</span>
-            <span className="text-sm font-body font-semibold text-accent">{badge}</span>
-            <span className="text-xs font-body text-accent/70 ml-1">{count}</span>
+            <span className="text-sm font-body font-semibold text-sky-700">{badge}</span>
+            <span className="text-xs font-body text-sky-600 ml-1">{count}</span>
           </div>
         ))}
       </div>
@@ -344,7 +344,7 @@ function ReviewsTab({ reviews }: { reviews: Array<Record<string, unknown>> }) {
             const dish = r.dish as Record<string, unknown> | undefined;
             const restaurant = r.restaurant as Record<string, unknown> | undefined;
             return (
-              <div key={r.id as string} className="flex items-start gap-3 p-3 rounded-xl border border-border bg-card">
+              <div key={r.id as string} className="flex items-start gap-3 p-3 rounded-xl border border-amber-200 bg-amber-50">
                 {dish?.image && (
                   <img src={resolveImageUrl(dish.image as string)} alt="" className="w-10 h-10 rounded-lg object-cover flex-shrink-0" />
                 )}
@@ -448,13 +448,13 @@ function DealFormModal({
           initial={{ scale: 0.95 }}
           animate={{ scale: 1 }}
           exit={{ scale: 0.95 }}
-          className="bg-card rounded-2xl p-6 w-full max-w-md shadow-elevated"
+          className="bg-white border border-amber-200 rounded-2xl p-6 w-full max-w-md shadow-elevated"
         >
           <p className="text-sm font-body text-foreground text-center mb-4">
             You need to create a restaurant first before adding deals.
           </p>
           <div className="flex gap-2">
-            <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.02 }} onClick={onClose} className="flex-1 py-2.5 rounded-xl border-2 border-border text-sm font-body font-bold cursor-pointer hover:bg-muted hover:border-accent/30 transition-all">Cancel</motion.button>
+            <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.02 }} onClick={onClose} className="flex-1 py-2.5 rounded-xl border-2 border-amber-300 text-sm font-body font-bold cursor-pointer hover:bg-amber-100 hover:border-amber-400 transition-all">Cancel</motion.button>
             <motion.button whileTap={{ scale: 0.9 }} whileHover={{ scale: 1.02 }} onClick={onNeedRestaurant} className="btn-shine flex-1 py-2.5 rounded-xl bg-gradient-to-r from-accent via-accent/90 to-accent/70 text-accent-foreground text-sm font-body font-extrabold cursor-pointer shadow-md shadow-accent/20 hover:shadow-accent/40 tracking-wide transition-all">Add Restaurant</motion.button>
           </div>
         </motion.div>
@@ -473,12 +473,12 @@ function DealFormModal({
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
-        className="bg-card rounded-2xl w-full max-w-lg shadow-elevated"
+        className="bg-white border border-amber-200 rounded-2xl w-full max-w-lg shadow-elevated"
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-amber-200">
           <h2 className="text-xl font-display text-foreground">Add New Deal</h2>
-          <motion.button whileTap={{ scale: 0.85 }} onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer transition-colors"><X className="w-5 h-5" strokeWidth={2.5} /></motion.button>
+          <motion.button whileTap={{ scale: 0.85 }} onClick={onClose} className="p-1.5 rounded-lg hover:bg-amber-100 cursor-pointer transition-colors"><X className="w-5 h-5" strokeWidth={2.5} /></motion.button>
         </div>
 
         <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4 max-h-[70vh] overflow-y-auto">
@@ -501,7 +501,7 @@ function DealFormModal({
               onChange={(e) => setName(e.target.value)}
               placeholder="e.g. BBQ Bacon Burger Combo"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent/40"
+              className="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
             />
           </div>
 
@@ -524,7 +524,7 @@ function DealFormModal({
               onChange={(e) => setPrice(e.target.value)}
               placeholder="9.99"
               required
-              className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent/40"
+              className="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
             />
           </div>
 
@@ -534,7 +534,7 @@ function DealFormModal({
             <div
               onDragOver={(e) => e.preventDefault()}
               onDrop={handleDrop}
-              className="relative flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-dashed border-border hover:border-accent/40 transition-colors cursor-pointer bg-background"
+              className="relative flex flex-col items-center gap-2 p-6 rounded-xl border-2 border-dashed border-amber-300 hover:border-amber-400 transition-colors cursor-pointer bg-amber-50"
               onClick={() => document.getElementById('deal-image-input')?.click()}
             >
               {imagePreview ? (
@@ -610,11 +610,11 @@ function RestaurantFormModal({ onClose }: { onClose: () => void }) {
         initial={{ scale: 0.95 }}
         animate={{ scale: 1 }}
         exit={{ scale: 0.95 }}
-        className="bg-card rounded-2xl w-full max-w-md shadow-elevated"
+        className="bg-white border border-amber-200 rounded-2xl w-full max-w-md shadow-elevated"
       >
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border">
+        <div className="flex items-center justify-between px-5 py-4 border-b border-amber-200">
           <h2 className="text-xl font-display text-foreground">Add Restaurant</h2>
-          <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.1 }} onClick={onClose} className="p-1.5 rounded-lg hover:bg-muted cursor-pointer"><X className="w-5 h-5" strokeWidth={2.5} /></motion.button>
+          <motion.button whileTap={{ scale: 0.85 }} whileHover={{ scale: 1.1 }} onClick={onClose} className="p-1.5 rounded-lg hover:bg-amber-100 cursor-pointer"><X className="w-5 h-5" strokeWidth={2.5} /></motion.button>
         </div>
         <form onSubmit={handleSubmit} className="px-5 py-4 flex flex-col gap-4">
           <input
@@ -623,14 +623,14 @@ function RestaurantFormModal({ onClose }: { onClose: () => void }) {
             onChange={(e) => setName(e.target.value)}
             placeholder="Restaurant Name"
             required
-            className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent/40"
+            className="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
           />
           <input
             type="text"
             value={coverImage}
             onChange={(e) => setCoverImage(e.target.value)}
             placeholder="Cover Image URL (optional)"
-            className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent/40"
+            className="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
           />
           <input
             type="url"
@@ -638,7 +638,7 @@ function RestaurantFormModal({ onClose }: { onClose: () => void }) {
             onChange={(e) => setRedirectUrl(e.target.value)}
             placeholder="Website / Order URL"
             required
-            className="w-full px-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body focus:outline-none focus:ring-2 focus:ring-accent/40"
+            className="w-full px-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500"
           />
           {error && <p className="text-sm font-body text-destructive text-center">{error}</p>}
           <motion.button
@@ -686,7 +686,7 @@ function AnimatedSelect({
       <button
         type="button"
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-border bg-card text-sm font-body text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors"
+        className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body text-foreground cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500 transition-colors"
       >
         <span>{selected?.label || 'Select...'}</span>
         <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -701,7 +701,7 @@ function AnimatedSelect({
             exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
             transition={{ duration: 0.15, ease: 'easeOut' }}
             style={{ transformOrigin: 'top' }}
-            className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
+            className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-amber-200 bg-white shadow-elevated py-1"
           >
             {options.map((o, i) => (
               <motion.li
@@ -712,8 +712,8 @@ function AnimatedSelect({
                 onClick={() => { onChange(o.value); setOpen(false); }}
                 className={`px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
                   o.value === value
-                    ? 'bg-accent/15 text-accent font-semibold'
-                    : 'text-foreground hover:bg-accent/10'
+                    ? 'bg-sky-100 text-sky-700 font-semibold'
+                    : 'text-foreground hover:bg-amber-100'
                 }`}
               >
                 {o.label}
@@ -761,7 +761,7 @@ function DropdownField({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors"
+          className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500 transition-colors"
         >
           <span className={value ? 'text-foreground' : 'text-muted-foreground'}>{display}</span>
           <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -776,7 +776,7 @@ function DropdownField({
               exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
               style={{ transformOrigin: 'top' }}
-              className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
+              className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-amber-200 bg-white shadow-elevated py-1"
             >
               {placeholder && (
                 <motion.li
@@ -784,7 +784,7 @@ function DropdownField({
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.02 }}
                   onClick={() => { onChange(''); setOpen(false); }}
-                  className="px-3 py-2 text-sm font-body text-muted-foreground cursor-pointer hover:bg-accent/10 transition-colors"
+                  className="px-3 py-2 text-sm font-body text-muted-foreground cursor-pointer hover:bg-amber-100 transition-colors"
                 >
                   {placeholder}
                 </motion.li>
@@ -798,8 +798,8 @@ function DropdownField({
                   onClick={() => { onChange(o); setOpen(false); }}
                   className={`px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
                     o === value
-                      ? 'bg-accent/15 text-accent font-semibold'
-                      : 'text-foreground hover:bg-accent/10'
+                      ? 'bg-sky-100 text-sky-700 font-semibold'
+                      : 'text-foreground hover:bg-amber-100'
                   }`}
                 >
                   {o}
@@ -853,7 +853,7 @@ function MultiDropdownField({
         <button
           type="button"
           onClick={() => setOpen(!open)}
-          className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-border bg-background text-sm font-body cursor-pointer focus:outline-none focus:ring-2 focus:ring-accent/40 transition-colors"
+          className="w-full flex items-center justify-between pl-3 pr-3 py-2.5 rounded-xl border border-amber-300 bg-amber-50 text-sm font-body cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400/40 focus:border-amber-500 transition-colors"
         >
           <span className={`truncate ${values.length > 0 ? 'text-foreground' : 'text-muted-foreground'}`}>{display}</span>
           <motion.div animate={{ rotate: open ? 180 : 0 }} transition={{ duration: 0.2 }}>
@@ -868,7 +868,7 @@ function MultiDropdownField({
               exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
               transition={{ duration: 0.15, ease: 'easeOut' }}
               style={{ transformOrigin: 'top' }}
-              className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-border bg-card shadow-elevated py-1"
+              className="absolute z-50 left-0 right-0 mt-1 max-h-48 overflow-y-auto rounded-xl border border-amber-200 bg-white shadow-elevated py-1"
             >
               {options.filter(Boolean).map((o, i) => {
                 const selected = values.includes(o);
@@ -881,12 +881,12 @@ function MultiDropdownField({
                     onClick={() => toggle(o)}
                     className={`flex items-center gap-2 px-3 py-2 text-sm font-body cursor-pointer transition-colors ${
                       selected
-                        ? 'bg-accent/15 text-accent font-semibold'
-                        : 'text-foreground hover:bg-accent/10'
+                        ? 'bg-sky-100 text-sky-700 font-semibold'
+                        : 'text-foreground hover:bg-amber-100'
                     }`}
                   >
                     <div className={`w-4 h-4 rounded border-2 flex items-center justify-center flex-shrink-0 transition-colors ${
-                      selected ? 'border-accent bg-accent' : 'border-border'
+                      selected ? 'border-sky-500 bg-sky-500' : 'border-amber-300'
                     }`}>
                       {selected && <Check className="w-3 h-3 text-accent-foreground" />}
                     </div>

@@ -25,7 +25,7 @@ export function DishCard({ dish, onTap }: DishCardProps) {
     <motion.button
       whileTap={{ scale: 0.96 }}
       onClick={onTap}
-      className="w-full rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group text-left bg-card shadow-card hover:shadow-food transition-shadow"
+      className="w-full rounded-xl sm:rounded-2xl overflow-hidden cursor-pointer group text-left bg-orange-50 border border-orange-200 shadow-card hover:shadow-food transition-shadow"
     >
       {/* Image */}
       <div className="relative aspect-square overflow-hidden">
@@ -83,7 +83,7 @@ export function DishCard({ dish, onTap }: DishCardProps) {
 
           {/* Modifiers */}
           {dish.modifiers.map((m) => (
-            <span key={m} className="text-[10px] px-1.5 py-0.5 rounded-full bg-accent/15 text-accent font-body font-medium">
+            <span key={m} className="text-[10px] px-1.5 py-0.5 rounded-full bg-sky-100 border border-sky-200 text-sky-700 font-body font-medium">
               {m}
             </span>
           ))}

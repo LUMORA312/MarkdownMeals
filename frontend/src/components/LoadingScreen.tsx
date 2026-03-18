@@ -27,7 +27,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.3 }}
-          className="p-4 rounded-2xl bg-accent/10"
+          className="p-4 rounded-2xl bg-orange-100 border border-orange-200"
         >
           <motion.div
             animate={{ rotate: [0, 10, -10, 0] }}
@@ -48,7 +48,7 @@ export function LoadingScreen({ message = 'Loading...' }: LoadingScreenProps) {
         </motion.p>
 
         {/* Progress bar */}
-        <div className="w-48 h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="w-48 h-1.5 rounded-full bg-amber-100 overflow-hidden">
           <motion.div
             initial={{ x: '-100%' }}
             animate={{ x: '100%' }}

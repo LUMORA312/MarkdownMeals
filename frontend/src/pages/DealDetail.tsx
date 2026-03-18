@@ -54,8 +54,8 @@ export default function DealDetail() {
   if (!restaurant || !dish) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-4 px-4">
-        <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center">
-          <Tag className="w-8 h-8 text-muted-foreground/50" />
+        <div className="w-16 h-16 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center">
+          <Tag className="w-8 h-8 text-amber-400" />
         </div>
         <p className="text-base text-muted-foreground font-body text-center">Deal not found.</p>
         <motion.button
@@ -138,7 +138,7 @@ export default function DealDetail() {
           <img
             src={resolveImageUrl(restaurant.coverImage)}
             alt={restaurant.name}
-            className="w-10 h-10 rounded-full object-cover border-2 border-border"
+            className="w-10 h-10 rounded-full object-cover border-2 border-amber-300"
           />
           <div>
             <p className="text-sm font-body font-semibold text-foreground">{restaurant.name}</p>
@@ -156,23 +156,23 @@ export default function DealDetail() {
         {/* Deal details */}
         <div className="flex flex-wrap items-center gap-2 mb-5">
           {/* Category */}
-          <span className="text-xs px-2.5 py-1 rounded-full bg-accent/10 text-accent font-body font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-sky-100 border border-sky-200 text-sky-700 font-body font-medium">
             {dish.category}
           </span>
 
           {/* Taste */}
-          <span className="text-xs px-2.5 py-1 rounded-full bg-accent/10 text-accent font-body font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-violet-100 border border-violet-200 text-violet-700 font-body font-medium">
             {dish.primaryTaste}
           </span>
 
           {/* Feeds */}
-          <span className="text-xs px-2.5 py-1 rounded-full bg-muted text-muted-foreground font-body font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-amber-100 border border-amber-200 text-amber-700 font-body font-medium">
             Feeds {dish.feeds}
           </span>
 
           {/* Modifiers */}
           {dish.modifiers.map((m) => (
-            <span key={m} className="text-xs px-2.5 py-1 rounded-full bg-green-500/10 text-green-700 font-body font-medium">
+            <span key={m} className="text-xs px-2.5 py-1 rounded-full bg-emerald-100 border border-emerald-200 text-emerald-700 font-body font-medium">
               {m}
             </span>
           ))}
@@ -181,8 +181,8 @@ export default function DealDetail() {
           {timeLeft && (
             <span className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full font-body font-medium ${
               isUrgent
-                ? 'bg-destructive/10 text-destructive'
-                : 'bg-muted text-muted-foreground'
+                ? 'bg-rose-100 border border-rose-300 text-rose-700'
+                : 'bg-gray-100 border border-gray-200 text-gray-600'
             }`}>
               <Clock className="w-3 h-3" />
               {timeLeft}
@@ -196,7 +196,7 @@ export default function DealDetail() {
             {REVIEW_BADGES.filter((b) => reviewSummary.badges[b]).map((badge) => (
               <span
                 key={badge}
-                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-accent/10 text-accent font-body font-medium"
+                className="flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-pink-100 border border-pink-200 text-pink-700 font-body font-medium"
               >
                 <span>{REVIEW_BADGE_ICONS[badge as ReviewBadge]}</span>
                 {reviewSummary.badges[badge]}
@@ -249,11 +249,11 @@ export default function DealDetail() {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0, scale: 0.9 }}
-              className="flex flex-col items-center gap-4 px-8 py-6 rounded-2xl bg-card shadow-elevated"
+              className="flex flex-col items-center gap-4 px-8 py-6 rounded-2xl bg-white border border-amber-200 shadow-elevated"
             >
               <Loader2 className="w-7 h-7 text-accent animate-spin" />
               <p className="text-base font-body font-medium text-foreground">Opening deal...</p>
-              <div className="w-48 h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="w-48 h-1.5 rounded-full bg-amber-100 overflow-hidden">
                 <motion.div
                   initial={{ width: '0%' }}
                   animate={{ width: '100%' }}

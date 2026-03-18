@@ -248,7 +248,7 @@ export default function RestaurantList() {
     >
       {/* Full-page background image */}
       <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.1 }}
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.3 }}
       />
 
       <div className="relative z-10">
@@ -277,7 +277,7 @@ export default function RestaurantList() {
             </div>
           </div>
           {priceFilter && (
-            <span className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-accent/10 text-accent text-base font-body font-bold">
+            <span className="flex items-center gap-1 px-3 py-1.5 rounded-full bg-orange-100 border border-orange-300 text-orange-700 text-base font-body font-bold">
               {PRICE_RANGE_ICONS[priceFilter]} {priceFilter}
             </span>
           )}
@@ -288,7 +288,7 @@ export default function RestaurantList() {
 
         {/* Search bar — becomes sticky */}
         <div className={`${isSearchSticky ? 'sticky top-0 z-30 -mx-4 px-4 py-2 bg-background/90 backdrop-blur-md border-b border-border/50' : ''} transition-all`}>
-          <div className="flex items-center gap-2 bg-muted/50 rounded-xl px-3 py-2.5 border border-border focus-within:border-accent/40 focus-within:bg-card transition-all">
+          <div className="flex items-center gap-2 bg-amber-50 rounded-xl px-3 py-2.5 border border-amber-300 focus-within:border-amber-500 focus-within:bg-amber-100 transition-all">
             <Search className="w-4 h-4 text-muted-foreground shrink-0" />
             <input
               value={searchQuery}
@@ -297,7 +297,7 @@ export default function RestaurantList() {
               className="bg-transparent text-base font-body text-foreground placeholder:text-muted-foreground outline-none w-full"
             />
             {searchQuery && (
-              <motion.button whileTap={{ scale: 0.8 }} onClick={() => setSearchQuery('')} className="p-1.5 rounded-full hover:bg-accent/20 cursor-pointer shrink-0 transition-colors">
+              <motion.button whileTap={{ scale: 0.8 }} onClick={() => setSearchQuery('')} className="p-1.5 rounded-full hover:bg-amber-200 cursor-pointer shrink-0 transition-colors">
                 <X className="w-3.5 h-3.5 text-muted-foreground" strokeWidth={2.5} />
               </motion.button>
             )}
@@ -305,74 +305,70 @@ export default function RestaurantList() {
         </div>
 
         {/* Secondary filters — Eating Style + Taste Tags */}
-        <div className="mt-3 space-y-3">
-          {/* Eating Style (choose one) */}
+        <div className="mt-3 space-y-2">
+          {/* Eating Style — one scrollable row */}
           <div>
-            <p className="text-xs sm:text-sm font-body font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">Eating Style</p>
-            <div className="flex flex-wrap gap-1.5 pb-0.5">
-              {EATING_STYLES.map((style) => {
-                const isActive = eatingStyle === style;
-                return (
-                  <motion.button
-                    key={style}
-                    whileTap={{ scale: 0.93 }}
-                    onClick={() => selectEatingStyle(style)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-sm font-body font-semibold whitespace-nowrap cursor-pointer transition-all ${
-                      isActive
-                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm'
-                        : 'border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:border-accent/40'
-                    }`}
-                  >
-                    <span className="text-base">{EATING_STYLE_ICONS[style]}</span>
-                    {style}
-                  </motion.button>
-                );
-              })}
-            </div>
+            <p className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-widest mb-1">Eating Style</p>
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide scroll-touch pb-0.5">
+            {EATING_STYLES.map((style) => {
+              const isActive = eatingStyle === style;
+              return (
+                <motion.button
+                  key={style}
+                  whileTap={{ scale: 0.93 }}
+                  onClick={() => selectEatingStyle(style)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-body font-semibold whitespace-nowrap cursor-pointer transition-all flex-shrink-0 ${
+                    isActive
+                      ? 'border-sky-500 bg-sky-200 text-sky-900 ring-1 ring-sky-400/30 shadow-sm'
+                      : 'border-sky-300 bg-sky-50 text-sky-700 hover:bg-sky-100 hover:border-sky-400'
+                  }`}
+                >
+                  <span className="text-sm">{EATING_STYLE_ICONS[style]}</span>
+                  {style}
+                </motion.button>
+              );
+            })}
+          </div>
           </div>
 
-          {/* Taste Tags (max two) */}
+          {/* Taste Tags — one scrollable row */}
           <div>
-            <p className="text-xs sm:text-sm font-body font-semibold text-muted-foreground uppercase tracking-widest mb-1.5">
-              Taste {tasteTags.length > 0 && <span className="text-accent">({tasteTags.length}/2)</span>}
-            </p>
-            <div className="flex flex-wrap gap-1.5 pb-0.5">
-              {PRIMARY_TASTES.map((taste) => {
-                const isActive = tasteTags.includes(taste);
-                const atMax = tasteTags.length >= 2 && !isActive;
-                return (
-                  <motion.button
-                    key={taste}
-                    whileTap={!atMax ? { scale: 0.93 } : undefined}
-                    onClick={() => !atMax && toggleTasteTag(taste)}
-                    className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full border text-sm font-body font-semibold whitespace-nowrap transition-all ${
-                      isActive
-                        ? 'border-accent bg-accent/15 text-foreground ring-1 ring-accent/30 shadow-sm cursor-pointer'
-                        : atMax
-                          ? 'border-border bg-muted/20 text-muted-foreground/40 cursor-not-allowed'
-                          : 'border-border bg-muted/40 text-muted-foreground hover:bg-muted hover:border-accent/40 cursor-pointer'
-                    }`}
-                  >
-                    <span className="text-base">{TASTE_ICONS[taste]}</span>
-                    {taste}
-                  </motion.button>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Clear secondary filters */}
-          {hasSecondaryFilters && (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex justify-end">
+            <p className="text-xs font-body font-semibold text-muted-foreground uppercase tracking-widest mb-1">Taste {tasteTags.length > 0 && <span className="text-accent">({tasteTags.length}/2)</span>}</p>
+          <div className="flex gap-1.5 overflow-x-auto scrollbar-hide scroll-touch pb-0.5">
+            {PRIMARY_TASTES.map((taste) => {
+              const isActive = tasteTags.includes(taste);
+              const atMax = tasteTags.length >= 2 && !isActive;
+              return (
+                <motion.button
+                  key={taste}
+                  whileTap={!atMax ? { scale: 0.93 } : undefined}
+                  onClick={() => !atMax && toggleTasteTag(taste)}
+                  className={`flex items-center gap-1 px-3 py-1.5 rounded-full border text-xs font-body font-semibold whitespace-nowrap transition-all flex-shrink-0 ${
+                    isActive
+                      ? 'border-violet-500 bg-violet-200 text-violet-900 ring-1 ring-violet-400/30 shadow-sm cursor-pointer'
+                      : atMax
+                        ? 'border-gray-200 bg-gray-100 text-gray-400 cursor-not-allowed'
+                        : 'border-violet-300 bg-violet-50 text-violet-700 hover:bg-violet-100 hover:border-violet-400 cursor-pointer'
+                  }`}
+                >
+                  <span className="text-sm">{TASTE_ICONS[taste]}</span>
+                  {taste}
+                </motion.button>
+              );
+            })}
+            {hasSecondaryFilters && (
               <motion.button
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => { setEatingStyle(null); setTasteTags([]); }}
-                className="text-sm font-body font-medium text-destructive/80 hover:text-destructive px-3 py-1.5 rounded-full border border-destructive/30 hover:border-destructive/60 hover:bg-destructive/10 transition-all cursor-pointer"
+                className="flex-shrink-0 text-xs font-body font-medium text-rose-700 hover:text-rose-900 px-3 py-1.5 rounded-full border border-rose-300 bg-rose-50 hover:border-rose-400 hover:bg-rose-100 transition-all cursor-pointer"
               >
-                Clear filters
+                Clear
               </motion.button>
-            </motion.div>
-          )}
+            )}
+          </div>
+          </div>
         </div>
 
         {/* Sort + Favorites row */}
@@ -387,10 +383,10 @@ export default function RestaurantList() {
               key={opt.value}
               whileTap={{ scale: 0.93 }}
               onClick={() => setSortBy(opt.value)}
-              className={`px-3.5 py-2 rounded-full text-sm font-body font-semibold transition-all cursor-pointer whitespace-nowrap ${
+              className={`px-3.5 py-2 rounded-full text-sm font-body font-semibold transition-all cursor-pointer whitespace-nowrap border ${
                 sortBy === opt.value
-                  ? 'bg-accent text-accent-foreground shadow-sm'
-                  : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
+                  ? 'bg-emerald-500 text-white border-emerald-500 shadow-sm'
+                  : 'bg-emerald-50 text-emerald-700 border-emerald-300 hover:bg-emerald-100 hover:border-emerald-400'
               }`}
             >
               {opt.label}
@@ -400,10 +396,10 @@ export default function RestaurantList() {
           <motion.button
             whileTap={{ scale: 0.93 }}
             onClick={() => setShowFavoritesOnly((prev) => !prev)}
-            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-body font-semibold transition-all cursor-pointer whitespace-nowrap ${
+            className={`flex items-center gap-1.5 px-3.5 py-2 rounded-full text-sm font-body font-semibold transition-all cursor-pointer whitespace-nowrap border ${
               showFavoritesOnly
-                ? 'bg-destructive/15 text-destructive shadow-sm ring-1 ring-destructive/30'
-                : 'bg-muted/50 text-muted-foreground hover:bg-muted hover:text-foreground'
+                ? 'bg-rose-200 text-rose-900 border-rose-500 shadow-sm ring-1 ring-rose-400/30'
+                : 'bg-rose-50 text-rose-700 border-rose-300 hover:bg-rose-100 hover:border-rose-400'
             }`}
           >
             <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-destructive' : ''}`} />
@@ -474,7 +470,7 @@ export default function RestaurantList() {
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col items-center justify-center py-16 sm:py-20 gap-4"
           >
-            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-muted flex items-center justify-center">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center">
               {showFavoritesOnly ? (
                 <Heart className="w-8 h-8 sm:w-10 sm:h-10 text-muted-foreground/50" />
               ) : (
