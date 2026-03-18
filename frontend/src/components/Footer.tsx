@@ -18,7 +18,7 @@ export function Footer() {
                 </div>
                 <span className="text-2xl font-display text-foreground">FoodMan</span>
               </div>
-              <p className="text-sm font-body text-muted-foreground max-w-[260px] text-center sm:text-left leading-relaxed">
+              <p className="text-sm font-body text-foreground/70 max-w-[260px] text-center sm:text-left leading-relaxed">
                 Discover the best food markdowns near you. Save more, eat better.
               </p>
             </div>
@@ -26,21 +26,21 @@ export function Footer() {
             {/* Link columns */}
             <div className="flex gap-12 sm:gap-16">
               <div className="flex flex-col gap-2.5">
-                <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Explore</span>
-                <Link to="/restaurants" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Browse Deals</Link>
-                <Link to="/restaurants" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Top Rated</Link>
-                <Link to="/restaurants" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Near Me</Link>
+                <span className="text-xs font-body font-semibold text-foreground/90 uppercase tracking-widest mb-1">Explore</span>
+                <Link to="/restaurants" className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Browse Deals</Link>
+                <Link to="/restaurants" className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Top Rated</Link>
+                <Link to="/restaurants" className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Near Me</Link>
               </div>
               <div className="flex flex-col gap-2.5">
-                <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Company</span>
-                <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">About</span>
-                <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Contact</span>
-                <span className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Privacy</span>
+                <span className="text-xs font-body font-semibold text-foreground/90 uppercase tracking-widest mb-1">Company</span>
+                <span className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">About</span>
+                <span className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Contact</span>
+                <span className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Privacy</span>
               </div>
               <div className="flex flex-col gap-2.5">
-                <span className="text-xs font-body font-semibold text-foreground/70 uppercase tracking-widest mb-1">Portal</span>
-                <Link to="/partner/login" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Partner Login</Link>
-                <Link to="/admin/login" className="text-sm font-body text-muted-foreground hover:text-foreground cursor-pointer transition-colors">Admin Login</Link>
+                <span className="text-xs font-body font-semibold text-foreground/90 uppercase tracking-widest mb-1">Portal</span>
+                <Link to="/partner/login" className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Partner Login</Link>
+                <Link to="/admin/login" className="text-sm font-body text-foreground/80 hover:text-accent cursor-pointer transition-colors">Admin Login</Link>
               </div>
             </div>
           </div>
@@ -50,7 +50,7 @@ export function Footer() {
 
           {/* Bottom bar */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
-            <p className="text-xs font-body text-muted-foreground/60">
+            <p className="text-xs font-body text-foreground/60">
               &copy; {new Date().getFullYear()} FoodMan. All rights reserved.
             </p>
           </div>
