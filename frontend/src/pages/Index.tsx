@@ -92,7 +92,7 @@ const Index = () => {
     <div className="relative min-h-screen bg-background safe-bottom">
       {/* Full-page background image — different from hero steak */}
       <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.3 }}
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', opacity: 0.08, mixBlendMode: 'multiply' }}
       />
 
       {/* Sticky Nav */}
@@ -351,23 +351,25 @@ const Index = () => {
                     }}
                     className={`flex items-center gap-3 sm:gap-5 w-full px-4 sm:px-7 py-3.5 sm:py-6 rounded-2xl border-2 transition-all cursor-pointer group ${
                       isActive
-                        ? 'border-accent bg-accent/15 shadow-lg ring-2 ring-accent/40'
-                        : 'border-border bg-card hover:bg-accent/10 hover:border-accent/50 shadow-card hover:shadow-food'
+                        ? 'border-accent bg-accent text-white shadow-lg ring-2 ring-accent/40'
+                        : 'border-border bg-card hover:bg-accent/20 hover:border-accent/50 shadow-card hover:shadow-food'
                     }`}
                   >
                     <span className="text-2xl sm:text-4xl">{PRICE_RANGE_ICONS[price]}</span>
                     <div className="flex flex-col items-start flex-1 min-w-0">
                       <span className={`text-sm sm:text-xl font-display font-bold truncate ${
-                        isActive ? 'text-foreground' : 'text-foreground/90 group-hover:text-foreground'
+                        isActive ? 'text-white' : 'text-foreground/90 group-hover:text-foreground'
                       }`}>
                         {price}
                       </span>
-                      <span className="text-xs sm:text-base font-body text-muted-foreground truncate">
+                      <span className={`text-xs sm:text-base font-body truncate ${
+                        isActive ? 'text-white/80' : 'text-muted-foreground'
+                      }`}>
                         {PRICE_DESCRIPTIONS[price]}
                       </span>
                     </div>
                     <ArrowRight className={`w-5 h-5 shrink-0 transition-transform ${
-                      isActive ? 'text-accent translate-x-1' : 'text-muted-foreground group-hover:translate-x-1 group-hover:text-foreground'
+                      isActive ? 'text-white translate-x-1' : 'text-muted-foreground group-hover:translate-x-1 group-hover:text-foreground'
                     }`} />
                   </motion.button>
                 );

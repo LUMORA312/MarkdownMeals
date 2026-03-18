@@ -248,7 +248,7 @@ export default function RestaurantList() {
     >
       {/* Full-page background image */}
       <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.2 }}
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.1 }}
       />
 
       <div className="relative z-10">

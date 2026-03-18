@@ -91,7 +91,7 @@ export default function RestaurantDetail() {
     <div className="relative min-h-screen bg-background safe-bottom">
       {/* Full-page background image */}
       <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.2 }}
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.08}}
       />
 
       {/* Hero */}
