@@ -92,7 +92,7 @@ const Index = () => {
     <div className="relative min-h-screen bg-background safe-bottom">
       {/* Full-page background image — different from hero steak */}
       <div className="fixed inset-0 z-0 pointer-events-none"
-        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.06 }}
+        style={{ backgroundImage: 'url(/images/pad-thai.jpg)', backgroundSize: 'cover', backgroundPosition: 'center', mixBlendMode: 'multiply', opacity: 0.3 }}
       />
 
       {/* Sticky Nav */}
