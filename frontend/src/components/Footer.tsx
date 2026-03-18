@@ -6,7 +6,7 @@ export function Footer() {
     <footer className="relative z-10 w-full overflow-hidden">
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent" />
 
-      <div className="bg-gradient-to-b from-foreground/20 to-foreground/35 pt-10 sm:pt-14 pb-6 sm:pb-8">
+      <div className="bg-gradient-to-b from-foreground/5 to-foreground/10 pt-10 sm:pt-14 pb-6 sm:pb-8">
         <div className="max-w-3xl mx-auto px-6">
           {/* Top section: brand + columns */}
           <div className="flex flex-col sm:flex-row items-center sm:items-start gap-8 sm:gap-12 mb-8 sm:mb-10">
